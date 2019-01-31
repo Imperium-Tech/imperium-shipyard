@@ -373,3 +373,24 @@ def generate_software_data():
     s = json.dumps(software_data, indent=4)
     print(s)
 
+
+def generate_fuel_addon_data():
+    fuel_addon_data = dict()
+
+    fuel_addon_data["Fuel Scoop"] = dict()
+    fuel_addon_data["Fuel Scoop"]['cost'] = 1
+    fuel_addon_data["Fuel Scoop"]['tonnage'] = 0
+    fuel_addon_data["Fuel Scoop"]['effect'] = list()
+
+    fuel_addon_data["Fuel Processor"] = dict()
+    fuel_addon_data["Fuel Processor"]['cost'] = .05
+    fuel_addon_data["Fuel Processor"]['tonnage'] = 1
+    fuel_addon_data["Fuel Processor"]['fuel_refinement_rate'] = 20
+    fuel_addon_data["Fuel Processor"]['effect'] = list()
+
+    f = json.dumps(fuel_addon_data, indent=4)
+    print(f)
+
+
+generate_fuel_addon_data()
+
