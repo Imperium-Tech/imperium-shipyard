@@ -54,3 +54,50 @@ def generate_jdrive_data():
 
     j = json.dumps(jdrive_data, indent=4)
     print(j)
+
+def generate_mdrive_data():
+    """
+    Generates a data dict for M-Drives
+    """
+    mdrive_data = dict()
+
+    for i in range(0, 24):
+        j = i
+        if j >= 8:
+            j = j + 1
+        if j >= 14:
+            j = j + 1
+        
+        temp_key = chr(65+j)
+        mdrive_data[temp_key] = dict()
+
+        if i == 0:
+            mdrive_data[temp_key]["tonnage"] = 2
+        else:
+            mdrive_data[temp_key]["tonnage"] = 1 + (2 * i)
+
+        mdrive_data[temp_key]["cost"] = 4 * (i + 1)
+
+    j = json.dumps(mdrive_data, indent=4)
+    print(j)
+
+def generate_pplant_data():
+    """
+    Generates a data dict for P-Plant
+    """
+    pplant_data = dict()
+
+    for i in range(0, 24):
+        j = i
+        if j >= 8:
+            j = j + 1
+        if j >= 14:
+            j = j + 1
+        
+        temp_key = chr(65+j)
+        pplant_data[temp_key] = dict()
+        pplant_data[temp_key]["tonnage"] = 4 + (3 * i)
+        pplant_data[temp_key]["cost"] = 8 * (i + 1)
+
+    j = json.dumps(pplant_data, indent=4)
+    print(j)

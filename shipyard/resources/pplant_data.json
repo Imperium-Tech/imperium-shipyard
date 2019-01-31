@@ -1,0 +1,98 @@
+{
+    "A": {
+        "tonnage": 4,
+        "cost": 8
+    },
+    "B": {
+        "tonnage": 7,
+        "cost": 16
+    },
+    "C": {
+        "tonnage": 10,
+        "cost": 24
+    },
+    "D": {
+        "tonnage": 13,
+        "cost": 32
+    },
+    "E": {
+        "tonnage": 16,
+        "cost": 40
+    },
+    "F": {
+        "tonnage": 19,
+        "cost": 48
+    },
+    "G": {
+        "tonnage": 22,
+        "cost": 56
+    },
+    "H": {
+        "tonnage": 25,
+        "cost": 64
+    },
+    "J": {
+        "tonnage": 28,
+        "cost": 72
+    },
+    "K": {
+        "tonnage": 31,
+        "cost": 80
+    },
+    "L": {
+        "tonnage": 34,
+        "cost": 88
+    },
+    "M": {
+        "tonnage": 37,
+        "cost": 96
+    },
+    "N": {
+        "tonnage": 40,
+        "cost": 104
+    },
+    "P": {
+        "tonnage": 43,
+        "cost": 112
+    },
+    "Q": {
+        "tonnage": 46,
+        "cost": 120
+    },
+    "R": {
+        "tonnage": 49,
+        "cost": 128
+    },
+    "S": {
+        "tonnage": 52,
+        "cost": 136
+    },
+    "T": {
+        "tonnage": 55,
+        "cost": 144
+    },
+    "U": {
+        "tonnage": 58,
+        "cost": 152
+    },
+    "V": {
+        "tonnage": 61,
+        "cost": 160
+    },
+    "W": {
+        "tonnage": 64,
+        "cost": 168
+    },
+    "X": {
+        "tonnage": 67,
+        "cost": 176
+    },
+    "Y": {
+        "tonnage": 70,
+        "cost": 184
+    },
+    "Z": {
+        "tonnage": 73,
+        "cost": 192
+    }
+}

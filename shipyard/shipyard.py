@@ -5,4 +5,4 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 """
 import data_generators as dg
 
-dg.generate_jdrive_data()
+dg.generate_pplant_data()
