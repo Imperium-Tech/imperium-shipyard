@@ -305,3 +305,24 @@ def generate_turret_data():
 
     t = json.dumps(turret_data, indent=4)
     print(t)
+
+
+def generate_bayweapon_data():
+    """
+    Generates data for the bay weapons on a ship
+    Manually input values and can add more weapons to the weapon_list
+    """
+    bayweapon_data = dict()
+
+    weapon_list = ["Missile Bank", "Particle Beam", "Fusion Gun", "Meson Gun"]
+    for wep in weapon_list:
+        print(wep)
+        bayweapon_data[wep] = dict()
+        bayweapon_data[wep]['tl'] = int(input("TL: "))
+        bayweapon_data[wep]['range'] = input("Range: ")
+        bayweapon_data[wep]['damage'] = input("Damage: ")
+        bayweapon_data[wep]['cost'] = int(input("Cost: "))
+        bayweapon_data[wep]['notes'] = list()
+
+    b = json.dumps(bayweapon_data, indent=4)
+    print(b)
