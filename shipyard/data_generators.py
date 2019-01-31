@@ -7,7 +7,7 @@ import json
 
 def generate_hull_data():
     """
-    Generates a data dict for hull prices
+    Generates a data dict for Hulls
     """
     hull_data = dict()
 
@@ -32,4 +32,25 @@ def generate_hull_data():
             hull_data[temp_key]['cost'] = i * 10
 
     j = json.dumps(hull_data, indent=4)
+    print(j)
+
+def generate_jdrive_data():
+    """
+    Generates a data dict for J-Drives
+    """
+    jdrive_data = dict()
+
+    for i in range(0, 24):
+        j = i
+        if j >= 8:
+            j = j + 1
+        if j >= 14:
+            j = j + 1
+        
+        temp_key = chr(65+j)
+        jdrive_data[temp_key] = dict()
+        jdrive_data[temp_key]["tonnage"] = 10 + (5 * i)
+        jdrive_data[temp_key]["cost"] = 10 * (i + 1)
+
+    j = json.dumps(jdrive_data, indent=4)
     print(j)

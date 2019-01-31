@@ -3,6 +3,6 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
-import data_generators
+import data_generators as dg
 
-generate_hull_data()
+dg.generate_jdrive_data()
