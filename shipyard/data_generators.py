@@ -58,6 +58,56 @@ def generate_jdrive_data():
     print(j)
 
 
+def generate_mdrive_data():
+    """
+    Generates a data dict for M-Drives
+    """
+    mdrive_data = dict()
+
+    for i in range(0, 24):
+        j = i
+        if j >= 8:
+            j = j + 1
+        if j >= 14:
+            j = j + 1
+        
+        temp_key = chr(65+j)
+        mdrive_data[temp_key] = dict()
+
+        if i == 0:
+            mdrive_data[temp_key]["tonnage"] = 2
+        else:
+            mdrive_data[temp_key]["tonnage"] = 1 + (2 * i)
+
+        mdrive_data[temp_key]["cost"] = 4 * (i + 1)
+
+    j = json.dumps(mdrive_data, indent=4)
+    print(j)
+
+
+def generate_pplant_data():
+    """
+    Generates a data dict for P-Plant
+    """
+    pplant_data = dict()
+
+    for i in range(0, 24):
+        j = i
+        if j >= 8:
+            j = j + 1
+        if j >= 14:
+            j = j + 1
+        
+        temp_key = chr(65+j)
+        pplant_data[temp_key] = dict()
+        pplant_data[temp_key]["tonnage"] = 4 + (3 * i)
+        pplant_data[temp_key]["cost"] = 8 * (i + 1)
+        pplant_data[temp_key]["fuel_two_weeks"] = 2 * (i + 1)
+
+    j = json.dumps(pplant_data, indent=4)
+    print(j)
+
+
 def generate_performance_data():
     """
     Generates Performance by Hull Volume measaurements
@@ -85,27 +135,6 @@ def generate_performance_data():
     print(p)
 
 
-def generate_powerplant_data():
-    """
-    Generates data regarding Ship Powerplant fuel usage
-    """
-    powerplant_data = dict()
-
-    tons = 2
-    # Iterates through all characters
-    for val in range(26):
-        char = chr(65 + val)
-
-        # Ignoring characters 'O' and 'I'
-        if char != "O" and char != "I":
-            powerplant_data[char] = dict()
-            powerplant_data[char]["tons_per_two_weeks"] = tons
-            tons += 2
-
-    p = json.dumps(powerplant_data, indent=4)
-    print(p)
-
-
 def generate_bridge_data():
     """
     Generates bridge data compared ship size to bridge size
@@ -123,4 +152,3 @@ def generate_bridge_data():
 
     b = json.dumps(bridge_data, indent=4)
     print(b)
-
