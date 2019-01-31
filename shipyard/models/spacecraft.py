@@ -77,6 +77,11 @@ class Spacecraft:
         # create new jdrive object
         new_jdrive = JDrive(drive_type)
 
+        # if drive already in place, replace stats
+        if self.jdrive is not None:
+            self.cost_total = self.cost_total - self.jdrive.cost
+            self.cargo = self.cargo + self.jdrive.tonnage
+
         # assign object to ship, update cost & tonnage
         self.jdrive = new_jdrive
         self.cost_total = self.cost_total + new_jdrive.cost
@@ -91,6 +96,11 @@ class Spacecraft:
         # create new mdrive object
         new_mdrive = MDrive(drive_type)
 
+        # if drive already in place, replace stats
+        if self.mdrive is not None:
+            self.cost_total = self.cost_total - self.mdrive.cost
+            self.cargo = self.cargo + self.mdrive.tonnage
+
         # assign object to ship, update cost & tonnage
         self.mdrive = new_mdrive
         self.cost_total = self.cost_total + new_mdrive.cost
@@ -104,6 +114,11 @@ class Spacecraft:
         """
         # create new pplant object
         new_pplant = PPlant(plant_type)
+
+        # if plant already in place, replace stats
+        if self.pplant is not None:
+            self.cost_total = self.cost_total - self.pplant.cost
+            self.cargo = self.cargo + self.pplant.tonnage
 
         # assign object to ship, update cost & tonnage
         self.pplant = new_pplant
