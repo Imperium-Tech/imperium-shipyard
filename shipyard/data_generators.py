@@ -375,6 +375,10 @@ def generate_software_data():
 
 
 def generate_fuel_addon_data():
+    """
+    Generates data for fuel addons on ships
+    These are manually set values
+    """
     fuel_addon_data = dict()
 
     fuel_addon_data["Fuel Scoop"] = dict()
