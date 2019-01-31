@@ -3,8 +3,6 @@ drives.py
 
 Contains classes for the M & J drives
 """
-import json
-import os.path
 from json_reader import get_file_data
 
 
