@@ -326,3 +326,24 @@ def generate_bayweapon_data():
 
     b = json.dumps(bayweapon_data, indent=4)
     print(b)
+
+
+def generate_screen_data():
+    """
+    Generates data for the screens on a ship
+    Manually input values and can edit notes and add new screens
+    """
+    screen_data = dict()
+
+    screen_list = ["Nuclear Damper", "Meson Screen"]
+    for screen in screen_list:
+        print(screen)
+        screen_data[screen] = dict()
+        screen_data[screen]['tl'] = int(input("TL: "))
+        screen_data[screen]['tonnage'] = int(input("Tonnage: "))
+        screen_data[screen]['cost'] = int(input("Cost (MCr.): "))
+        screen_data[screen]['effect'] = list()
+
+    s = json.dumps(screen_data, indent=4)
+    print(s)
+

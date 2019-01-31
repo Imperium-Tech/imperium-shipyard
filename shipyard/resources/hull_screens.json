@@ -1,0 +1,19 @@
+{
+    "Nuclear Damper": {
+        "tl": 12,
+        "tonnage": 50,
+        "cost": 50,
+        "effect": [
+          "Reduces fusion gunand nuclear missile damage by 2d6",
+          "Removes automatic crew hit from nuclear missile attacks"
+        ]
+    },
+    "Meson Screen": {
+        "tl": 12,
+        "tonnage": 50,
+        "cost": 60,
+        "effect": [
+          "Protects against meson damage, reducing damage by 2d6"
+        ]
+    }
+}
