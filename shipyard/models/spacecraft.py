@@ -4,6 +4,9 @@ spacecraft.py
 Houses the spacecraft class
 """
 from models.json_reader import get_file_data
+from models.drives import JDrive
+from models.drives import MDrive
+from models.pplant import PPlant
 
 
 class Spacecraft:
@@ -64,3 +67,46 @@ class Spacecraft:
         
         # set the total cost to hull cost
         self.cost_total = self.cost_hull
+
+    def add_jdrive(self, drive_type):
+        """
+        Adds a jump drive to the spaceship
+
+        :param drive_type: The drive designation letter
+        """
+        # create new jdrive object
+        new_jdrive = JDrive(drive_type)
+
+        # assign object to ship, update cost & tonnage
+        self.jdrive = new_jdrive
+        self.cost_total = self.cost_total + new_jdrive.cost
+        self.cargo = self.cargo - new_jdrive.tonnage
+
+    def add_mdrive(self, drive_type):
+        """
+        Adds a maneuver drive to the spaceship
+
+        :param drive_type: The drive designation letter
+        """
+        # create new mdrive object
+        new_mdrive = MDrive(drive_type)
+
+        # assign object to ship, update cost & tonnage
+        self.mdrive = new_mdrive
+        self.cost_total = self.cost_total + new_mdrive.cost
+        self.cargo = self.cargo - new_mdrive.tonnage
+
+    def add_pplant(self, plant_type):
+        """
+        Adds a power plant to the spaceship
+
+        :param plant_type: The plant designation letter
+        """
+        # create new pplant object
+        new_pplant = PPlant(plant_type)
+
+        # assign object to ship, update cost & tonnage
+        self.pplant = new_pplant
+        self.cost_total = self.cost_total + new_pplant.cost
+        self.cargo = self.cargo - new_pplant.tonnage
+        self.fuel_two_weeks = new_pplant.fuel_two_weeks

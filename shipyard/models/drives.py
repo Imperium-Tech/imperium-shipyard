@@ -39,7 +39,7 @@ class JDrive(Drive):
 
 class MDrive(Drive):
     """
-    The M-Drive, or Manouvore Drive, in a Spaceship
+    The M-Drive, or Maneuver Drive, in a Spaceship
     
     :param drive_type: The type of M-Drive, by letter
     """
