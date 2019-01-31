@@ -1,20 +1,20 @@
 {
     "Streamlined": {
-        "mod_cost": 1.10,
+        "mod_hull_cost": 1.10,
         "mod_additional": [
             "Fuel scoops",
             "Aerodynamic"
         ]
     },
     "Distributed": {
-        "mod_cost": 0.90,
+        "mod_hull_cost": 0.90,
         "mod_additional": [
             "Cannot mount fuel acoops",
             "Non-Aerodynamic"
         ]
     },
     "Standard": {
-        "mod_cost": 1.00,
+        "mod_hull_cost": 1.00,
         "mod_additional": [
             "Fuel scoops not included",
             "Fuel scoops less efficient on gas giants",
