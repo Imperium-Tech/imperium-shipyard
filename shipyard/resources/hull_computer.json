@@ -33,5 +33,20 @@
         "tl": 15,
         "rating": 35,
         "cost": 30.0
+    },
+    "Jump Control Specialisation": {
+        "rating_increase": 5,
+        "cost_increase": 0.5,
+        "mod_additional": [
+            "Increases a computer's rating for the purpose of running Jump Control Programs",
+            "Increases the cost of the computer by 50%"
+        ]
+    },
+    "Hardened Systems": {
+        "cost_increase": 0.5,
+        "mod_additional": [
+            "A computer and its connections are hardened against EMPs, making it immune",
+            "Increases the cost of the computer by 50%"
+        ]
     }
 }

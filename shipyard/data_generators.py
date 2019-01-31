@@ -211,3 +211,25 @@ def generate_electronics_data():
     e = json.dumps(electronics_data, indent=4)
     print(e)
 
+
+def generate_vehicle_drone_data():
+    """
+    Generates vehicle and drone data for ship additions
+    Have to manually add notes/desc. on each, as well as special modifiers on each.
+        i.e. Repair Drones weighing .01 x tonnage of the ship
+    """
+    vehicle_drone_data = dict()
+    while True:
+        vehicle = input("Enter vehicle name (q to quit): ")
+        if vehicle == "q":
+            break
+        tonnage = float(input("Enter tonnage: "))
+        cost = float(input("Enter cost (in MCr.): "))
+        vehicle_drone_data[vehicle] = dict()
+        vehicle_drone_data[vehicle]["tonnage"] = tonnage
+        vehicle_drone_data[vehicle]["cost"] = cost
+        vehicle_drone_data[vehicle]["notes"] = list()
+
+    v = json.dumps(vehicle_drone_data, indent=4)
+    print(v)
+
