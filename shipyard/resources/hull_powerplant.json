@@ -1,0 +1,74 @@
+{
+    "A": {
+        "tons_per_two_weeks": 2
+    },
+    "B": {
+        "tons_per_two_weeks": 4
+    },
+    "C": {
+        "tons_per_two_weeks": 6
+    },
+    "D": {
+        "tons_per_two_weeks": 8
+    },
+    "E": {
+        "tons_per_two_weeks": 10
+    },
+    "F": {
+        "tons_per_two_weeks": 12
+    },
+    "G": {
+        "tons_per_two_weeks": 14
+    },
+    "H": {
+        "tons_per_two_weeks": 16
+    },
+    "J": {
+        "tons_per_two_weeks": 18
+    },
+    "K": {
+        "tons_per_two_weeks": 20
+    },
+    "L": {
+        "tons_per_two_weeks": 22
+    },
+    "M": {
+        "tons_per_two_weeks": 24
+    },
+    "N": {
+        "tons_per_two_weeks": 26
+    },
+    "P": {
+        "tons_per_two_weeks": 28
+    },
+    "Q": {
+        "tons_per_two_weeks": 30
+    },
+    "R": {
+        "tons_per_two_weeks": 32
+    },
+    "S": {
+        "tons_per_two_weeks": 34
+    },
+    "T": {
+        "tons_per_two_weeks": 36
+    },
+    "U": {
+        "tons_per_two_weeks": 38
+    },
+    "V": {
+        "tons_per_two_weeks": 40
+    },
+    "W": {
+        "tons_per_two_weeks": 42
+    },
+    "X": {
+        "tons_per_two_weeks": 44
+    },
+    "Y": {
+        "tons_per_two_weeks": 46
+    },
+    "Z": {
+        "tons_per_two_weeks": 48
+    }
+}

@@ -57,10 +57,10 @@ def generate_jdrive_data():
     print(j)
 
 
-
 def generate_performance_data():
     """
     Generates Performance by Hull Volume measaurements
+    Have to manually input the values for each Hull type in list chunks
     """
     performance_data = dict()
 
@@ -82,3 +82,24 @@ def generate_performance_data():
 
     p = json.dumps(performance_data, indent=4)
     print(p)
+
+
+def generate_powerplant_data():
+    powerplant_data = dict()
+
+    tons = 2
+    # Iterates through all characters
+    for val in range(26):
+        char = chr(65 + val)
+
+        # Ignoring characters 'O' and 'I'
+        if char != "O" and char != "I":
+            powerplant_data[char] = dict()
+            powerplant_data[char]["tons_per_two_weeks"] = tons
+            tons += 2
+
+    p = json.dumps(powerplant_data, indent=4)
+    print(p)
+
+
+generate_powerplant_data()
