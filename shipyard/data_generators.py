@@ -98,6 +98,7 @@ def generate_pplant_data():
         pplant_data[temp_key] = dict()
         pplant_data[temp_key]["tonnage"] = 4 + (3 * i)
         pplant_data[temp_key]["cost"] = 8 * (i + 1)
+        pplant_data[temp_key]["fuel_two_weeks"] = 2 * (i + 1)
 
     j = json.dumps(pplant_data, indent=4)
     print(j)
