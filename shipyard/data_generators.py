@@ -152,3 +152,31 @@ def generate_bridge_data():
 
     b = json.dumps(bridge_data, indent=4)
     print(b)
+
+
+def generate_computer_data():
+    """
+    Generates computer data for the main component
+    """
+    computer_data = dict()
+
+    rating = 5
+    for i in range(7):
+        model = "model_{}".format(i + 1)
+        computer_data[model] = dict()
+
+        if i == 0:
+            computer_data[model]["tech_level"] = 7
+        if i == 1:
+            computer_data[model]["tech_level"] = 9
+        if i > 1:
+            computer_data[model]["tech_level"] = i + 9
+
+        computer_data[model]["rating"] = rating
+        rating += 5
+
+        cost = int(input("Enter the cost in credits for Model {}: ".format(i + 1)))
+        computer_data[model]["cost"] = cost
+
+    c = json.dumps(computer_data, indent=4)
+    print(c)
