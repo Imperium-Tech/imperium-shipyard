@@ -85,6 +85,9 @@ def generate_performance_data():
 
 
 def generate_powerplant_data():
+    """
+    Generates data regarding Ship Powerplant fuel usage
+    """
     powerplant_data = dict()
 
     tons = 2
@@ -102,4 +105,16 @@ def generate_powerplant_data():
     print(p)
 
 
-generate_powerplant_data()
+def generate_bridge_data():
+    """
+    Generates bridge data compared ship size to bridge size
+    """
+    bridge_data = dict()
+
+    bridge_data["200_tons"] = 10
+    bridge_data["300_to_1000_tons"] = 20
+    bridge_data["1100_to_2000_tons"] = 30
+    bridge_data["2000_plus_tons"] = 40
+
+    b = json.dumps(bridge_data, indent=4)
+    print(b)
