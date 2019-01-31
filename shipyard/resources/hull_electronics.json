@@ -1,0 +1,58 @@
+{
+    "standard": {
+        "tech_level": 8,
+        "damage_modifier": -4,
+        "equipment": [
+            "Rader",
+            "Lidar"
+        ],
+        "tons": 0,
+        "cost": 0
+    },
+    "basic_civilian": {
+        "tech_level": 9,
+        "damage_modifier": -2,
+        "equipment": [
+            "Radar",
+            "Lidar"
+        ],
+        "tons": 1,
+        "cost": 50000
+    },
+    "basic_military": {
+        "tech_level": 10,
+        "damage_modifier": 0,
+        "equipment": [
+            "Radar",
+            "Lidar",
+            "Jammers"
+        ],
+        "tons": 2,
+        "cost": 1000000
+    },
+    "advanced": {
+        "tech_level": 11,
+        "damage_modifier": 1,
+        "equipment": [
+            "Radar",
+            "Lidar",
+            "Densitometer",
+            "Jammers"
+        ],
+        "tons": 3,
+        "cost": 2000000
+    },
+    "very_advanced": {
+        "tech_level": 12,
+        "damage_modifier": 2,
+        "equipment": [
+            "Radar",
+            "Lidar",
+            "Densitometer",
+            "Jammers",
+            "Neural Activity Sensor"
+        ],
+        "tons": 5,
+        "cost": 4000000
+    }
+}

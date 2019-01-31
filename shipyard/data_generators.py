@@ -180,3 +180,34 @@ def generate_computer_data():
 
     c = json.dumps(computer_data, indent=4)
     print(c)
+
+
+def generate_electronics_data():
+    """
+    Generates electronics data for the main component
+    """
+    electronics_data = dict()
+    electronics_list = ["standard", "basic_civilian", "basic_military", "advanced", "very_advanced"]
+
+    tech_level = 8
+    for system in electronics_list:
+        print("{}".format(system))
+        electronics_data[system] = dict()
+        electronics_data[system]["tech_level"] = tech_level
+        tech_level += 1
+
+        damage_modifier = int(input("Enter DM: "))
+        electronics_data[system]["damage_modifier"] = damage_modifier
+
+        equipment = input("Enter equipment: ")
+        electronics_data[system]["equipment"] = equipment.split()
+
+        tons = int(input("Enter tons: "))
+        electronics_data[system]["tons"] = tons
+
+        cost = int(input("Enter cost: "))
+        electronics_data[system]["cost"] = cost
+
+    e = json.dumps(electronics_data, indent=4)
+    print(e)
+
