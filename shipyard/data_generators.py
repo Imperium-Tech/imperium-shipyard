@@ -23,13 +23,13 @@ def generate_hull_data():
         hull_data[temp_key]['tonnage'] = i * 100
 
         if i == 1:
-            hull_data[temp_key]['price'] = 2
+            hull_data[temp_key]['cost'] = 2
         elif i >= 2 and i <= 4:
-            hull_data[temp_key]['price'] = i * 4
+            hull_data[temp_key]['cost'] = i * 4
         elif i >= 5 and i <= 8:
-            hull_data[temp_key]['price'] = (i - 3) * 16
+            hull_data[temp_key]['cost'] = (i - 3) * 16
         else:
-            hull_data[temp_key]['price'] = i * 10
+            hull_data[temp_key]['cost'] = i * 10
 
     j = json.dumps(hull_data, indent=4)
     print(j)

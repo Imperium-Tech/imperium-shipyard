@@ -1,24 +1,24 @@
 {
     "Streamlined": {
-        "mod_price": 1.10,
+        "mod_cost": 1.10,
         "mod_additional": [
-            "Fuel Scoops",
+            "Fuel scoops",
             "Aerodynamic"
         ]
     },
     "Distributed": {
-        "mod_price": 0.90,
+        "mod_cost": 0.90,
         "mod_additional": [
-            "Cannot Mount Fuel Scoops",
+            "Cannot mount fuel acoops",
             "Non-Aerodynamic"
         ]
     },
     "Standard": {
-        "mod_price": 1.00,
+        "mod_cost": 1.00,
         "mod_additional": [
-            "Fuel Scoops Not Included",
-            "Fuel Scoops Less Efficient on Gas Giants",
-            "Must Relaunch in Atmosphere"
+            "Fuel scoops not included",
+            "Fuel scoops less efficient on gas giants",
+            "Cannot takeoff on own, must relaunch in atmosphere"
         ]
     }
 }
