@@ -1,6 +1,18 @@
 {
-    "200_tons": 10,
-    "300_to_1000_tons": 20,
-    "1100_to_2000_tons": 30,
-    "2000_plus_tons": 40
+    "200_tons": {
+        "tonnage": 10,
+        "cost_per_ton": 0.005
+    },
+    "300_to_1000_tons": {
+        "tonnage": 20,
+        "cost_per_ton": 0.005
+    },
+    "1100_to_2000_tons": {
+        "tonnage": 30,
+        "cost_per_ton": 0.005
+    },
+    "2000_plus_tons": {
+        "tonnage": 40,
+        "cost_per_ton": 0.005
+    }
 }

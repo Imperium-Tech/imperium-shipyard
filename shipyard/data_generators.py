@@ -5,6 +5,7 @@ Some generators for the data stored in resources
 """
 import json
 
+
 def generate_hull_data():
     """
     Generates a data dict for Hulls
@@ -111,10 +112,15 @@ def generate_bridge_data():
     """
     bridge_data = dict()
 
-    bridge_data["200_tons"] = 10
-    bridge_data["300_to_1000_tons"] = 20
-    bridge_data["1100_to_2000_tons"] = 30
-    bridge_data["2000_plus_tons"] = 40
+    ship_size = ["200_tons", "300_to_1000_tons", "1100_to_2000_tons", "2000_plus_tons"]
+
+    bridge_size = 10
+    for ship in ship_size:
+        bridge_data[ship] = dict()
+        bridge_data[ship]["tonnage"] = bridge_size
+        bridge_data[ship]["cost_per_ton"] = 0.005
+        bridge_size += 10
 
     b = json.dumps(bridge_data, indent=4)
     print(b)
+
