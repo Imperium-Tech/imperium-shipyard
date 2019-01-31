@@ -211,3 +211,54 @@ def generate_electronics_data():
     e = json.dumps(electronics_data, indent=4)
     print(e)
 
+
+def generate_vehicle_drone_data():
+    """
+    Generates vehicle and drone data for ship additions
+    Have to manually add notes/desc. on each, as well as special modifiers on each.
+        i.e. Repair Drones weighing .01 x tonnage of the ship
+    """
+    vehicle_drone_data = dict()
+    while True:
+        vehicle = input("Enter vehicle name (q to quit): ")
+        if vehicle == "q":
+            break
+        tonnage = float(input("Enter tonnage: "))
+        cost = float(input("Enter cost (in MCr.): "))
+        vehicle_drone_data[vehicle] = dict()
+        vehicle_drone_data[vehicle]["tonnage"] = tonnage
+        vehicle_drone_data[vehicle]["cost"] = cost
+        vehicle_drone_data[vehicle]["notes"] = list()
+
+    v = json.dumps(vehicle_drone_data, indent=4)
+    print(v)
+
+
+def generate_living_data():
+    """
+    Generates living data for ship addons like Staterooms and Low Berth
+    Have to manually enter notes
+    """
+    living_data = dict()
+    while True:
+        room = input("Enter room name (q to quit): ")
+        if room == "q":
+            break
+
+        cost = float(input("Enter cost (in MCr.): "))
+        tonnage = float(input("Enter tonnage: "))
+
+        living_data[room] = dict()
+        living_data[room]["cost"] = cost
+        living_data[room]["tonnage"] = tonnage
+        if room == "Luxuries":
+            modifier = int(input("Enter Steward modifier: "))
+            living_data[room]["steward_modifier"] = modifier
+        else:
+            max_occupants = int(input("Enter max occupants: "))
+            living_data[room]["max_occupants"] = max_occupants
+        living_data[room]["notes"] = list()
+
+    l = json.dumps(living_data, indent=4)
+    print(l)
+
