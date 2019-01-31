@@ -166,16 +166,16 @@ def generate_computer_data():
         computer_data[model] = dict()
 
         if i == 0:
-            computer_data[model]["tech_level"] = 7
+            computer_data[model]["tl"] = 7
         if i == 1:
-            computer_data[model]["tech_level"] = 9
+            computer_data[model]["tl"] = 9
         if i > 1:
-            computer_data[model]["tech_level"] = i + 9
+            computer_data[model]["tl"] = i + 9
 
         computer_data[model]["rating"] = rating
         rating += 5
 
-        cost = int(input("Enter the cost in credits for Model {}: ".format(i + 1)))
+        cost = float(input("Enter the cost in MCr. for Model {}: ".format(i + 1)))
         computer_data[model]["cost"] = cost
 
     c = json.dumps(computer_data, indent=4)
@@ -193,19 +193,19 @@ def generate_electronics_data():
     for system in electronics_list:
         print("{}".format(system))
         electronics_data[system] = dict()
-        electronics_data[system]["tech_level"] = tech_level
+        electronics_data[system]["tl"] = tech_level
         tech_level += 1
 
-        damage_modifier = int(input("Enter DM: "))
-        electronics_data[system]["damage_modifier"] = damage_modifier
+        dice_modifier = int(input("Enter DM: "))
+        electronics_data[system]["sensors_dm"] = dice_modifier
 
         equipment = input("Enter equipment: ")
         electronics_data[system]["equipment"] = equipment.split()
 
-        tons = int(input("Enter tons: "))
-        electronics_data[system]["tons"] = tons
+        tons = int(input("Enter tonnage: "))
+        electronics_data[system]["tonnage"] = tons
 
-        cost = int(input("Enter cost: "))
+        cost = float(input("Enter cost (in MCr.): "))
         electronics_data[system]["cost"] = cost
 
     e = json.dumps(electronics_data, indent=4)
