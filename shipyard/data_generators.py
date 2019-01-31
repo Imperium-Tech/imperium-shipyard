@@ -5,6 +5,7 @@ Some generators for the data stored in resources
 """
 import json
 
+
 def generate_hull_data():
     """
     Generates a data dict for Hulls
@@ -34,6 +35,7 @@ def generate_hull_data():
     j = json.dumps(hull_data, indent=4)
     print(j)
 
+
 def generate_jdrive_data():
     """
     Generates a data dict for J-Drives
@@ -54,6 +56,7 @@ def generate_jdrive_data():
 
     j = json.dumps(jdrive_data, indent=4)
     print(j)
+
 
 def generate_mdrive_data():
     """
@@ -81,6 +84,7 @@ def generate_mdrive_data():
     j = json.dumps(mdrive_data, indent=4)
     print(j)
 
+
 def generate_pplant_data():
     """
     Generates a data dict for P-Plant
@@ -102,3 +106,49 @@ def generate_pplant_data():
 
     j = json.dumps(pplant_data, indent=4)
     print(j)
+
+
+def generate_performance_data():
+    """
+    Generates Performance by Hull Volume measaurements
+    Have to manually input the values for each Hull type in list chunks
+    """
+    performance_data = dict()
+
+    # Iterates through all characters
+    for val in range(26):
+        char = chr(65 + val)
+
+        # Ignoring characters 'O' and 'I'
+        if char != "O" and char != "I":
+            performance_data[char] = dict()
+
+            # Taking an input of numbers and converting to integers
+            tonnage_list = input("Enter tonnage list for {} (-1 to quit): ".format(char))
+            values = tonnage_list.split()
+            for i in range(len(values)):
+                values[i] = int(values[i])
+
+            performance_data[char]["jumps_per_hull_volume"] = values
+
+    p = json.dumps(performance_data, indent=4)
+    print(p)
+
+
+def generate_bridge_data():
+    """
+    Generates bridge data compared ship size to bridge size
+    """
+    bridge_data = dict()
+
+    ship_size = ["200_tons", "300_to_1000_tons", "1100_to_2000_tons", "2000_plus_tons"]
+
+    bridge_size = 10
+    for ship in ship_size:
+        bridge_data[ship] = dict()
+        bridge_data[ship]["tonnage"] = bridge_size
+        bridge_data[ship]["cost_per_ton"] = 0.005
+        bridge_size += 10
+
+    b = json.dumps(bridge_data, indent=4)
+    print(b)
