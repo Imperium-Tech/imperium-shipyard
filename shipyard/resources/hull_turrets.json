@@ -1,0 +1,94 @@
+{
+    "models": {
+        "Single Turret": {
+            "tl": 7,
+            "tonnage": 1.0,
+            "cost": 0.2,
+            "num_weapons": 1
+        },
+        "Double Turret": {
+            "tl": 8,
+            "tonnage": 1.0,
+            "cost": 0.5,
+            "num_weapons": 2
+        },
+        "Triple Turret": {
+            "tl": 9,
+            "tonnage": 1.0,
+            "cost": 1.0,
+            "num_weapons": 3
+        }
+    },
+    "addons": {
+        "Pop-up Turret": {
+            "tl": 10,
+            "tonnage": 2.0,
+            "cost": 1.0,
+            "notes": [
+              "Quality that can be applied to any type of turret, concealing it in a pod or recess on the hull",
+              "Makes the turret detectable only when it is deployed"
+            ]
+        },
+        "Fixed Mounting": {
+            "tl": 0,
+            "tonnage": 0.0,
+            "turret_cost_modifier": 0.5,
+            "notes": [
+              "Weapons cannot move and are limited to firing in one direction",
+              "Fixing a turret costs half as much as a turret of that type, ie. a single turret mounted costs .1 MCr."
+            ]
+        }
+    },
+    "weapons": {
+        "Pulse Laser": {
+            "tl": 7,
+            "opt_range": "Short",
+            "damage": "1d6",
+            "cost": 0.5,
+            "notes": [
+              "Fires short bursts of energy at targets"
+            ]
+        },
+        "Beam Laser": {
+            "tl": 7,
+            "opt_range": "Medium",
+            "damage": "2d6",
+            "cost": 1.0,
+            "notes": [
+              "Fires continuous beams of energy at targets"
+            ]
+        },
+        "Particle Beam": {
+            "tl": 8,
+            "opt_range": "Long",
+            "damage": "3d6 + crew_hit",
+            "cost": 4.0,
+            "notes": [
+              "Fires a stream of accelerated subatomic particles",
+              "Inflicts an automatic radiation crew hit in addition to any other damage"
+            ]
+        },
+        "Missile Rack": {
+            "tl": 6,
+            "opt_range": "Special",
+            "damage": "Missile Dependent",
+            "cost": 0.75,
+            "notes": [
+              "Launcher for small anti-ship missiles",
+              "Damage depends on the type of missile used",
+              "Require ammunition - 12 missiles take up one ton of space"
+            ]
+        },
+        "Sandcaster": {
+            "tl": 7,
+            "opt_range": "Special",
+            "damage": "Special",
+            "cost": 0.25,
+            "notes": [
+              "Defensive weapon that dispense small particles which counteract the strength of lasers",
+              "Reduces the damage from a beam weapon by 1d6",
+              "Requires ammunition - 12 barrels take up one ton of space, cost .01 MCr."
+            ]
+        }
+    }
+}

@@ -262,3 +262,46 @@ def generate_living_data():
     l = json.dumps(living_data, indent=4)
     print(l)
 
+
+def generate_turret_data():
+    """
+    Generates turret, addon, and weapon data
+    Have to manually input notes data on addons
+    """
+    turret_data = dict()
+
+    turret_data["models"] = dict()
+    turret_data["addons"] = dict()
+    turret_data["weapons"] = dict()
+
+    while True:
+        type = input("Does this belong to models or addons or weapons? (q to quit): ")
+        if type == "q":
+            break
+
+        if type == "models" or type == "addons":
+            parameters = (input("Enter Name, TL, Tonnage, Cost (in MCr.): ")).split()
+            name = parameters[0]
+            turret_data[type][name] = dict()
+            turret_data[type][name]['tl'] = int(parameters[1])
+            turret_data[type][name]['tonnage'] = float(parameters[2])
+            turret_data[type][name]['cost'] = float(parameters[3])
+
+            if type == "models":
+                num_weapons = int(input("Enter # of weapons: "))
+                turret_data[type][name]['num_weapons'] = num_weapons
+            if type == "addons":
+                turret_data[type][name]['notes'] = list()
+
+        if type == "weapons":
+            parameters = (input("Enter Name, TL, Opt. Range, Damage, Cost (in MCr.): ")).split()
+            name = parameters[0]
+            turret_data[type][name] = dict()
+            turret_data[type][name]['tl'] = int(parameters[1])
+            turret_data[type][name]['opt_range'] = parameters[2]
+            turret_data[type][name]['damage'] = parameters[3]
+            turret_data[type][name]['cost'] = float(parameters[4])
+            turret_data[type][name]['notes'] = list()
+
+    t = json.dumps(turret_data, indent=4)
+    print(t)
