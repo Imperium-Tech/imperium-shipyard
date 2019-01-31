@@ -3,8 +3,8 @@ spacecraft.py
 
 Houses the spacecraft class
 """
-import json
-import os.path
+from models.json_reader import get_file_data
+
 
 class Spacecraft:
     """
@@ -17,6 +17,7 @@ class Spacecraft:
         self.hull_hp            = 0 # calculated as 1 per 50 tonnage
         self.structure_hp       = 0 # calculated as 1 per 50 tonnage
         self.cargo              = 0 # amount of cargo space in tons (total tonnage - fuel - other modules)
+        self.jump               = 0 # max number of tiles covered in a single jump
         self.fuel_max           = 0 # amount of fuel tank
         self.fuel_jump          = 0 # amount of fuel required for a jump
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
@@ -48,11 +49,7 @@ class Spacecraft:
         self.structure_hp = self.tonnage // 50
 
         # pull hull cost from json, set that
-        data = None
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "../resources/hull_data.json")
-        with open(path) as f:
-            data = json.load(f)
+        data = get_file_data("hull_data.json")
 
         for key in data.keys():
             # iterate through hull sizes for 

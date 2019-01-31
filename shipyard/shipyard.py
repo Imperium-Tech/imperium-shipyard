@@ -6,6 +6,6 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 import data_generators as dg
 from models.spacecraft import Spacecraft
 
-new_spacecraft = Spacecraft(2001)
+new_spacecraft = Spacecraft(2000)
 
 print(new_spacecraft.cost_total)
