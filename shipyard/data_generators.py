@@ -34,6 +34,7 @@ def generate_hull_data():
     j = json.dumps(hull_data, indent=4)
     print(j)
 
+
 def generate_jdrive_data():
     """
     Generates a data dict for J-Drives
@@ -54,3 +55,30 @@ def generate_jdrive_data():
 
     j = json.dumps(jdrive_data, indent=4)
     print(j)
+
+
+
+def generate_performance_data():
+    """
+    Generates Performance by Hull Volume measaurements
+    """
+    performance_data = dict()
+
+    # Iterates through all characters
+    for val in range(26):
+        char = chr(65 + val)
+
+        # Ignoring characters 'O' and 'I'
+        if char != "O" and char != "I":
+            performance_data[char] = dict()
+
+            # Taking an input of numbers and converting to integers
+            tonnage_list = input("Enter tonnage list for {} (-1 to quit): ".format(char))
+            values = tonnage_list.split()
+            for i in range(len(values)):
+                values[i] = int(values[i])
+
+            performance_data[char]["jumps_per_hull_volume"] = values
+
+    p = json.dumps(performance_data, indent=4)
+    print(p)
