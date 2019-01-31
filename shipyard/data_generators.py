@@ -347,3 +347,29 @@ def generate_screen_data():
     s = json.dumps(screen_data, indent=4)
     print(s)
 
+
+def generate_software_data():
+    """
+    Generates levels of software data in the ship software system
+    Modify the (i * x) values in the for loop to customize scaling factors
+    """
+    software_data = dict()
+
+    levels = int(input("How many levels for this program?: "))
+    program = input("Name of program: ")
+    tl = int(input("Starting TL: "))
+    rating = int(input("Starting rating: "))
+    cost = float(input("Starting cost: "))
+
+    software_data[program] = dict()
+    software_data[program]['effect'] = list()
+
+    for i in range(levels):
+        software_data[program][i + 1] = dict()
+        software_data[program][i + 1]['tl'] = tl + (2 * i)
+        software_data[program][i + 1]['rating'] = rating + (i * 10)
+        software_data[program][i + 1]['cost'] = cost + (i * 5)
+
+    s = json.dumps(software_data, indent=4)
+    print(s)
+
