@@ -347,3 +347,54 @@ def generate_screen_data():
     s = json.dumps(screen_data, indent=4)
     print(s)
 
+
+def generate_software_data():
+    """
+    Generates levels of software data in the ship software system
+    Modify the (i * x) values in the for loop to customize scaling factors
+    """
+    software_data = dict()
+
+    levels = int(input("How many levels for this program?: "))
+    program = input("Name of program: ")
+    tl = int(input("Starting TL: "))
+    rating = int(input("Starting rating: "))
+    cost = float(input("Starting cost: "))
+
+    software_data[program] = dict()
+    software_data[program]['effect'] = list()
+
+    for i in range(levels):
+        software_data[program][i + 1] = dict()
+        software_data[program][i + 1]['tl'] = tl + (2 * i)
+        software_data[program][i + 1]['rating'] = rating + (i * 10)
+        software_data[program][i + 1]['cost'] = cost + (i * 5)
+
+    s = json.dumps(software_data, indent=4)
+    print(s)
+
+
+def generate_fuel_addon_data():
+    """
+    Generates data for fuel addons on ships
+    These are manually set values
+    """
+    fuel_addon_data = dict()
+
+    fuel_addon_data["Fuel Scoop"] = dict()
+    fuel_addon_data["Fuel Scoop"]['cost'] = 1
+    fuel_addon_data["Fuel Scoop"]['tonnage'] = 0
+    fuel_addon_data["Fuel Scoop"]['effect'] = list()
+
+    fuel_addon_data["Fuel Processor"] = dict()
+    fuel_addon_data["Fuel Processor"]['cost'] = .05
+    fuel_addon_data["Fuel Processor"]['tonnage'] = 1
+    fuel_addon_data["Fuel Processor"]['fuel_refinement_rate'] = 20
+    fuel_addon_data["Fuel Processor"]['effect'] = list()
+
+    f = json.dumps(fuel_addon_data, indent=4)
+    print(f)
+
+
+generate_fuel_addon_data()
+
