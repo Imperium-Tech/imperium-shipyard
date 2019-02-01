@@ -394,7 +394,3 @@ def generate_fuel_addon_data():
 
     f = json.dumps(fuel_addon_data, indent=4)
     print(f)
-
-
-generate_fuel_addon_data()
-

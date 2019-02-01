@@ -22,7 +22,7 @@ class PPlant:
         self.plant_type = plant_type
 
         # grab additional info from json
-        data = get_file_data(pplant_data.json)
+        data = get_file_data("pplant_data.json")
         plant_item = data.get(plant_type)
 
         # set determined object state
