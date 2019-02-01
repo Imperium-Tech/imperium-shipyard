@@ -1,5 +1,5 @@
 """
-@file Turrets.py
+@file turrets.py
 
 Module that contains classes and relevant data for a turret
 """
@@ -65,21 +65,3 @@ class Turret:
                 break
         print("Error: {} not attached to {}".format(part, self.name))
 
-
-def turret_test():
-    """
-    Simple test to test the functionality of the Turret methods, checking cost and total tonnage
-    """
-    turret = Turret("Single Turret")
-    turret.add_addon("Pop-up Turret")
-    turret.add_weapon("Missile Rack")
-    turret.remove_weapon("Missile Rack")
-    turret.add_weapon("Beam Laser")
-
-    print(turret.tonnage)
-    print(turret.addons)
-    print(turret.weapons)
-    print(turret.cost)
-
-
-turret_test()
