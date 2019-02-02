@@ -125,3 +125,4 @@ class Spacecraft:
         self.cost_total = self.cost_total + new_pplant.cost
         self.cargo = self.cargo - new_pplant.tonnage
         self.fuel_two_weeks = new_pplant.fuel_two_weeks
+

@@ -9,9 +9,10 @@ import os.path
 
 def get_file_data(filename):
     """
-    get_file_data
-
+    Parses the filename given, grabs the corresponding .json file, and converts it into a
+    Python-usable dictionary
     :param filename: The name of the file to get
+    :return: Dictionary of the converted .json file
     """
     data = None
     my_path = os.path.abspath(os.path.dirname(__file__))

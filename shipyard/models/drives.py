@@ -29,7 +29,7 @@ class JDrive(Drive):
         Drive.__init__(self, drive_type)
 
         # grab additional info from json
-        data = get_file_data(jdrive_data.json)
+        data = get_file_data("jdrive_data.json")
         drive_item = data.get(drive_type)
 
         # set determined object state
@@ -47,7 +47,7 @@ class MDrive(Drive):
         Drive.__init__(self, drive_type)
 
         # grab additional info from json
-        data = get_file_data(mdrive_data.json)
+        data = get_file_data("mdrive_data.json")
         drive_item = data.get(drive_type)
 
         # set determined object state
