@@ -3,7 +3,7 @@
 
 Module that contains classes and relevant data for a turret
 """
-from json_reader import get_file_data
+from shipyard.models.json_reader import get_file_data
 
 
 class Turret:
@@ -35,12 +35,13 @@ class Turret:
         if part == "Pop-up Turret":
             self.cost += addon.get("cost")
         if part == "Fixed Mounting":
-            self.cost *= addon.get("cost")
+            self.cost *= addon.get("turret_cost_modifier")
 
     def add_weapon(self, part):
         # Checks if the turret can have more weapons
         if len(self.weapons) == self.max_wep:
-            print("Maximum number of weapons reached for {}: {}/{}".format(self.name, len(self.weapons), self.max_wep))
+            print("Error: cannot add '{}'. Max # of weapons reached for {}: {}/{}".format(
+                part, self.name, len(self.weapons), self.max_wep))
             return
 
         # Grabbing weapon info from data
@@ -62,6 +63,7 @@ class Turret:
         for w in self.weapons:
             if wep == w:
                 self.weapons.remove(w)
-                break
+                self.cost -= w.get("cost")
+                return
         print("Error: {} not attached to {}".format(part, self.name))
 
