@@ -3,10 +3,10 @@ spacecraft.py
 
 Houses the spacecraft class
 """
-from models.json_reader import get_file_data
-from models.drives import JDrive
-from models.drives import MDrive
-from models.pplant import PPlant
+from shipyard.models.json_reader import get_file_data
+from shipyard.models.drives import JDrive
+from shipyard.models.drives import MDrive
+from shipyard.models.pplant import PPlant
 
 
 class Spacecraft:

@@ -3,7 +3,7 @@ drives.py
 
 Contains classes for the M & J drives
 """
-from json_reader import get_file_data
+from shipyard.models.json_reader import get_file_data
 
 
 class Drive:
