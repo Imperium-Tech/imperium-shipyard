@@ -7,6 +7,7 @@ from shipyard.models.json_reader import get_file_data
 from shipyard.models.drives import JDrive
 from shipyard.models.drives import MDrive
 from shipyard.models.pplant import PPlant
+from shipyard.models.turrets import Turret
 
 
 class Spacecraft:
@@ -126,3 +127,24 @@ class Spacecraft:
         self.cargo = self.cargo - new_pplant.tonnage
         self.fuel_two_weeks = new_pplant.fuel_two_weeks
 
+    def add_turret(self, turret):
+        """
+        Adds a single turret to the spaceship and adds costs to
+        :param turret: Turret object to append
+        """
+        self.turrets.append(turret)
+        self.cargo -= turret.tonnage
+        self.cost_total += turret.cost
+
+    def remove_turret(self, turret_index):
+        """
+        Removes a single turret from the spaceship and decrements costs
+        :param turret_index: Index of the turret to remove
+        """
+        if len(self.turrets) != (turret_index + 1):
+            return
+
+        turret = self.turrets[turret_index]
+        self.turrets.remove(turret)
+        self.cargo += turret.tonnage
+        self.cost_total -= turret.cost
