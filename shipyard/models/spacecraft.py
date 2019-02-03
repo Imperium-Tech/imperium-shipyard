@@ -43,6 +43,9 @@ class Spacecraft:
         self.additional_mods    = list() # list of strings describing misc features
 
         # set the tonnage to that given at init
+        if hull_tonnage > 2000:
+            hull_tonnage = 2000
+
         self.tonnage = hull_tonnage
 
         # set cargo to maximum possible at first
@@ -148,3 +151,19 @@ class Spacecraft:
         self.turrets.remove(turret)
         self.cargo += turret.tonnage
         self.cost_total -= turret.cost
+
+    def add_bridge(self):
+        """
+        Handles adding a main component bridge to the ship based on the hull size
+        The bridge size is determined based upon the hull tonnage
+        """
+        if self.tonnage < 300:
+            self.cargo -= 10
+        if 300 <= self.tonnage < 1100:
+            self.cargo -= 20
+        if 1100 <= self.tonnage < 2000:
+            self.cargo -= 40
+        if self.tonnage == 2000:
+            self.cargo -= 60
+
+        self.cost_total += 0.5 * round(self.tonnage // 100)
