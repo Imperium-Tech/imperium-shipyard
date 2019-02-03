@@ -22,5 +22,3 @@ def test_mdrive():
     spacecraft = Spacecraft(2000)
     spacecraft.add_mdrive("U")
     assert spacecraft.thrust == 4
-
-test_mdrive()

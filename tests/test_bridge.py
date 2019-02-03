@@ -16,11 +16,11 @@ def test_small():
 
 
 def test_medium():
-    spacecraft = Spacecraft(450)
+    spacecraft = Spacecraft(400)
     spacecraft.add_bridge()
 
-    assert spacecraft.cargo == 430
-    assert spacecraft.cost_total == 34.0
+    assert spacecraft.cargo == 380
+    assert spacecraft.cost_total == 18.0
 
 
 def test_large():

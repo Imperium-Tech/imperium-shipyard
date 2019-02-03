@@ -408,6 +408,3 @@ def generate_performance_index():
 
     i = json.dumps(index_data, indent=4)
     print(i)
-
-
-generate_performance_index()

@@ -7,7 +7,6 @@ from shipyard.models.json_reader import get_file_data
 from shipyard.models.drives import JDrive
 from shipyard.models.drives import MDrive
 from shipyard.models.pplant import PPlant
-from shipyard.models.turrets import Turret
 
 
 class Spacecraft:
@@ -119,8 +118,7 @@ class Spacecraft:
         performance_list = data.get(drive_letter).get("jumps_per_hull_volume")
 
         # Get the nearest ton rounded down
-        ton = round(self.tonnage)
-        index = index.get(str(ton))
+        index = index.get(str(self.tonnage))
         value = performance_list[index]
 
         # Error checking if the drive type is non-compatible with the hull size
