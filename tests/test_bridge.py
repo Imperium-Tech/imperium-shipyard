@@ -4,7 +4,6 @@
 Unit tests for bridge component adding for a ship
 """
 import pytest
-from shipyard.models.json_reader import get_file_data
 from shipyard.models.spacecraft import Spacecraft
 
 

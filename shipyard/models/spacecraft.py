@@ -22,6 +22,7 @@ class Spacecraft:
         self.structure_hp       = 0 # calculated as 1 per 50 tonnage
         self.cargo              = 0 # amount of cargo space in tons (total tonnage - fuel - other modules)
         self.jump               = 0 # max number of tiles covered in a single jump
+        self.thrust             = 0 # max number of G accelerations available
         self.fuel_max           = 0 # amount of fuel tank
         self.fuel_jump          = 0 # amount of fuel required for a jump
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
@@ -90,6 +91,7 @@ class Spacecraft:
         self.jdrive = new_jdrive
         self.cost_total = self.cost_total + new_jdrive.cost
         self.cargo = self.cargo - new_jdrive.tonnage
+        self.performance_by_volume("jdrive", drive_type)
 
     def add_mdrive(self, drive_type):
         """
@@ -109,6 +111,27 @@ class Spacecraft:
         self.mdrive = new_mdrive
         self.cost_total = self.cost_total + new_mdrive.cost
         self.cargo = self.cargo - new_mdrive.tonnage
+        self.performance_by_volume("mdrive", drive_type)
+
+    def performance_by_volume(self, drive, drive_letter):
+        data = get_file_data("hull_performance.json")
+        index = get_file_data("hull_performance_index.json")
+        performance_list = data.get(drive_letter).get("jumps_per_hull_volume")
+
+        # Get the nearest ton rounded down
+        ton = round(self.tonnage)
+        index = index.get(str(ton))
+        value = performance_list[index]
+
+        # Error checking if the drive type is non-compatible with the hull size
+        if value == 0:
+            print("Error: non-compatible drive to tonnage value - {} to {}".format(drive, self.tonnage))
+            return None
+
+        if drive == "mdrive":
+            self.thrust = value
+        if drive == "jdrive":
+            self.jump = value
 
     def add_pplant(self, plant_type):
         """
@@ -167,3 +190,7 @@ class Spacecraft:
             self.cargo -= 60
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
+
+
+
+
