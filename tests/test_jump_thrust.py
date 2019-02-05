@@ -39,3 +39,4 @@ def test_jdrive():
     spacecraft = Spacecraft(1600)
     spacecraft.add_jdrive("Z")
     assert spacecraft.jump == 5
+
