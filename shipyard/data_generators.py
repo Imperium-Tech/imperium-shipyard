@@ -394,3 +394,17 @@ def generate_fuel_addon_data():
 
     f = json.dumps(fuel_addon_data, indent=4)
     print(f)
+
+
+def generate_performance_index():
+    """
+    Generates performance index values for use in performance by volume calcs
+    """
+    index_data = dict()
+    for i in range(10):
+        index_data[str((i + 1) * 100)] = i
+    for i in range(5):
+        index_data[str(200 * i + 1200)] = i + 10
+
+    i = json.dumps(index_data, indent=4)
+    print(i)
