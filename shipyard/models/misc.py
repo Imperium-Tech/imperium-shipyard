@@ -12,14 +12,16 @@ IRREGULAR_LIST = ["Repair Drone", "Escape Pods"]
 
 class Misc:
     def __init__(self, name):
-        c = determine_class(name)
-        data= c.get(name)
+        cls = determine_class(name)
+        data= cls.get(name)
 
         self.name               = name
         self.cost               = data.get("cost")
         self.mod_additional     = data.get("mod_additional")
+        self.tonnage            = data.get("tonnage")
 
-        if name in IRREGULAR_LIST:
-            self.tonnage        = 0
-        else:
-            self.tonnage        = data.get("tonnage")
+        if name == "Repair Drone":
+            self.cost           = 0.2
+            self.tonnage        = 0.01
+        if name == "Escape Pods":
+            self.tonnage        = 0.5

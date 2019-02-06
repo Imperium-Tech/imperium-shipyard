@@ -194,13 +194,16 @@ class Spacecraft:
         Handles adding a single misc addon to the ship and updating tonnage/cost
         """
         self.additional_mods.append(misc)
-        self.cost_total += misc.get("cost")
+        self.cost_total += misc.cost
 
-        tonnage = misc.get("tonnage")
+        tonnage = misc.tonnage
         if misc.name == "Repair Drone":
-            tonnage = misc.get("tonnage_per_hull_ton") * self.tonnage
+            tonnage = misc.tonnage * self.tonnage
         if misc.name == "Escape Pods":
-            tonnage = misc.get("tonnage_per_stateroom") * self.get_staterooms()
+            if self.get_staterooms() > 0:
+                tonnage = misc.tonnage * self.get_staterooms()
+            else:
+                print("Error: no staterooms exist on this ship - escape pods cannot be added.")
 
         self.cargo -= tonnage
 
@@ -209,13 +212,13 @@ class Spacecraft:
         Handles removing a single misc addon from the ship, adjusting tonnage/cost
         """
         self.additional_mods.append(misc)
-        self.cost_total -= misc.get("cost")
+        self.cost_total -= misc.cost
 
-        tonnage = misc.get("tonnage")
+        tonnage = misc.tonnage
         if misc.name == "Repair Drone":
-            tonnage = misc.get("tonnage_per_hull_ton") * self.tonnage
+            tonnage = misc.tonnage * self.tonnage
         if misc.name == "Escape Pods":
-            tonnage = misc.get("tonnage_per_stateroom") * self.get_staterooms()
+            tonnage = misc.tonnage * self.get_staterooms()
 
         self.cargo += tonnage
 
