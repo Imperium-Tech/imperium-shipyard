@@ -21,3 +21,15 @@ def get_file_data(filename):
         data = json.load(f)
 
     return data
+
+
+def determine_class(name):
+    """
+    Determines which of the .json classes a specific object name belongs to
+    :param name: Name of the object to find
+    """
+    for file in os.listdir("../resources"):
+        f = open("../resources/{}".format(file))
+        data = json.load(f)
+        if name in data.keys():
+            return data
