@@ -28,8 +28,10 @@ def determine_class(name):
     Determines which of the .json classes a specific object name belongs to
     :param name: Name of the object to find
     """
-    for file in os.listdir("../resources"):
-        f = open("../resources/{}".format(file))
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(my_path, "../resources/")
+    for file in os.listdir(path):
+        f = open(path + file)
         data = json.load(f)
         if name in data.keys():
             return data
