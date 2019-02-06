@@ -20,3 +20,4 @@ class Misc:
         self.cost               = obj.get("cost")
         self.mod_additional     = obj.get("mod_additional")
         self.tonnage            = obj.get("tonnage")
+
