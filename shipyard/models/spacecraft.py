@@ -234,3 +234,4 @@ class Spacecraft:
             if mod.name == "Stateroom":
                 num_staterooms += 1
         return num_staterooms
+
