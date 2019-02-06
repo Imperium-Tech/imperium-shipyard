@@ -25,6 +25,8 @@ class Spacecraft:
         self.fuel_max           = 0 # amount of fuel tank
         self.fuel_jump          = 0 # amount of fuel required for a jump
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
+        self.fuel_scoops        = 0 # number of fuel scoops the ship has
+        self.fuel_refine_rate   = 0 # amount of fuel the ship can refined per day (in gallons)
         self.cost_hull          = 0 # cost of the hull alone
         self.cost_total         = 0 # current cost, updated on each edit
         self.hull_designation   = None   # A, B, C, etc.
@@ -189,6 +191,39 @@ class Spacecraft:
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
 
+    def add_fuel_addons(self, addon):
+        """
+        Handles adding a single fuel addon to the ship and adjusting the tonnage/cost
+        as required.
+        """
+        data = get_file_data("hull_fuel_addons.json")
+        fuel_addon = None
 
+        if addon == "Fuel Scoop":
+            fuel_addon = data.get("Fuel Scoop")
+            self.fuel_scoops += 1
+        if addon == "Fuel Processor":
+            fuel_addon = data.get("Fuel Processor")
+            self.fuel_refine_rate += fuel_addon.get("fuel_refinement_rate")
 
+        self.cost_total += fuel_addon.get("cost")
+        self.tonnage += fuel_addon.get("tonnage")
+
+    def remove_fuel_addon(self, addon):
+        """
+        Handles removing a single fuel addon to the ship and adjusting the tonnage/cost
+        as required.
+        """
+        data = get_file_data("hull_fuel_addons.json")
+        fuel_addon = None
+
+        if addon == "Fuel Scoop":
+            fuel_addon = data.get("Fuel Scoop")
+            self.fuel_scoops -= 1
+        if addon == "Fuel Processor":
+            fuel_addon = data.get("Fuel Processor")
+            self.fuel_refine_rate -= fuel_addon.get("fuel_refinement_rate")
+
+        self.cost_total = round((self.cost_total - fuel_addon.get("cost")))
+        self.tonnage -= fuel_addon.get("tonnage")
 
