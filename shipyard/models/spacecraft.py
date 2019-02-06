@@ -189,6 +189,49 @@ class Spacecraft:
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
 
+    def add_misc(self, misc):
+        """
+        Handles adding a single misc addon to the ship and updating tonnage/cost
+        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
+        """
+        self.additional_mods.append(misc)
+        self.cost_total += misc.cost
 
+        tonnage = misc.tonnage
+        if misc.name == "Repair Drone":
+            tonnage = misc.tonnage * self.tonnage
+        if misc.name == "Escape Pods":
+            if self.get_staterooms() > 0:
+                tonnage = misc.tonnage * self.get_staterooms()
+            else:
+                print("Error: no staterooms exist on this ship - escape pods cannot be added.")
 
+        self.cargo -= tonnage
+
+    def remove_misc(self, misc):
+        """
+        Handles removing a single misc addon from the ship, adjusting tonnage/cost
+        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
+        """
+        self.additional_mods.append(misc)
+        self.cost_total -= misc.cost
+
+        tonnage = misc.tonnage
+        if misc.name == "Repair Drone":
+            tonnage = misc.tonnage * self.tonnage
+        if misc.name == "Escape Pods":
+            tonnage = misc.tonnage * self.get_staterooms()
+
+        self.cargo += tonnage
+
+    def get_staterooms(self):
+        """
+        Counts the number of staterooms present in the additional mods
+        :return: number of staterooms
+        """
+        num_staterooms = 0
+        for mod in self.additional_mods:
+            if mod.name == "Stateroom":
+                num_staterooms += 1
+        return num_staterooms
 

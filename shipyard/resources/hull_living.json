@@ -2,27 +2,18 @@
     "Stateroom": {
         "cost": 0.5,
         "tonnage": 4.0,
-        "max_occupants": 1,
-        "notes": [
+        "mod_additional": [
+          "Max occupants: 1 (can be 2 in exploratory vessels, military ships, and privately-owned starships)",
           "Quarters for the crew and passengers provided in the form of staterooms, containing living amenities",
-          "Includes the life support systems to keep crew alive"
-        ]
-    },
-    "Double Stateroom": {
-        "cost": 0.5,
-        "tonnage": 4.0,
-        "max_occupants": 2,
-        "notes": [
-          "Staterooms present on larger starships, such as exploratory vessels, military ships, and private-owned starships",
-          "Quarters for the crew and passengers provided in the form of staterooms, containing living amenities",
-          "Includes the life support systems to keep crew alive"
+          "Includes the life support systems to keep crew alive",
+          "Staterooms present on larger starships, such as exploratory vessels, military ships, and private-owned starships"
         ]
     },
     "Low Passage Berth": {
         "cost": 0.05,
         "tonnage": 0.5,
-        "max_occupants": 1,
-        "notes": [
+        "mod_additional": [
+          "Max occupants: 1",
           "Facility for carrying passengers in cold sleep",
           "Serves well in providing suspended animation for characters needing medical care"
         ]
@@ -30,8 +21,8 @@
     "Emergency Low Berth": {
         "cost": 0.1,
         "tonnage": 1.0,
-        "max_occupants": 4,
-        "notes": [
+        "mod_additional": [
+          "Max occupants: 4",
           "Facility for carrying passengers in cold sleep",
           "Serves well in providing suspended animation for characters needing medical care",
           "Larger low berth that take up more space and cost more, but have the ability to house more occupants"
@@ -40,8 +31,8 @@
     "Luxuries": {
         "cost": 0.1,
         "tonnage": 1.0,
-        "steward_modifier": 1,
-        "notes": [
+        "mod_additional": [
+          "Adds +1 DM to the Steward modifier of a ship",
           "Makes life on ship more pleasant, as standard amenities are often lacking",
           "Each ton counts as one level of the Steward skill for carrying passengers",
           "Allows a ship to carry medium-high class passengers without a trained steward"

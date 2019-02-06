@@ -2,7 +2,7 @@
     "Fuel Scoop": {
         "cost": 1,
         "tonnage": 0,
-        "effect": [
+        "mod_additional": [
           "Allows an unstreamlined ship to gather unrefined fuel from a gas giant",
           "Streamlined ships have this built-in"
         ]
@@ -10,8 +10,7 @@
     "Fuel Processor": {
         "cost": 0.05,
         "tonnage": 1,
-        "fuel_refinement_rate": 20,
-        "effect": [
+        "mod_additional": [
           "Converts unrefined fuel into refined fuel",
           "One ton of processors can refine 20 tons of fuel per day"
         ]
