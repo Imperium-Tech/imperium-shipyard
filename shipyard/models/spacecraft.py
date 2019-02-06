@@ -192,6 +192,7 @@ class Spacecraft:
     def add_misc(self, misc):
         """
         Handles adding a single misc addon to the ship and updating tonnage/cost
+        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
         """
         self.additional_mods.append(misc)
         self.cost_total += misc.cost
@@ -210,6 +211,7 @@ class Spacecraft:
     def remove_misc(self, misc):
         """
         Handles removing a single misc addon from the ship, adjusting tonnage/cost
+        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
         """
         self.additional_mods.append(misc)
         self.cost_total -= misc.cost
