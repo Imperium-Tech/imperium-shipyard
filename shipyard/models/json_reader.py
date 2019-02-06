@@ -35,3 +35,4 @@ def determine_class(name):
         data = json.load(f)
         if name in data.keys():
             return data
+

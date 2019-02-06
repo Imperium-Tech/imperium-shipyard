@@ -69,5 +69,3 @@ def test_repair_drones():
     assert ship.cargo == 100
     assert ship.cost_total == 2.0
 
-
-test_repair_drones()
