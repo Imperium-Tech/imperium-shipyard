@@ -1,0 +1,127 @@
+{
+  "Stateroom": {
+        "cost": 0.5,
+        "tonnage": 4.0,
+        "mod_additional": [
+          "Max occupants: 1 (can be 2 in exploratory vessels, military ships, and privately-owned starships)",
+          "Quarters for the crew and passengers provided in the form of staterooms, containing living amenities",
+          "Includes the life support systems to keep crew alive",
+          "Staterooms present on larger starships, such as exploratory vessels, military ships, and private-owned starships"
+        ]
+    },
+    "Low Passage Berth": {
+        "cost": 0.05,
+        "tonnage": 0.5,
+        "mod_additional": [
+          "Max occupants: 1",
+          "Facility for carrying passengers in cold sleep",
+          "Serves well in providing suspended animation for characters needing medical care"
+        ]
+    },
+    "Emergency Low Berth": {
+        "cost": 0.1,
+        "tonnage": 1.0,
+        "mod_additional": [
+          "Max occupants: 4",
+          "Facility for carrying passengers in cold sleep",
+          "Serves well in providing suspended animation for characters needing medical care",
+          "Larger low berth that take up more space and cost more, but have the ability to house more occupants"
+        ]
+    },
+    "Luxuries": {
+        "cost": 0.1,
+        "tonnage": 1.0,
+        "mod_additional": [
+          "Adds +1 DM to the Steward modifier of a ship",
+          "Makes life on ship more pleasant, as standard amenities are often lacking",
+          "Each ton counts as one level of the Steward skill for carrying passengers",
+          "Allows a ship to carry medium-high class passengers without a trained steward"
+        ]
+    },
+    "Mining Drone": {
+        "tonnage": 10.0,
+        "cost": 1.0,
+        "mod_additional": [
+          "Mining drones allow a ship to mine asteroids.",
+          "Allows the ship to process 1d6 x 10 tons of asteroid per working day.",
+          "Includes ore handling machinery, allowing the ship to take on ore and transfer it to the cargo bay."
+        ]
+    },
+    "Repair Drone": {
+        "tonnage": 0.01,
+        "cost": 0.2,
+        "mod_additional": [
+          "Allows a ship to make repairs with the AutoRepair software or by a character with Mechanic/Engineer skills.",
+          "Has the same stats as repair robots, just without an Intellect program"
+        ]
+    },
+    "Probe Drone": {
+        "tonnage": 1.0,
+        "cost": 0.5,
+        "mod_additional": [
+          "Each ton contains five drones",
+          "Can be dropped from orbit in disposable entry shells, but must be recovered manually",
+          "Probe Drones are capable of surveying orbiting satelites, derelicts, and other debris",
+          "Can be used as comm relays"
+        ]
+    },
+    "Escape Pods": {
+        "tonnage": 0.5,
+        "cost": 0.1,
+        "mod_additional": "Covers the installation of rescue bubbles and other escape pods"
+
+    },
+    "Life Boat/Launch": {
+        "tonnage": 20.0,
+        "cost": 14.0,
+        "mod_additional": "Small craft, hangered in or on the ship's hull"
+    },
+    "Ship's Boat": {
+        "tonnage": 30.0,
+        "cost": 16.0,
+        "mod_additional": "Small craft, hangered in or on the ship's hull"
+    },
+    "Pinnace": {
+        "tonnage": 40.0,
+        "cost": 20.0,
+        "mod_additional": "Small craft, hangered in or on the ship's hull"
+    },
+    "Cutter": {
+        "tonnage": 50.0,
+        "cost": 28.0,
+        "mod_additional": "Small craft, hangered in or on the ship's hull"
+    },
+    "Shuttle": {
+        "tonnage": 95.0,
+        "cost": 33.0,
+        "mod_additional": "Small craft, hangered in or on the ship's hull"
+
+    },
+    "Air/Raft": {
+        "tonnage": 4.0,
+        "cost": 0.275,
+        "mod_additional": "Vehicle, stored in or on the ship"
+
+    },
+    "ATV": {
+        "tonnage": 10.0,
+        "cost": 0.05,
+        "mod_additional": "Vehicle, stored in or on the ship"
+    },
+    "Fuel Scoop": {
+        "cost": 1,
+        "tonnage": 0,
+        "mod_additional": [
+          "Allows an unstreamlined ship to gather unrefined fuel from a gas giant",
+          "Streamlined ships have this built-in"
+        ]
+    },
+    "Fuel Processor": {
+        "cost": 0.05,
+        "tonnage": 1,
+        "mod_additional": [
+          "Converts unrefined fuel into refined fuel",
+          "One ton of processors can refine 20 tons of fuel per day"
+        ]
+    }
+}
