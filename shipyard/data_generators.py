@@ -228,7 +228,7 @@ def generate_vehicle_drone_data():
         vehicle_drone_data[vehicle] = dict()
         vehicle_drone_data[vehicle]["tonnage"] = tonnage
         vehicle_drone_data[vehicle]["cost"] = cost
-        vehicle_drone_data[vehicle]["notes"] = list()
+        vehicle_drone_data[vehicle]["mod_additional"] = list()
 
     v = json.dumps(vehicle_drone_data, indent=4)
     print(v)
@@ -251,13 +251,7 @@ def generate_living_data():
         living_data[room] = dict()
         living_data[room]["cost"] = cost
         living_data[room]["tonnage"] = tonnage
-        if room == "Luxuries":
-            modifier = int(input("Enter Steward modifier: "))
-            living_data[room]["steward_modifier"] = modifier
-        else:
-            max_occupants = int(input("Enter max occupants: "))
-            living_data[room]["max_occupants"] = max_occupants
-        living_data[room]["notes"] = list()
+        living_data[room]["mod_additional"] = list()
 
     l = json.dumps(living_data, indent=4)
     print(l)
@@ -384,13 +378,12 @@ def generate_fuel_addon_data():
     fuel_addon_data["Fuel Scoop"] = dict()
     fuel_addon_data["Fuel Scoop"]['cost'] = 1
     fuel_addon_data["Fuel Scoop"]['tonnage'] = 0
-    fuel_addon_data["Fuel Scoop"]['effect'] = list()
+    fuel_addon_data["Fuel Scoop"]['mod_additional'] = list()
 
     fuel_addon_data["Fuel Processor"] = dict()
     fuel_addon_data["Fuel Processor"]['cost'] = .05
     fuel_addon_data["Fuel Processor"]['tonnage'] = 1
-    fuel_addon_data["Fuel Processor"]['fuel_refinement_rate'] = 20
-    fuel_addon_data["Fuel Processor"]['effect'] = list()
+    fuel_addon_data["Fuel Processor"]['mod_additional'] = list()
 
     f = json.dumps(fuel_addon_data, indent=4)
     print(f)
