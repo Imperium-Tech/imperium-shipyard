@@ -37,7 +37,7 @@ class Spacecraft:
         self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
-        self.computer           = list() # list of computer objects
+        self.computer           = None   # computer object
         self.drones             = list() # list of drone objects
         self.vehicles           = list() # list of vehicle objects
         self.additional_mods    = list() # list of strings describing misc features
@@ -234,4 +234,15 @@ class Spacecraft:
             if mod.name == "Stateroom":
                 num_staterooms += 1
         return num_staterooms
+
+    def add_computer(self, computer):
+        """
+        Handles adding/replacing a computer object in the ship, adjusting cost as needed
+        :param computer: computer object to use
+        """
+        if self.computer is not None:
+            self.cost_total -= self.computer.cost
+
+        self.computer = computer
+        self.cost_total += computer.cost
 
