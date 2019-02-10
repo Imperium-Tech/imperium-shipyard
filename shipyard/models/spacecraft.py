@@ -38,6 +38,8 @@ class Spacecraft:
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
         self.computer           = None   # computer object
+        self.software           = list() # list of installed software
+        self.software_rating    = 0      # represents the combined rating of installed software
         self.drones             = list() # list of drone objects
         self.vehicles           = list() # list of vehicle objects
         self.additional_mods    = list() # list of strings describing misc features
@@ -245,4 +247,31 @@ class Spacecraft:
 
         self.computer = computer
         self.cost_total += computer.cost
+
+    def add_software(self, software):
+        combined_rating = software.rating + self.software_rating
+
+        # Checking whether software is already installed and adjusting combined_rating cost
+        installed = False
+        installed_s = None
+        for s in self.software:
+            if s.type == software.type:
+                installed_s = s
+                difference = software.rating - s.rating
+                combined_rating = self.software_rating + difference
+                installed = True
+                break
+
+        # Checking whether the new software exceeds the max computer rating
+        if combined_rating > self.computer.rating:
+            print("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
+                combined_rating, self.computer.rating
+            ))
+            return
+
+        if installed:
+            self.software.remove(installed_s)
+        self.software.append(software)
+        self.software_rating = combined_rating
+        self.cost_total += software.cost
 

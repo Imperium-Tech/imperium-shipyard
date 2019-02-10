@@ -15,8 +15,8 @@ class Software:
             print("Error: invalid software level for {}".format(name))
             return
 
-        self.software_type      = name
-        self.software_level     = level
+        self.type               = name
+        self.level              = level
         self.tl                 = software.get("tl")
         self.rating             = software.get("rating")
         self.cost               = software.get("cost")
