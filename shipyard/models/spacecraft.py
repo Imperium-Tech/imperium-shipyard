@@ -259,3 +259,29 @@ class Spacecraft:
         self.cargo -= sensor.tonnage
         self.cost_total += sensor.cost
 
+    def add_screen(self, screen):
+        """
+        Handles adding a screen object to a ship, adjusting cost/tonnage
+        Checks whether the module has already been added previously
+        :param screen: screen object to add
+        """
+        for s in self.screens:
+            if s.name == screen.name:
+                print("Error: screen module already installed on ship.")
+                return
+
+        self.screens.append(screen)
+        self.cost_total += screen.cost
+        self.cargo -= screen.tonnage
+
+    def remove_screen(self, screen):
+        """
+        Handles removing a screen object from the ship
+        :param screen: screen object to remove
+        """
+        for s in self.screens:
+            if s.name == screen.name:
+                self.cost_total -= s.cost
+                self.cargo += s.tonnage
+                self.screens.remove(s)
+
