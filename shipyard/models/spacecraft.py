@@ -249,6 +249,11 @@ class Spacecraft:
         self.cost_total += computer.cost
 
     def add_software(self, software):
+        """
+        Handles adding/altering a piece of software on a ship. Contains error checking for
+        computer rating limitations
+        :param software: software to add
+        """
         combined_rating = software.rating + self.software_rating
 
         # Checking whether software is already installed and adjusting combined_rating cost
@@ -271,6 +276,8 @@ class Spacecraft:
 
         if installed:
             self.software.remove(installed_s)
+            self.cost_total -= installed_s.cost
+
         self.software.append(software)
         self.software_rating = combined_rating
         self.cost_total += software.cost
