@@ -33,7 +33,7 @@ class Spacecraft:
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
         self.armour             = list() # list of armor objects
-        self.sensors            = list() # list of sensor objects
+        self.sensors            = None   # sensor object
         self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
@@ -245,4 +245,17 @@ class Spacecraft:
 
         self.computer = computer
         self.cost_total += computer.cost
+
+    def add_sensors(self, sensor):
+        """
+        Handles adding/replacing a sensors system within the system, adjusting cost/tonnage
+        :param sensor: sensor object to use
+        """
+        if self.sensors is not None:
+            self.cargo += self.sensors.tonnage
+            self.cost_total -= self.sensors.cost
+
+        self.sensors = sensor
+        self.cargo -= sensor.tonnage
+        self.cost_total += sensor.cost
 
