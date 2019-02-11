@@ -11,9 +11,6 @@ from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
 QLabel, QLineEdit, QWidget)
 
 
-
-
-
 class Window(QWidget):
     def __init__(self):
         super(Window, self).__init__()
