@@ -72,6 +72,24 @@ class Spacecraft:
         # set the total cost to hull cost
         self.cost_total = self.cost_hull
 
+    def set_tonnage(self, new_tonnage):
+        """
+        Sets the tonnage of an existing Spacecraft
+
+        :param new_tonnage: The tonnage to update to
+        """
+        self.cargo = self.cargo + (new_tonnage - self.tonnage)
+        self.tonnage = new_tonnage
+
+    def set_fuel(self, new_fuel):
+        """
+        Sets the max fuel of an existing Spacecraft
+
+        :param new_fuel: The fuel to update to
+        """
+        self.cargo = self.cargo - new_fuel
+        self.fuel_max = new_fuel
+
     def add_jdrive(self, drive_type):
         """
         Adds a jump drive to the spaceship
