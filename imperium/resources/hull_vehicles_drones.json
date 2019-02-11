@@ -1,0 +1,72 @@
+{
+    "Mining Drone": {
+        "tonnage": 10.0,
+        "cost": 1.0,
+        "notes": [
+          "Mining drones allow a ship to mine asteroids.",
+          "Allows the ship to process 1d6 x 10 tons of asteroid per working day.",
+          "Includes ore handling machinery, allowing the ship to take on ore and transfer it to the cargo bay."
+        ]
+    },
+    "Repair Drone": {
+        "tonnage_per_hull_ton": 0.01,
+        "cost_per_ton": 0.2,
+        "notes": [
+          "Allows a ship to make repairs with the AutoRepair software or by a character with Mechanic/Engineer skills.",
+          "Has the same stats as repair robots, just without an Intellect program"
+        ]
+    },
+    "Probe Drone": {
+        "tonnage": 1.0,
+        "cost_per_ton": 0.5,
+        "notes": [
+          "Each ton contains five drones",
+          "Can be dropped from orbit in disposable entry shells, but must be recovered manually",
+          "Probe Drones are capable of surveying orbiting satelites, derelicts, and other debris",
+          "Can be used as comm relays"
+        ]
+    },
+    "Escape Pods": {
+        "tonnage_per_stateroom": 0.5,
+        "cost": 0.1,
+        "notes": "Covers the installation of rescue bubbles and other escape pods"
+
+    },
+    "Life Boat/Launch": {
+        "tonnage": 20.0,
+        "cost": 14.0,
+        "notes": "Small craft, hangered in or on the ship's hull"
+    },
+    "Ship's Boat": {
+        "tonnage": 30.0,
+        "cost": 16.0,
+        "notes": "Small craft, hangered in or on the ship's hull"
+    },
+    "Pinnace": {
+        "tonnage": 40.0,
+        "cost": 20.0,
+        "notes": "Small craft, hangered in or on the ship's hull"
+    },
+    "Cutter": {
+        "tonnage": 50.0,
+        "cost": 28.0,
+        "notes": "Small craft, hangered in or on the ship's hull"
+    },
+    "Shuttle": {
+        "tonnage": 95.0,
+        "cost": 33.0,
+        "notes": "Small craft, hangered in or on the ship's hull"
+
+    },
+    "Air/Raft": {
+        "tonnage": 4.0,
+        "cost": 0.275,
+        "notes": "Vehicle, stored in or on the ship"
+
+    },
+    "ATV": {
+        "tonnage": 10.0,
+        "cost": 0.05,
+        "notes": "Vehicle, stored in or on the ship"
+    }
+}

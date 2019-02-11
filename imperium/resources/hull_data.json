@@ -1,0 +1,82 @@
+{
+    "1": {
+        "tonnage": 100,
+        "cost": 2
+    },
+    "2": {
+        "tonnage": 200,
+        "cost": 8
+    },
+    "3": {
+        "tonnage": 300,
+        "cost": 12
+    },
+    "4": {
+        "tonnage": 400,
+        "cost": 16
+    },
+    "5": {
+        "tonnage": 500,
+        "cost": 32
+    },
+    "6": {
+        "tonnage": 600,
+        "cost": 48
+    },
+    "7": {
+        "tonnage": 700,
+        "cost": 64
+    },
+    "8": {
+        "tonnage": 800,
+        "cost": 80
+    },
+    "9": {
+        "tonnage": 900,
+        "cost": 90
+    },
+    "B": {
+        "tonnage": 1000,
+        "cost": 100
+    },
+    "C": {
+        "tonnage": 1100,
+        "cost": 110
+    },
+    "D": {
+        "tonnage": 1200,
+        "cost": 120
+    },
+    "E": {
+        "tonnage": 1300,
+        "cost": 130
+    },
+    "F": {
+        "tonnage": 1400,
+        "cost": 140
+    },
+    "G": {
+        "tonnage": 1500,
+        "cost": 150
+    },
+    "H": {
+        "tonnage": 1600,
+        "cost": 160
+    },
+    "I": {
+        "tonnage": 1700,
+        "cost": 170
+    },
+    "J": {
+        "tonnage": 1800,
+        "cost": 180
+    },
+    "K": {
+        "tonnage": 1900,
+        "cost": 190
+    },
+    "L": {
+        "tonnage": 2000,
+        "cost": 200
+    }
+}

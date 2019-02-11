@@ -1,0 +1,26 @@
+{
+    "Reflec": {
+        "tl": 10,
+        "protection_lasers": 3,
+        "cost_per_hull_ton": 0.1
+    },
+    "Self-Sealing": {
+        "tl": 9,
+        "cost_per_hull_ton": 0.01,
+        "mod_additional": [
+            "Hull hits cannot cause explosive decompression",
+            "Automatically repairs minor breaches"
+        ]
+    },
+    "Stealth": {
+        "tl": 11,
+        "cost_per_hull_ton": 0.1,
+        "mod_enemy_sensors": -4,
+        "mod_additional": [
+            "Absorbs radar and lidar beams",
+            "Hides heat emissions",
+            "-4 DM to enemy sensor detection",
+            "-4 DM to enemy sensor lock"
+        ]
+    }
+}

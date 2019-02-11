@@ -1,0 +1,20 @@
+{
+    "Titanium Steel": {
+        "tl": 7,
+        "protection": 2,
+        "hull_amount": 0.05,
+        "cost_by_hull_percentage": 0.05
+    },
+    "Crystaliron": {
+        "tl": 10,
+        "protection": 4,
+        "hull_amount": 0.05,
+        "cost_by_hull_percentage": 0.20
+    },
+    "Bonded Superdense": {
+        "tl": 14,
+        "protection": 6,
+        "hull_amount": 0.05,
+        "cost_by_hull_percentage": 0.50
+    }
+}
