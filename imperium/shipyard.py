@@ -74,6 +74,12 @@ class Window(QWidget):
 
         # Structure HP
         self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, base_stats_layout, read_only=True)
+
+        # Armor
+        self.armor_line_edit = add_stat_to_layout("Armor:", 7, base_stats_layout, read_only=True)
+
+        # Cost
+        self.cost_line_edit = add_stat_to_layout("Cost:", 8, base_stats_layout, read_only=True)
         
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
