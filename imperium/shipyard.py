@@ -76,7 +76,7 @@ class Window(QWidget):
         self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, base_stats_layout, read_only=True)
 
         # Armor
-        self.armor_line_edit = add_stat_to_layout("Armor:", 7, base_stats_layout, read_only=True)
+        self.armour_line_edit = add_stat_to_layout("Armour:", 7, base_stats_layout, read_only=True)
 
         # Cost
         self.cost_line_edit = add_stat_to_layout("Cost:", 8, base_stats_layout, read_only=True)
@@ -91,6 +91,23 @@ class Window(QWidget):
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
         self.setLayout(layout)
+
+        # Update to current stats
+        self.update_stats()
+
+    def update_stats(self):
+        """
+        Updates the UI with the current Spacecraft stats
+        """
+        self.tonnage_line_edit.setText(str(      self.spacecraft.tonnage            ))
+        self.cargo_line_edit.setText(str(        self.spacecraft.cargo              ))
+        self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
+        self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
+        self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
+        self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
+        self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
+        self.armour_line_edit.setText(str(       self.spacecraft.get_armor_rating() ))
+        self.cost_line_edit.setText(str(         self.spacecraft.cost_total         ))
 
 
 if __name__ == '__main__':

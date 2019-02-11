@@ -189,6 +189,17 @@ class Spacecraft:
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
 
+    def get_armor_rating(self):
+        """
+        Gets the total armor rating for the ship
 
+        :returns: An int representing the total armor
+        """
+        total_rating = 0
 
+        for armour_item in self.armour:
+            protection = armour_item.get('protection')
+            if protection is not None:
+                total_rating = total_rating + protection
 
+        return total_rating
