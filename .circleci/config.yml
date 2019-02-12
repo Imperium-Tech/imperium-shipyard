@@ -50,7 +50,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest
+            pytest --cov=shipyard tests/
             coveralls
 
       - store_artifacts:
