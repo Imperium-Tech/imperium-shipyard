@@ -39,7 +39,6 @@ class Spacecraft:
         self.screens            = list() # list of screen objects
         self.computer           = None   # computer object
         self.software           = list() # list of installed software
-        self.software_rating    = 0      # represents the combined rating of installed software
         self.drones             = list() # list of drone objects
         self.vehicles           = list() # list of vehicle objects
         self.additional_mods    = list() # list of strings describing misc features
@@ -254,7 +253,13 @@ class Spacecraft:
         computer rating limitations
         :param software: software to add
         """
-        combined_rating = software.rating + self.software_rating
+        # Calculating the current total software rating
+        current_rating = 0
+        for s in self.software:
+            current_rating += s.rating
+
+        # Represents the combined rating between the current rating and software rating
+        combined_rating = software.rating + current_rating
 
         # Checking whether software is already installed and adjusting combined_rating cost
         installed = False
@@ -263,7 +268,7 @@ class Spacecraft:
             if s.type == software.type:
                 installed_s = s
                 difference = software.rating - s.rating
-                combined_rating = self.software_rating + difference
+                combined_rating = current_rating + difference
                 installed = True
                 break
 
@@ -279,6 +284,5 @@ class Spacecraft:
             self.cost_total -= installed_s.cost
 
         self.software.append(software)
-        self.software_rating = combined_rating
         self.cost_total += software.cost
 
