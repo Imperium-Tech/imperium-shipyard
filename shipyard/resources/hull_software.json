@@ -1,6 +1,6 @@
 {
     "Jump Control": {
-        "effect": [
+        "mod_additional": [
           "Allows jumps of up to the specified number",
           "Incorporates astrogation software and jump engine management"
         ],
@@ -36,7 +36,7 @@
         }
     },
     "Fire Control": {
-        "effect": [
+        "mod_additional": [
           "Allows the computer to fire a number of weapons per round equal to the number",
           "Alternatively can give a positive DM to an attack, or any combination of the two",
           "Ex: A ship with Fire Control/3 could make 3 attacks, or give a +3 DM to 1 attack, or make one attack with +2"
@@ -68,7 +68,7 @@
         }
     },
     "Evade": {
-        "effect": [
+        "mod_additional": [
           "The computer reacts automatically to incoming fire, applying a negative DM of -1.",
           "The ship can make a number of dodges each round w.r.t. the listed number"
         ],
@@ -89,7 +89,7 @@
         }
     },
     "Auto-Repair": {
-        "effect": [
+        "mod_additional": [
           "Allows the computer to make a number of repair attempts per round w.r.t. the level",
           "Alternatively can give a positive DM to a single repair attempt",
           "Requires the ship to carry repair drones"
@@ -106,7 +106,7 @@
         }
     },
     "Manoeuvre": {
-        "effect": [
+        "mod_additional": [
           "Allows basic control of the ship"
         ],
         "1": {
@@ -116,7 +116,7 @@
         }
     },
     "Intellect": {
-        "effect": [
+        "mod_additional": [
           "Allows a ship to understand and obey verbal commands"
         ],
         "1": {
@@ -126,7 +126,7 @@
         }
     },
     "Library": {
-        "effect": [
+        "mod_additional": [
           "Contains a wealth of data on numerous subjects"
         ],
         "1": {

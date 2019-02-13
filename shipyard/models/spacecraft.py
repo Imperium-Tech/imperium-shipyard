@@ -38,6 +38,7 @@ class Spacecraft:
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
         self.computer           = None   # computer object
+        self.software           = list() # list of installed software
         self.drones             = list() # list of drone objects
         self.vehicles           = list() # list of vehicle objects
         self.additional_mods    = list() # list of strings describing misc features
@@ -245,7 +246,7 @@ class Spacecraft:
 
         self.computer = computer
         self.cost_total += computer.cost
-
+        
     def add_sensors(self, sensor):
         """
         Handles adding/replacing a sensors system within the system, adjusting cost/tonnage
@@ -284,4 +285,42 @@ class Spacecraft:
                 self.cost_total -= s.cost
                 self.cargo += s.tonnage
                 self.screens.remove(s)
+                
+    def add_software(self, software):
+        """
+        Handles adding/altering a piece of software on a ship. Contains error checking for
+        computer rating limitations
+        :param software: software to add
+        """
+        # Calculating the current total software rating
+        current_rating = 0
+        for s in self.software:
+            current_rating += s.rating
 
+        # Represents the combined rating between the current rating and software rating
+        combined_rating = software.rating + current_rating
+
+        # Checking whether software is already installed and adjusting combined_rating cost
+        installed = False
+        installed_s = None
+        for s in self.software:
+            if s.type == software.type:
+                installed_s = s
+                difference = software.rating - s.rating
+                combined_rating = current_rating + difference
+                installed = True
+                break
+
+        # Checking whether the new software exceeds the max computer rating
+        if combined_rating > self.computer.rating:
+            print("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
+                combined_rating, self.computer.rating
+            ))
+            return
+
+        if installed:
+            self.software.remove(installed_s)
+            self.cost_total -= installed_s.cost
+
+        self.software.append(software)
+        self.cost_total += software.cost
