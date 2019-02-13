@@ -33,7 +33,7 @@ class Spacecraft:
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
         self.armour             = list() # list of armor objects
-        self.sensors            = list() # list of sensor objects
+        self.sensors            = None   # sensor object
         self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
@@ -246,7 +246,46 @@ class Spacecraft:
 
         self.computer = computer
         self.cost_total += computer.cost
+        
+    def add_sensors(self, sensor):
+        """
+        Handles adding/replacing a sensors system within the system, adjusting cost/tonnage
+        :param sensor: sensor object to use
+        """
+        if self.sensors is not None:
+            self.cargo += self.sensors.tonnage
+            self.cost_total -= self.sensors.cost
 
+        self.sensors = sensor
+        self.cargo -= sensor.tonnage
+        self.cost_total += sensor.cost
+
+    def add_screen(self, screen):
+        """
+        Handles adding a screen object to a ship, adjusting cost/tonnage
+        Checks whether the module has already been added previously
+        :param screen: screen object to add
+        """
+        for s in self.screens:
+            if s.name == screen.name:
+                print("Error: screen module already installed on ship.")
+                return
+
+        self.screens.append(screen)
+        self.cost_total += screen.cost
+        self.cargo -= screen.tonnage
+
+    def remove_screen(self, screen):
+        """
+        Handles removing a screen object from the ship
+        :param screen: screen object to remove
+        """
+        for s in self.screens:
+            if s.name == screen.name:
+                self.cost_total -= s.cost
+                self.cargo += s.tonnage
+                self.screens.remove(s)
+                
     def add_software(self, software):
         """
         Handles adding/altering a piece of software on a ship. Contains error checking for
@@ -285,4 +324,3 @@ class Spacecraft:
 
         self.software.append(software)
         self.cost_total += software.cost
-
