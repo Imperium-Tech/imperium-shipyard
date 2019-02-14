@@ -4,8 +4,8 @@
         "tonnage": 50,
         "cost": 50,
         "mod_additional": [
-            "Reduces fusion gunand nuclear missile damage by 2d6",
-            "Removes automatic crew hit from nuclear missile attacks"
+          "Reduces fusion gunand nuclear missile damage by 2d6",
+          "Removes automatic crew hit from nuclear missile attacks"
         ]
     },
     "Meson Screen": {
@@ -13,7 +13,7 @@
         "tonnage": 50,
         "cost": 60,
         "mod_additional": [
-            "Protects against meson damage, reducing damage by 2d6"
+          "Protects against meson damage, reducing damage by 2d6"
         ]
     }
 }
