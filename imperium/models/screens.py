@@ -3,7 +3,7 @@
 
 Represents a Screen object installed on a ship
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class Screen:

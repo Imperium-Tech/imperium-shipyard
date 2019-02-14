@@ -3,7 +3,7 @@
 
 Class that represents a piece of software and its level for a ship
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class Software:
