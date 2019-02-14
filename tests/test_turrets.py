@@ -4,7 +4,7 @@
 File to test functionality of the Turrets class
 """
 import pytest
-from shipyard.models.turrets import Turret
+from imperium.models.turrets import Turret
 
 
 def test_single_turret():

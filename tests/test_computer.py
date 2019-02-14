@@ -4,8 +4,8 @@
 Unit tests for testing functionality of adding and replacing a computer system in a ship
 """
 import pytest
-from shipyard.models.computer import Computer
-from shipyard.models.spacecraft import Spacecraft
+from imperium.models.computer import Computer
+from imperium.models.spacecraft import Spacecraft
 
 
 def test_init():

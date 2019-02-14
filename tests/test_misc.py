@@ -4,8 +4,8 @@
 Unit tests to test functionality of adding a fuel scoop and processors to a ship
 """
 import pytest
-from shipyard.models.spacecraft import Spacecraft
-from shipyard.models.misc import Misc
+from imperium.models.spacecraft import Spacecraft
+from imperium.models.misc import Misc
 
 
 def test_init():

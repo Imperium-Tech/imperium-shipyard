@@ -4,7 +4,7 @@
 Unit tests for bridge component adding for a ship
 """
 import pytest
-from shipyard.models.spacecraft import Spacecraft
+from imperium.models.spacecraft import Spacecraft
 
 
 def test_small():
