@@ -15,4 +15,3 @@ class Sensor:
         self.tonnage        = data.get("tonnage")
         self.cost           = data.get("cost")
         self.sensors_dm     = data.get("sensors_dm")
-

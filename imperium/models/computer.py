@@ -23,4 +23,3 @@ class Computer:
         self.cost += (addon.get("cost_increase") * self.cost)
 
         self.addons.append(addon)
-

@@ -73,4 +73,3 @@ class Turret:
                 self.cost -= w.get("cost")
                 return
         print("Error: {} not attached to {}".format(part, self.name))
-

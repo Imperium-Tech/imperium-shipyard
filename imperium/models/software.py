@@ -21,4 +21,3 @@ class Software:
         self.rating             = software.get("rating")
         self.cost               = software.get("cost")
         self.mod_additional     = data.get("mod_additional")
-

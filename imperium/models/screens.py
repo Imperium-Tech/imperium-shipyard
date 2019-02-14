@@ -15,4 +15,3 @@ class Screen:
         self.tonnage        = data.get("tonnage")
         self.cost           = data.get("cost")
         self.mod_additional = data.get("mod_additional")
-
