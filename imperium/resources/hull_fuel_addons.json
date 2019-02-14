@@ -3,8 +3,8 @@
         "cost": 1,
         "tonnage": 0,
         "mod_additional": [
-            "Allows an unstreamlined ship to gather unrefined fuel from a gas giant",
-            "Streamlined ships have this built-in"
+          "Allows an unstreamlined ship to gather unrefined fuel from a gas giant",
+          "Streamlined ships have this built-in"
         ]
     },
     "Fuel Processor": {

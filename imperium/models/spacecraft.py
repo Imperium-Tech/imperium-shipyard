@@ -33,11 +33,12 @@ class Spacecraft:
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
         self.armour             = list() # list of armor objects
-        self.sensors            = list() # list of sensor objects
+        self.sensors            = None   # sensor object
         self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
-        self.computer           = list() # list of computer objects
+        self.computer           = None   # computer object
+        self.software           = list() # list of installed software
         self.drones             = list() # list of drone objects
         self.vehicles           = list() # list of vehicle objects
         self.additional_mods    = list() # list of strings describing misc features
@@ -221,3 +222,138 @@ class Spacecraft:
                 total_rating = total_rating + protection
 
         return total_rating
+        
+    def add_misc(self, misc):
+        """
+        Handles adding a single misc addon to the ship and updating tonnage/cost
+        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
+        """
+        self.additional_mods.append(misc)
+        self.cost_total += misc.cost
+
+        tonnage = misc.tonnage
+        if misc.name == "Repair Drone":
+            tonnage = misc.tonnage * self.tonnage
+        if misc.name == "Escape Pods":
+            if self.get_staterooms() > 0:
+                tonnage = misc.tonnage * self.get_staterooms()
+            else:
+                print("Error: no staterooms exist on this ship - escape pods cannot be added.")
+
+        self.cargo -= tonnage
+
+    def remove_misc(self, misc):
+        """
+        Handles removing a single misc addon from the ship, adjusting tonnage/cost
+        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
+        """
+        self.additional_mods.append(misc)
+        self.cost_total -= misc.cost
+
+        tonnage = misc.tonnage
+        if misc.name == "Repair Drone":
+            tonnage = misc.tonnage * self.tonnage
+        if misc.name == "Escape Pods":
+            tonnage = misc.tonnage * self.get_staterooms()
+
+        self.cargo += tonnage
+
+    def get_staterooms(self):
+        """
+        Counts the number of staterooms present in the additional mods
+        :return: number of staterooms
+        """
+        num_staterooms = 0
+        for mod in self.additional_mods:
+            if mod.name == "Stateroom":
+                num_staterooms += 1
+        return num_staterooms
+
+    def add_computer(self, computer):
+        """
+        Handles adding/replacing a computer object in the ship, adjusting cost as needed
+        :param computer: computer object to use
+        """
+        if self.computer is not None:
+            self.cost_total -= self.computer.cost
+
+        self.computer = computer
+        self.cost_total += computer.cost
+        
+    def add_sensors(self, sensor):
+        """
+        Handles adding/replacing a sensors system within the system, adjusting cost/tonnage
+        :param sensor: sensor object to use
+        """
+        if self.sensors is not None:
+            self.cargo += self.sensors.tonnage
+            self.cost_total -= self.sensors.cost
+
+        self.sensors = sensor
+        self.cargo -= sensor.tonnage
+        self.cost_total += sensor.cost
+
+    def add_screen(self, screen):
+        """
+        Handles adding a screen object to a ship, adjusting cost/tonnage
+        Checks whether the module has already been added previously
+        :param screen: screen object to add
+        """
+        for s in self.screens:
+            if s.name == screen.name:
+                print("Error: screen module already installed on ship.")
+                return
+
+        self.screens.append(screen)
+        self.cost_total += screen.cost
+        self.cargo -= screen.tonnage
+
+    def remove_screen(self, screen):
+        """
+        Handles removing a screen object from the ship
+        :param screen: screen object to remove
+        """
+        for s in self.screens:
+            if s.name == screen.name:
+                self.cost_total -= s.cost
+                self.cargo += s.tonnage
+                self.screens.remove(s)
+                
+    def add_software(self, software):
+        """
+        Handles adding/altering a piece of software on a ship. Contains error checking for
+        computer rating limitations
+        :param software: software to add
+        """
+        # Calculating the current total software rating
+        current_rating = 0
+        for s in self.software:
+            current_rating += s.rating
+
+        # Represents the combined rating between the current rating and software rating
+        combined_rating = software.rating + current_rating
+
+        # Checking whether software is already installed and adjusting combined_rating cost
+        installed = False
+        installed_s = None
+        for s in self.software:
+            if s.type == software.type:
+                installed_s = s
+                difference = software.rating - s.rating
+                combined_rating = current_rating + difference
+                installed = True
+                break
+
+        # Checking whether the new software exceeds the max computer rating
+        if combined_rating > self.computer.rating:
+            print("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
+                combined_rating, self.computer.rating
+            ))
+            return
+
+        if installed:
+            self.software.remove(installed_s)
+            self.cost_total -= installed_s.cost
+
+        self.software.append(software)
+        self.cost_total += software.cost
