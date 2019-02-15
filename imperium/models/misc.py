@@ -4,7 +4,7 @@
 Misc class that represents miscellaneous items that don't need individual classes, such as
 staterooms, low berths, fuel scoops, etc
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class Misc:
@@ -20,4 +20,3 @@ class Misc:
         self.cost               = obj.get("cost")
         self.mod_additional     = obj.get("mod_additional")
         self.tonnage            = obj.get("tonnage")
-

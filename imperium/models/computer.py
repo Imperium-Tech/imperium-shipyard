@@ -3,7 +3,7 @@
 
 Represents the computers put within a ship and the benefits that come with it
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class Computer:
@@ -23,4 +23,3 @@ class Computer:
         self.cost += (addon.get("cost_increase") * self.cost)
 
         self.addons.append(addon)
-

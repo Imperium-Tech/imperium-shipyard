@@ -3,7 +3,7 @@ pplant.py
 
 Contains classes for the power plant
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class PPlant:

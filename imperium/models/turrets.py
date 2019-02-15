@@ -3,7 +3,7 @@
 
 Module that contains classes and relevant data for a turret
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class Turret:
@@ -73,4 +73,3 @@ class Turret:
                 self.cost -= w.get("cost")
                 return
         print("Error: {} not attached to {}".format(part, self.name))
-

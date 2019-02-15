@@ -4,8 +4,8 @@
 Unit tests to test functionality of sensors objects within a ship
 """
 import pytest
-from shipyard.models.sensors import Sensor
-from shipyard.models.spacecraft import Spacecraft
+from imperium.models.sensors import Sensor
+from imperium.models.spacecraft import Spacecraft
 
 
 def test_init():

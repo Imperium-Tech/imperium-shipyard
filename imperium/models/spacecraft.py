@@ -3,10 +3,10 @@ spacecraft.py
 
 Houses the spacecraft class
 """
-from shipyard.models.json_reader import get_file_data
-from shipyard.models.drives import JDrive
-from shipyard.models.drives import MDrive
-from shipyard.models.pplant import PPlant
+from imperium.models.json_reader import get_file_data
+from imperium.models.drives import JDrive
+from imperium.models.drives import MDrive
+from imperium.models.pplant import PPlant
 
 
 class Spacecraft:
@@ -72,6 +72,24 @@ class Spacecraft:
         
         # set the total cost to hull cost
         self.cost_total = self.cost_hull
+
+    def set_tonnage(self, new_tonnage):
+        """
+        Sets the tonnage of an existing Spacecraft
+
+        :param new_tonnage: The tonnage to update to
+        """
+        self.cargo = self.cargo + (new_tonnage - self.tonnage)
+        self.tonnage = new_tonnage
+
+    def set_fuel(self, new_fuel):
+        """
+        Sets the max fuel of an existing Spacecraft
+
+        :param new_fuel: The fuel to update to
+        """
+        self.cargo = self.cargo - new_fuel
+        self.fuel_max = new_fuel
 
     def add_jdrive(self, drive_type):
         """
@@ -190,6 +208,21 @@ class Spacecraft:
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
 
+    def get_armor_rating(self):
+        """
+        Gets the total armor rating for the ship
+
+        :returns: An int representing the total armor
+        """
+        total_rating = 0
+
+        for armour_item in self.armour:
+            protection = armour_item.get('protection')
+            if protection is not None:
+                total_rating = total_rating + protection
+
+        return total_rating
+        
     def add_misc(self, misc):
         """
         Handles adding a single misc addon to the ship and updating tonnage/cost

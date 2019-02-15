@@ -4,8 +4,8 @@ test_spacecraft.py
 Unit tests for classes in shipyard.models.spacecraft
 """
 import pytest
-from shipyard.models.spacecraft import Spacecraft
-from shipyard.models.turrets import Turret
+from imperium.models.spacecraft import Spacecraft
+from imperium.models.turrets import Turret
 
 
 def test_spacecraft_init():

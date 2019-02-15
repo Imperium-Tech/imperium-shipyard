@@ -3,7 +3,7 @@
 
 Represents a Sensor object installed on a ship
 """
-from shipyard.models.json_reader import get_file_data
+from imperium.models.json_reader import get_file_data
 
 
 class Sensor:
@@ -15,4 +15,3 @@ class Sensor:
         self.tonnage        = data.get("tonnage")
         self.cost           = data.get("cost")
         self.sensors_dm     = data.get("sensors_dm")
-

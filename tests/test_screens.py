@@ -4,8 +4,8 @@
 Unit tests for Screen objects within a ship
 """
 import pytest
-from shipyard.models.screens import Screen
-from shipyard.models.spacecraft import Spacecraft
+from imperium.models.screens import Screen
+from imperium.models.spacecraft import Spacecraft
 
 
 def test_init():
