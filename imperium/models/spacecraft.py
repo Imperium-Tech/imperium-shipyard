@@ -76,7 +76,6 @@ class Spacecraft:
     def set_tonnage(self, new_tonnage):
         """
         Sets the tonnage of an existing Spacecraft
-
         :param new_tonnage: The tonnage to update to
         """
         tonnage_cost_data = get_file_data("hull_data.json")
@@ -95,7 +94,6 @@ class Spacecraft:
     def set_fuel(self, new_fuel):
         """
         Sets the max fuel of an existing Spacecraft
-
         :param new_fuel: The fuel to update to
         """
         self.cargo = self.cargo - new_fuel
@@ -104,50 +102,65 @@ class Spacecraft:
     def add_jdrive(self, drive_type):
         """
         Adds a jump drive to the spaceship
-
         :param drive_type: The drive designation letter
         """
         # create new jdrive object
         new_jdrive = JDrive(drive_type)
 
-        # if drive already in place, replace stats
-        if self.jdrive is not None:
-            self.cost_total = self.cost_total - self.jdrive.cost
-            self.cargo = self.cargo + self.jdrive.tonnage
+        # Error checking to see if new drive type is incompatible
+        if self.performance_by_volume("jdrive", drive_type) is not None:
+            # if drive already in place, replace stats
+            if self.jdrive is not None:
+                self.cost_total = self.cost_total - self.jdrive.cost
+                self.cargo = self.cargo + self.jdrive.tonnage
 
-        # assign object to ship, update cost & tonnage
-        self.jdrive = new_jdrive
-        self.cost_total = self.cost_total + new_jdrive.cost
-        self.cargo = self.cargo - new_jdrive.tonnage
-        self.performance_by_volume("jdrive", drive_type)
+            # assign object to ship, update cost & tonnage
+            self.jdrive = new_jdrive
+            self.cost_total = self.cost_total + new_jdrive.cost
+            self.cargo = self.cargo - new_jdrive.tonnage
+        
 
     def add_mdrive(self, drive_type):
         """
         Adds a maneuver drive to the spaceship
-
         :param drive_type: The drive designation letter
         """
         # create new mdrive object
         new_mdrive = MDrive(drive_type)
 
-        # if drive already in place, replace stats
-        if self.mdrive is not None:
-            self.cost_total = self.cost_total - self.mdrive.cost
-            self.cargo = self.cargo + self.mdrive.tonnage
+        # Error checking to see if new drive type is incompatible
+        if self.performance_by_volume("mdrive", drive_type) is not None:
+            # if drive already in place, replace stats
+            if self.mdrive is not None:
+                self.cost_total = self.cost_total - self.mdrive.cost
+                self.cargo = self.cargo + self.mdrive.tonnage
 
-        # assign object to ship, update cost & tonnage
-        self.mdrive = new_mdrive
-        self.cost_total = self.cost_total + new_mdrive.cost
-        self.cargo = self.cargo - new_mdrive.tonnage
-        self.performance_by_volume("mdrive", drive_type)
+            # assign object to ship, update cost & tonnage
+            self.mdrive = new_mdrive
+            self.cost_total = self.cost_total + new_mdrive.cost
+            self.cargo = self.cargo - new_mdrive.tonnage
+        
 
     def performance_by_volume(self, drive, drive_letter):
+        """
+        Handles checking whether a drive type is compatible and retrieves the relative jump/thrust numbers
+        for a drive type
+        :param drive: drive type
+        :param drive_letter: letter of the drive 
+        :return: None if incompatible
+        """
         data = get_file_data("hull_performance.json")
         index = get_file_data("hull_performance_index.json")
         performance_list = data.get(drive_letter).get("jumps_per_hull_volume")
 
         # Get the nearest ton rounded down
         index = index.get(str(self.tonnage))
+
+        # Error checking to see if drive type is incompatible with the hull size
+        if index >= len(performance_list):
+            print("Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_letter, self.tonnage))
+            return None
+
         value = performance_list[int(index)]
 
         # Error checking if the drive type is non-compatible with the hull size
@@ -160,10 +173,11 @@ class Spacecraft:
         if drive == "jdrive":
             self.jump = value
 
+        return 1
+
     def add_pplant(self, plant_type):
         """
         Adds a power plant to the spaceship
-
         :param plant_type: The plant designation letter
         """
         # create new pplant object
