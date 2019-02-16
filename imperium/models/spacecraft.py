@@ -138,7 +138,7 @@ class Spacecraft:
 
         # Get the nearest ton rounded down
         index = index.get(str(self.tonnage))
-        value = performance_list[index]
+        value = performance_list[int(index)]
 
         # Error checking if the drive type is non-compatible with the hull size
         if value == 0:

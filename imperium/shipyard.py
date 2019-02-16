@@ -3,8 +3,8 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
-import data_generators as dg
-from models.spacecraft import Spacecraft
+import imperium.data_generators as dg
+from imperium.models.spacecraft import Spacecraft
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
@@ -42,7 +42,7 @@ class Window(QWidget):
             new_label = QLabel(label)
             new_line_edit = QLineEdit()
             new_line_edit.setFixedWidth(50)
-            new_line_edit.setValidator(QIntValidator(new_line_edit))
+            # new_line_edit.setValidator(QIntValidator(new_line_edit))
 
             if signal_function is not None:
                 new_line_edit.editingFinished.connect(signal_function)
@@ -67,7 +67,7 @@ class Window(QWidget):
         self.fuel_line_edit = add_stat_to_layout("Fuel:", 2, signal_function=self.edit_fuel, force_int=True)
 
         # Jump
-        self.jump_line_edit = add_stat_to_layout("Jump:", 3, read_only=True)
+        self.jump_line_edit = add_stat_to_layout("Jump:", 3, signal_function=self.edit_jdrive)
 
         # Thrust
         self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, read_only=True)
@@ -125,6 +125,14 @@ class Window(QWidget):
         """
         new_fuel = int(self.fuel_line_edit.text())
         self.spacecraft.set_fuel(new_fuel)
+
+    def edit_jdrive(self):
+        """
+        Update the spacecraft jump drive
+        """
+        drive_type = self.jump_line_edit.text()
+        if drive_type.isalpha():
+            self.spacecraft.add_jdrive(drive_type)
 
 
 if __name__ == '__main__':
