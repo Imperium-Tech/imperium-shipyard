@@ -131,7 +131,7 @@ class Window(QWidget):
         Update the spacecraft jump drive
         """
         drive_type = self.jump_line_edit.text()
-        if drive_type.isalpha():
+        if drive_type.isalpha() and len(drive_type) == 1:
             self.spacecraft.add_jdrive(drive_type)
         else:
             print("Error: Incompatible drive type. Drive types are A-Z")
@@ -141,7 +141,7 @@ class Window(QWidget):
         Update the spacecraft thrust drive
         """
         drive_type = self.thrust_line_edit.text()
-        if drive_type.isalpha():
+        if drive_type.isalpha() and len(drive_type) == 1:
             self.spacecraft.add_mdrive(drive_type)
         else:
             print("Error: Incompatible drive type. Drive types are A-Z")
