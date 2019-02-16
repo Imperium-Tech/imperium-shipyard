@@ -63,14 +63,14 @@ class Window(QWidget):
         # Cargo
         self.cargo_line_edit = add_stat_to_layout("Cargo:", 1, read_only=True)
 
-        # Fuel
+        # Fuels
         self.fuel_line_edit = add_stat_to_layout("Fuel:", 2, signal_function=self.edit_fuel, force_int=True)
 
         # Jump
         self.jump_line_edit = add_stat_to_layout("Jump:", 3, signal_function=self.edit_jdrive)
 
         # Thrust
-        self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, read_only=True)
+        self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, signal_function=self.edit_mdrive)
 
         # Hull HP
         self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, read_only=True)
@@ -133,7 +133,18 @@ class Window(QWidget):
         drive_type = self.jump_line_edit.text()
         if drive_type.isalpha():
             self.spacecraft.add_jdrive(drive_type)
+        else:
+            print("Error: Incompatible drive type. Drive types are A-Z")
 
+    def edit_mdrive(self):
+        """
+        Update the spacecraft thrust drive
+        """
+        drive_type = self.thrust_line_edit.text()
+        if drive_type.isalpha():
+            self.spacecraft.add_mdrive(drive_type)
+        else:
+            print("Error: Incompatible drive type. Drive types are A-Z")
 
 if __name__ == '__main__':
     import sys

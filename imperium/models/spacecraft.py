@@ -79,8 +79,18 @@ class Spacecraft:
 
         :param new_tonnage: The tonnage to update to
         """
+        tonnage_cost_data = get_file_data("hull_data.json")
+        new_cost = 0
+        for key in tonnage_cost_data:
+            current = tonnage_cost_data.get(key)
+            if current.get('tonnage') == self.tonnage:
+                self.cost_total -= current.get("cost")
+            if current.get('tonnage') == int(new_tonnage):
+                new_cost = current.get("cost")
+
         self.cargo = self.cargo + (new_tonnage - self.tonnage)
         self.tonnage = new_tonnage
+        self.cost_total += new_cost
 
     def set_fuel(self, new_fuel):
         """
@@ -142,7 +152,7 @@ class Spacecraft:
 
         # Error checking if the drive type is non-compatible with the hull size
         if value == 0:
-            print("Error: non-compatible drive to tonnage value - {} to {}".format(drive, self.tonnage))
+            print("Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_letter, self.tonnage))
             return None
 
         if drive == "mdrive":
