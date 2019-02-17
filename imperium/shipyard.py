@@ -73,10 +73,10 @@ class Window(QWidget):
         self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, signal_function=self.edit_mdrive)
 
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, read_only=True)
+        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, read_only=True)
+        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
         self.armour_line_edit = add_stat_to_layout("Armour:", 7, read_only=True)

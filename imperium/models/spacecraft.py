@@ -87,9 +87,14 @@ class Spacecraft:
             if current.get('tonnage') == int(new_tonnage):
                 new_cost = current.get("cost")
 
+        # update cargo, tonnage, cost
         self.cargo = self.cargo + (new_tonnage - self.tonnage)
         self.tonnage = new_tonnage
         self.cost_total += new_cost
+
+        # set hp based on tonnage
+        self.hull_hp = self.tonnage // 50
+        self.structure_hp = self.tonnage // 50
 
     def set_fuel(self, new_fuel):
         """
