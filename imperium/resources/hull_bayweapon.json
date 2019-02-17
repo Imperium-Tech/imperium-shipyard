@@ -4,7 +4,7 @@
         "range": "Special",
         "damage": "Launches a flight of 12 missiles",
         "cost": 12,
-        "notes": [
+        "mod_additional": [
           "Fires flights of 12 missiles at a time",
           "Behaves exactly as if it were fired from a smaller launcher"
         ]
@@ -14,7 +14,7 @@
         "range": "Long",
         "damage": "6d5 + crew hit",
         "cost": 20,
-        "notes": [
+        "mod_additional": [
           "Larger version of the turret-mounted weapon"
         ]
     },
@@ -23,7 +23,7 @@
         "range": "Medium",
         "damage": "5d6",
         "cost": 8,
-        "notes": [
+        "mod_additional": [
           "Fires a directed beam of fusing hydrogen at targets"
         ]
     },
@@ -32,7 +32,7 @@
         "range": "Long",
         "damage": "5d6 + crew hit",
         "cost": 50,
-        "notes": [
+        "mod_additional": [
           "Project a stream of mesons at targets, ignoring armor and blast when inside the hall",
           "Inflcits an automatic radiation hit to the crew of any vessel struck"
         ]

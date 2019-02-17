@@ -357,3 +357,24 @@ class Spacecraft:
 
         self.software.append(software)
         self.cost_total += software.cost
+
+    def add_bayweapon(self, weapon):
+        """
+        Handles adding a single bayweapon onto the ship
+        :param weapon: weapon object to add
+        """
+        self.cost_total += weapon.cost
+        self.cargo -= weapon.tonnage
+        self.bays.append(weapon)
+
+    def remove_bayweapon(self, weapon):
+        """
+        Handles removing a single bayweapon from a ship
+        :param weapon: weapon object to remove
+        """
+        if weapon in self.bays:
+            self.cost_total -= weapon.cost
+            self.cargo += weapon.tonnage
+            self.bays.remove(weapon)
+        else:
+            print("Error: baywapon not attached to the ship.")
