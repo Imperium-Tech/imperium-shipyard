@@ -78,10 +78,6 @@ class Spacecraft:
         Sets the tonnage of an existing Spacecraft
         :param new_tonnage: The tonnage to update to
         """
-        if new_tonnage > 2000:
-            print("Error: Tonnage exceeds maximum ship limit. {} > 2000".format(new_tonnage))
-            return
-
         tonnage_cost_data = get_file_data("hull_data.json")
         new_cost = 0
         for item in tonnage_cost_data.values():
@@ -126,7 +122,6 @@ class Spacecraft:
             self.jdrive = new_jdrive
             self.cost_total = self.cost_total + new_jdrive.cost
             self.cargo = self.cargo - new_jdrive.tonnage
-        
 
     def add_mdrive(self, drive_type):
         """
@@ -148,7 +143,6 @@ class Spacecraft:
             self.cost_total = self.cost_total + new_mdrive.cost
             self.cargo = self.cargo - new_mdrive.tonnage
         
-
     def performance_by_volume(self, drive, drive_letter):
         """
         Handles checking whether a drive type is compatible and retrieves the relative jump/thrust numbers
