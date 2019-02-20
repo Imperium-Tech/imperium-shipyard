@@ -3,8 +3,8 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
-import data_generators as dg
-from models.spacecraft import Spacecraft
+import imperium.data_generators as dg
+from imperium.models.spacecraft import Spacecraft
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
@@ -42,7 +42,7 @@ class Window(QWidget):
             new_label = QLabel(label)
             new_line_edit = QLineEdit()
             new_line_edit.setFixedWidth(50)
-            new_line_edit.setValidator(QIntValidator(new_line_edit))
+            # new_line_edit.setValidator(QIntValidator(new_line_edit))
 
             if signal_function is not None:
                 new_line_edit.editingFinished.connect(signal_function)
@@ -59,24 +59,25 @@ class Window(QWidget):
 
         # Tonnage
         self.tonnage_line_edit = add_stat_to_layout("Tonnage:", 0, signal_function=self.edit_tonnage, force_int=True)
+        self.tonnage_line_edit.validator().setBottom(0)
 
         # Cargo
         self.cargo_line_edit = add_stat_to_layout("Cargo:", 1, read_only=True)
 
-        # Fuel
+        # Fuels
         self.fuel_line_edit = add_stat_to_layout("Fuel:", 2, signal_function=self.edit_fuel, force_int=True)
 
         # Jump
-        self.jump_line_edit = add_stat_to_layout("Jump:", 3, read_only=True)
+        self.jump_line_edit = add_stat_to_layout("Jump:", 3, signal_function=self.edit_jdrive)
 
         # Thrust
-        self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, read_only=True)
+        self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, signal_function=self.edit_mdrive)
 
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, read_only=True)
+        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, read_only=True)
+        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
         self.armour_line_edit = add_stat_to_layout("Armour:", 7, read_only=True)
@@ -125,6 +126,26 @@ class Window(QWidget):
         """
         new_fuel = int(self.fuel_line_edit.text())
         self.spacecraft.set_fuel(new_fuel)
+
+    def edit_jdrive(self):
+        """
+        Update the spacecraft jump drive
+        """
+        drive_type = self.jump_line_edit.text()
+        if drive_type.isalpha() and len(drive_type) == 1:
+            self.spacecraft.add_jdrive(drive_type)
+        else:
+            print("Error: Incompatible drive type. Drive types are A-Z")
+
+    def edit_mdrive(self):
+        """
+        Update the spacecraft thrust drive
+        """
+        drive_type = self.thrust_line_edit.text()
+        if drive_type.isalpha() and len(drive_type) == 1:
+            self.spacecraft.add_mdrive(drive_type)
+        else:
+            print("Error: Incompatible drive type. Drive types are A-Z")
 
 
 if __name__ == '__main__':
