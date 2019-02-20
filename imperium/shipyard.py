@@ -59,6 +59,7 @@ class Window(QWidget):
 
         # Tonnage
         self.tonnage_line_edit = add_stat_to_layout("Tonnage:", 0, signal_function=self.edit_tonnage, force_int=True)
+        self.tonnage_line_edit.validator().setBottom(0)
 
         # Cargo
         self.cargo_line_edit = add_stat_to_layout("Cargo:", 1, read_only=True)

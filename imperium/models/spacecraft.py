@@ -78,10 +78,6 @@ class Spacecraft:
         Sets the tonnage of an existing Spacecraft
         :param new_tonnage: The tonnage to update to
         """
-        if new_tonnage > 2000:
-            print("Error: Tonnage exceeds maximum ship limit. {} > 2000".format(new_tonnage))
-            return
-
         tonnage_cost_data = get_file_data("hull_data.json")
         new_cost = 0
         for item in tonnage_cost_data.values():
