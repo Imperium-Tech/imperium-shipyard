@@ -88,9 +88,11 @@ class Spacecraft:
                 new_cost = item.get("cost")
 
         # update cargo, tonnage, cost
-        self.cargo = self.cargo + (new_tonnage - self.tonnage)
+        cost_change, cargo_change = self.get_armor_cost(new_tonnage - self.tonnage)
+
+        self.cargo = self.cargo + (new_tonnage - self.tonnage) - cargo_change
         self.tonnage = new_tonnage
-        self.cost_total += new_cost
+        self.cost_total += new_cost + cost_change
 
         # set hp based on tonnage
         self.hull_hp = self.tonnage // 50
@@ -243,20 +245,21 @@ class Spacecraft:
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
 
-    def get_armor_rating(self):
+    def get_armor_cost(self, change_in_tonnage):
         """
-        Gets the total armor rating for the ship
-
-        :returns: An int representing the total armor
+        Gets the cargo and cost change when setting a new tonnage for the ship
+        :returns: change in cargo and cost
         """
-        total_rating = 0
+        total_cost = 0
+        total_cargo = 0
 
         for armour_item in self.armour:
-            protection = armour_item.get('protection')
-            if protection is not None:
-                total_rating = total_rating + protection
+            hull_amount = armour_item.hull_amount
+            cost = armour_item.cost_by_hull_percentage
+            total_cost += int(change_in_tonnage * cost)
+            total_cargo += int(change_in_tonnage * hull_amount)
 
-        return total_rating
+        return total_cargo, total_cost
         
     def add_misc(self, misc):
         """
@@ -422,4 +425,5 @@ class Spacecraft:
         self.cost_total += int(armor.cost_by_hull_percentage * self.tonnage)
         self.cargo -= int(armor.hull_amount * self.tonnage)
         self.armor_total += armor.protection
+        self.armour.append(armor)
 

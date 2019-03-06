@@ -103,7 +103,7 @@ class Window(QWidget):
         self.num_armor = 0
 
         self.armor_combo_box = QComboBox()
-        self.armor_combo_box.addItem("< --- >")
+        self.armor_combo_box.addItem("---")
         for item in get_file_data("hull_armor.json").keys():
             self.armor_combo_box.addItem(item)
         self.armor_combo_box.activated.connect(self.edit_armor)
@@ -178,7 +178,10 @@ class Window(QWidget):
         armor_type = self.armor_combo_box.currentText()
         self.armor_combo_box.setCurrentIndex(0)
 
-        if armor_type == "< --- >" or self.spacecraft.tonnage == 0:
+        if armor_type == "---":
+            return
+        if self.spacecraft.tonnage == 0:
+            print("Error: Tonnage not set before adding armor.")
             return
 
         armor = Armor(armor_type)
