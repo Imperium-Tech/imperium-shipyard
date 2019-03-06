@@ -250,6 +250,7 @@ class Spacecraft:
         Gets the cargo and cost change when setting a new tonnage for the ship
         :returns: change in cargo and cost
         """
+        print(change_in_tonnage)
         total_cost = 0
         total_cargo = 0
 
@@ -259,7 +260,7 @@ class Spacecraft:
             total_cost += int(change_in_tonnage * cost)
             total_cargo += int(change_in_tonnage * hull_amount)
 
-        return total_cargo, total_cost
+        return total_cost, total_cargo
         
     def add_misc(self, misc):
         """
