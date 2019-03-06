@@ -27,6 +27,7 @@ class Spacecraft:
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
         self.cost_hull          = 0 # cost of the hull alone
         self.cost_total         = 0 # current cost, updated on each edit
+        self.armor_total        = 0 # total armor pointage
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.jdrive             = None   # jdrive object
@@ -412,3 +413,13 @@ class Spacecraft:
             self.bays.remove(weapon)
         else:
             print("Error: baywapon not attached to the ship.")
+
+    def add_armor(self, armor):
+        """
+        Handles adding a piece of armor to the ship, adjusting cost as needed
+        :param armor: armor object to add
+        """
+        self.cost_total += int(armor.cost_by_hull_percentage * self.tonnage)
+        self.cargo -= int(armor.hull_amount * self.tonnage)
+        self.armor_total += armor.protection
+

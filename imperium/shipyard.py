@@ -5,6 +5,7 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 """
 from imperium.models.json_reader import get_file_data
 from imperium.models.spacecraft import Spacecraft
+from imperium.models.armor import Armor
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
@@ -97,16 +98,18 @@ class Window(QWidget):
         ###################################
         ###  START: Armor/Config Grid   ###
         ###################################
-        armor_config_group = QGroupBox("Armor/Config")
-        armor_config_layout = QGridLayout()
+        self.armor_config_group = QGroupBox("Armor/Config")
+        self.armor_config_layout = QGridLayout()
+        self.num_armor = 0
 
-        armor_combo_box = QComboBox()
-        armor_combo_box.addItem("< --- >")
+        self.armor_combo_box = QComboBox()
+        self.armor_combo_box.addItem("< --- >")
         for item in get_file_data("hull_armor.json").keys():
-            armor_combo_box.addItem(item)
-        armor_config_layout.addWidget(armor_combo_box, 0, 0)
+            self.armor_combo_box.addItem(item)
+        self.armor_combo_box.activated.connect(self.edit_armor)
 
-        armor_config_group.setLayout(armor_config_layout)
+        self.armor_config_layout.addWidget(self.armor_combo_box, 0, 0)
+        self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
         ###################################
@@ -114,7 +117,7 @@ class Window(QWidget):
         # Overall layout grid
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
-        layout.addWidget(armor_config_group, 0, 1)
+        layout.addWidget(self.armor_config_group, 0, 1)
         self.setLayout(layout)
 
         # Update to current stats
@@ -131,7 +134,7 @@ class Window(QWidget):
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
-        self.armour_line_edit.setText(str(       self.spacecraft.get_armor_rating() ))
+        self.armour_line_edit.setText(str(       self.spacecraft.armor_total        ))
         self.cost_line_edit.setText(str(         self.spacecraft.cost_total         ))
 
     def edit_tonnage(self):
@@ -167,6 +170,26 @@ class Window(QWidget):
             result = self.spacecraft.add_mdrive(drive_type)
             if result:
                 self.thrust_label.setText(drive_type)
+
+    def edit_armor(self):
+        """
+        Add a new armor piece to the ship, creating a new box in the grid and adjusting values
+        """
+        armor_type = self.armor_combo_box.currentText()
+        self.armor_combo_box.setCurrentIndex(0)
+
+        if armor_type == "< --- >" or self.spacecraft.tonnage == 0:
+            return
+
+        armor = Armor(armor_type)
+        self.spacecraft.add_armor(armor)
+
+        box = QLabel(
+            "{} - Protect: {} | TL: {}".format(armor_type, armor.protection, armor.tl)
+        )
+        self.num_armor += 1
+        self.armor_config_layout.addWidget(box, self.num_armor, 0)
+        self.update_stats()
 
 
 if __name__ == '__main__':
