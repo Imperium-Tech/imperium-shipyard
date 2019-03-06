@@ -100,6 +100,8 @@ class Spacecraft:
         Sets the max fuel of an existing Spacecraft
         :param new_fuel: The fuel to update to
         """
+        if self.fuel_max != 0:
+            self.cargo = self.cargo + self.fuel_max
         self.cargo = self.cargo - new_fuel
         self.fuel_max = new_fuel
 
@@ -122,6 +124,9 @@ class Spacecraft:
             self.jdrive = new_jdrive
             self.cost_total = self.cost_total + new_jdrive.cost
             self.cargo = self.cargo - new_jdrive.tonnage
+            return True
+        else:
+            return False
 
     def add_mdrive(self, drive_type):
         """
@@ -142,6 +147,9 @@ class Spacecraft:
             self.mdrive = new_mdrive
             self.cost_total = self.cost_total + new_mdrive.cost
             self.cargo = self.cargo - new_mdrive.tonnage
+            return True
+        else:
+            return False
         
     def performance_by_volume(self, drive, drive_letter):
         """

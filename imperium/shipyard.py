@@ -42,7 +42,6 @@ class Window(QWidget):
             new_label = QLabel(label)
             new_line_edit = QLineEdit()
             new_line_edit.setFixedWidth(50)
-            # new_line_edit.setValidator(QIntValidator(new_line_edit))
 
             if signal_function is not None:
                 new_line_edit.editingFinished.connect(signal_function)
@@ -69,9 +68,13 @@ class Window(QWidget):
 
         # Jump
         self.jump_line_edit = add_stat_to_layout("Jump:", 3, signal_function=self.edit_jdrive)
+        self.jump_label = QLabel("-")
+        base_stats_layout.addWidget(self.jump_label, 3, 1)
 
         # Thrust
         self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, signal_function=self.edit_mdrive)
+        self.thrust_label = QLabel("-")
+        base_stats_layout.addWidget(self.thrust_label, 4, 1)
 
         # Hull HP
         self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, signal_function=self.edit_tonnage, read_only=True)
@@ -133,9 +136,9 @@ class Window(QWidget):
         """
         drive_type = self.jump_line_edit.text()
         if drive_type.isalpha() and len(drive_type) == 1:
-            self.spacecraft.add_jdrive(drive_type)
-        else:
-            print("Error: Incompatible drive type. Drive types are A-Z")
+            result = self.spacecraft.add_jdrive(drive_type)
+            if result:
+                self.jump_label.setText(drive_type)
 
     def edit_mdrive(self):
         """
@@ -143,9 +146,9 @@ class Window(QWidget):
         """
         drive_type = self.thrust_line_edit.text()
         if drive_type.isalpha() and len(drive_type) == 1:
-            self.spacecraft.add_mdrive(drive_type)
-        else:
-            print("Error: Incompatible drive type. Drive types are A-Z")
+            result = self.spacecraft.add_mdrive(drive_type)
+            if result:
+                self.thrust_label.setText(drive_type)
 
 
 if __name__ == '__main__':
