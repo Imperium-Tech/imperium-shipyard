@@ -3,7 +3,7 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
-import imperium.data_generators as dg
+from imperium.models.json_reader import get_file_data
 from imperium.models.spacecraft import Spacecraft
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
@@ -87,16 +87,34 @@ class Window(QWidget):
 
         # Cost
         self.cost_line_edit = add_stat_to_layout("Cost:", 8, read_only=True)
-        
+
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
         ###################################
         ###  END: Base Stats Grid       ###
         ###################################
 
+        ###################################
+        ###  START: Armor/Config Grid   ###
+        ###################################
+        armor_config_group = QGroupBox("Armor/Config")
+        armor_config_layout = QGridLayout()
+
+        armor_combo_box = QComboBox()
+        armor_combo_box.addItem("< --- >")
+        for item in get_file_data("hull_armor.json").keys():
+            armor_combo_box.addItem(item)
+        armor_config_layout.addWidget(armor_combo_box, 0, 0)
+
+        armor_config_group.setLayout(armor_config_layout)
+        ###################################
+        ###  END: Armor/Config Grid     ###
+        ###################################
+
         # Overall layout grid
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
+        layout.addWidget(armor_config_group, 0, 1)
         self.setLayout(layout)
 
         # Update to current stats
