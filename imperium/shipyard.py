@@ -66,6 +66,7 @@ class Window(QWidget):
 
         # Fuels
         self.fuel_line_edit = add_stat_to_layout("Fuel:", 2, signal_function=self.edit_fuel, force_int=True)
+        self.fuel_line_edit.validator().setBottom(0)
 
         # Jump
         self.jump_line_edit = add_stat_to_layout("Jump:", 3, signal_function=self.edit_jdrive)
@@ -100,6 +101,7 @@ class Window(QWidget):
         ###################################
         self.armor_config_group = QGroupBox("Armor/Config")
         self.armor_config_layout = QGridLayout()
+        self.armor_config_layout.setAlignment(Qt.AlignTop)
         self.num_armor = 0
 
         self.armor_combo_box = QComboBox()

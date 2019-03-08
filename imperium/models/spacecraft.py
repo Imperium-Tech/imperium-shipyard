@@ -113,6 +113,10 @@ class Spacecraft:
         Adds a jump drive to the spaceship
         :param drive_type: The drive designation letter
         """
+        if self.tonnage == 0:
+            print("Error: Tonnage not set before adding drive.")
+            return
+
         # create new jdrive object
         new_jdrive = JDrive(drive_type)
 
@@ -136,6 +140,10 @@ class Spacecraft:
         Adds a maneuver drive to the spaceship
         :param drive_type: The drive designation letter
         """
+        if self.tonnage == 0:
+            print("Error: Tonnage not set before adding drive.")
+            return
+
         # create new mdrive object
         new_mdrive = MDrive(drive_type)
 
