@@ -41,3 +41,24 @@ def test_add():
     assert ship.cargo == 190
     assert ship.armor_total == 2
     assert ship.cost_total == 18
+
+
+def test_remove():
+    ship = Spacecraft(200)
+
+    armor = Armor("Titanium Steel")
+    assert armor.tl == 7
+    assert armor.protection == 2
+    assert armor.hull_amount == 0.05
+    assert armor.cost_by_hull_percentage == 0.05
+
+    ship.add_armor(armor)
+    assert ship.cargo == 190
+    assert ship.armor_total == 2
+    assert ship.cost_total == 18
+
+    ship.remove_armor(armor)
+    assert ship.cargo == 200
+    assert ship.armor_total == 0
+    assert ship.cost_total == 8
+
