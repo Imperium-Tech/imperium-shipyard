@@ -44,6 +44,9 @@ def test_add():
 
 
 def test_remove():
+    """
+    Tests removing a piece of armor from the ship
+    """
     ship = Spacecraft(200)
 
     armor = Armor("Titanium Steel")
