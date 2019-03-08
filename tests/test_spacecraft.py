@@ -22,6 +22,10 @@ def test_spacecraft_init():
     assert spacecraft.structure_hp == 1000 // 50
     assert spacecraft.cost_hull == 100
     assert spacecraft.cost_total == 100
+    assert spacecraft.fuel_max == 0
+    assert spacecraft.armour_total == 0
+    assert spacecraft.hull_type == "Standard"
+    assert spacecraft.hull_designation == "B"
 
 
 def test_turret_functionality():
@@ -116,4 +120,16 @@ def test_config_functionality():
     assert ship.cost_hull == 2.0
     assert ship.base_cost_hull == 2.0
     assert ship.hull_type == "Standard"
+
+
+def test_fuel_add():
+    ship = Spacecraft(100)
+    assert ship.tonnage == 100
+    assert ship.cargo == 100
+    assert ship.fuel_max == 0
+
+    ship.set_fuel(50)
+    assert ship.tonnage == 100
+    assert ship.cargo == 50
+    assert ship.fuel_max == 50
 

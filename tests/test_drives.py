@@ -69,3 +69,20 @@ def test_changing():
     assert ship.cargo == 85
     assert ship.cost_total == 22
     assert ship.jdrive.drive_type == "B"
+
+
+def test_empty_ship():
+    ship = Spacecraft(0)
+    assert ship.tonnage == 0
+    assert ship.cargo == 0
+    assert ship.jdrive is None
+
+    ship.add_jdrive("A")
+    assert ship.tonnage == 0
+    assert ship.cargo == 0
+    assert ship.jdrive is None
+
+    ship.add_mdrive("A")
+    assert ship.tonnage == 0
+    assert ship.cargo == 0
+    assert ship.mdrive is None
