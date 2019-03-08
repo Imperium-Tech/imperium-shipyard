@@ -6,7 +6,7 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 from imperium.models.config import Config
 from imperium.models.json_reader import get_file_data
 from imperium.models.spacecraft import Spacecraft
-from imperium.models.armor import Armor
+from imperium.models.armour import Armour
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,

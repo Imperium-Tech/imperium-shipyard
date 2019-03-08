@@ -6,7 +6,7 @@ Unit tests for classes in shipyard.models.spacecraft
 import pytest
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.turrets import Turret
-from imperium.models.armor import Armor
+from imperium.models.armour import Armour
 
 
 def test_spacecraft_init():
@@ -55,7 +55,7 @@ def test_set_tonnage():
     assert ship.tonnage == 100
     assert ship.structure_hp == 2
     assert ship.hull_hp == 2
-    assert ship.armor_total == 0
+    assert ship.armour_total == 0
 
     ship.set_tonnage(200)
     assert ship.cargo == 200
@@ -63,21 +63,21 @@ def test_set_tonnage():
     assert ship.tonnage == 200
     assert ship.structure_hp == 4
     assert ship.hull_hp == 4
-    assert ship.armor_total == 0
+    assert ship.armour_total == 0
 
-    armor = Armor("Titanium Steel")
-    ship.add_armor(armor)
+    armour = Armour("Titanium Steel")
+    ship.add_armour(armour)
     assert ship.cargo == 190
     assert ship.cost_total == 18
     assert ship.tonnage == 200
     assert ship.structure_hp == 4
     assert ship.hull_hp == 4
-    assert ship.armor_total == 2
+    assert ship.armour_total == 2
 
     ship.set_tonnage(100)
     assert ship.cargo == 95
     assert ship.cost_total == 7
     assert ship.tonnage == 100
-    assert ship.armor_total == 2
+    assert ship.armour_total == 2
     assert ship.structure_hp == 2
     assert ship.hull_hp == 2

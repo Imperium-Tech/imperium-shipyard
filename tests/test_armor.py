@@ -4,7 +4,7 @@
 Unit tests for testing functionality of adding a bayweapon to a ship
 """
 import pytest
-from imperium.models.armor import Armor
+from imperium.models.armour import Armor
 from imperium.models.spacecraft import Spacecraft
 
 

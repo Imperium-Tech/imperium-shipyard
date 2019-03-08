@@ -6,7 +6,7 @@ Represents a piece of armor that can be added onto a ship
 from imperium.models.json_reader import get_file_data
 
 
-class Armor:
+class Armour:
     def __init__(self, type):
         data = get_file_data("hull_armor.json").get(type)
 
