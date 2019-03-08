@@ -250,7 +250,6 @@ class Spacecraft:
         Gets the cargo and cost change when setting a new tonnage for the ship
         :returns: change in cargo and cost
         """
-        print(change_in_tonnage)
         total_cost = 0
         total_cargo = 0
 
@@ -416,7 +415,7 @@ class Spacecraft:
             self.cargo += weapon.tonnage
             self.bays.remove(weapon)
         else:
-            print("Error: baywapon not attached to the ship.")
+            print("Error: bayweapon not attached to the ship.")
 
     def add_armor(self, armor):
         """
@@ -428,3 +427,15 @@ class Spacecraft:
         self.armor_total += armor.protection
         self.armour.append(armor)
 
+    def remove_armor(self, armour):
+        """
+        Handles removing a piece of armor from the ship
+        :param armor: full armor string to be parse
+        """
+        if armour in self.armour:
+            self.armour.remove(armour)
+            self.armor_total -= armour.protection
+            self.cost_total -= int(armour.cost_by_hull_percentage * self.tonnage)
+            self.cargo += int(armour.hull_amount * self.tonnage)
+        else:
+            print("Error: armor piece not attached to the ship.")
