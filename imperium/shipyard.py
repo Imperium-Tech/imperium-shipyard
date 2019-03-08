@@ -221,8 +221,7 @@ class Window(QWidget):
     def remove_armor(self, armor):
         """
         Handles removing a piece of armor from the ship, as well as updating GUI to reflect changes
-        :param armor:
-        :return:
+        :param armor: armour object to remove
         """
         self.spacecraft.remove_armour(armor)
         self.occupied_rows -= 1

@@ -9,6 +9,9 @@ from imperium.models.spacecraft import Spacecraft
 
 
 def test_init():
+    """
+    Tests initializing all types of armour
+    """
     armour = Armour("Titanium Steel")
     assert armour.tl == 7
     assert armour.protection == 2
@@ -29,6 +32,9 @@ def test_init():
 
 
 def test_add():
+    """
+    Tests adding a piece of armour to a ship
+    """
     ship = Spacecraft(200)
 
     armour = Armour("Titanium Steel")
@@ -67,6 +73,10 @@ def test_remove():
 
 
 def test_swap():
+    """
+    Tests swapping the tonnage on the ship and making sure the ship's values
+    translate accordingly
+    """
     ship = Spacecraft(200)
 
     armour = Armour("Titanium Steel")
