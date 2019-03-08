@@ -203,7 +203,7 @@ class Window(QWidget):
             print("Error: Tonnage not set before adding armor.")
             return
 
-        armor = Armor(armor_type)
+        armor = Armour(armor_type)
         self.spacecraft.add_armour(armor)
 
         # Button to handle removing the piece of armor

@@ -66,7 +66,7 @@ class Spacecraft:
             item_tonnage = data.get(key).get("tonnage")
             if self.tonnage <= item_tonnage and (item_tonnage - self.tonnage) < 100:
                 self.hull_designation = key
-                self.cost_hull = data.get(key).get("cost")
+                self.cost_hull = self.base_cost_hull = data.get(key).get("cost")
 
         if self.cost_hull == 0:
             # picked an invalid hull size
@@ -74,6 +74,9 @@ class Spacecraft:
         
         # set the total cost to hull cost
         self.cost_total = self.cost_hull
+
+        # set hull type to standard
+        self.hull_type = "Standard"
 
     def set_tonnage(self, new_tonnage):
         """

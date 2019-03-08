@@ -4,6 +4,8 @@ test_spacecraft.py
 Unit tests for classes in shipyard.models.spacecraft
 """
 import pytest
+
+from imperium.models.config import Config
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.turrets import Turret
 from imperium.models.armour import Armour
@@ -81,3 +83,37 @@ def test_set_tonnage():
     assert ship.armour_total == 2
     assert ship.structure_hp == 2
     assert ship.hull_hp == 2
+
+
+def test_config_functionality():
+    """
+    Tests functionality for adding configurations and swapping tonnage values
+    :return:
+    """
+    ship = Spacecraft(100)
+    assert ship.cargo == 100
+    assert ship.cost_total == 2.0
+    assert ship.tonnage == 100
+    assert ship.cost_hull == 2.0
+    assert ship.base_cost_hull == 2.0
+    assert ship.hull_type == "Standard"
+
+    config = Config("Streamlined")
+    ship.edit_hull_config(config)
+    assert ship.cargo == 100
+    assert ship.cost_total == 2.2
+    assert ship.tonnage == 100
+    assert ship.cost_hull == 2.2
+    assert ship.base_cost_hull == 2.0
+    assert ship.hull_type == "Streamlined"
+
+    config = Config("Standard")
+    ship.edit_hull_config(config)
+    ship.set_tonnage(100)
+    assert ship.cargo == 100
+    assert ship.cost_total == 2.0
+    assert ship.tonnage == 100
+    assert ship.cost_hull == 2.0
+    assert ship.base_cost_hull == 2.0
+    assert ship.hull_type == "Standard"
+
