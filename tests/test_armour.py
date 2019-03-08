@@ -71,6 +71,12 @@ def test_remove():
     assert ship.armour_total == 0
     assert ship.cost_total == 8
 
+    # testing for removing a non-attached armour piece
+    ship.remove_armour(armour)
+    assert ship.cargo == 200
+    assert ship.armour_total == 0
+    assert ship.cost_total == 8
+
 
 def test_swap():
     """

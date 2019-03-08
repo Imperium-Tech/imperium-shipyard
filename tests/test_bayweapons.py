@@ -35,3 +35,8 @@ def test_add_remove():
     ship.remove_bayweapon(wep)
     assert ship.cost_total == 2
     assert ship.cargo == 100
+
+    # error checking for removing a non-existant bayweapon
+    ship.remove_bayweapon(wep)
+    assert ship.cost_total == 2
+    assert ship.cargo == 100

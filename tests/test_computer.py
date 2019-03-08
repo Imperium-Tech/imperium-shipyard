@@ -29,3 +29,16 @@ def test_adding():
     ship.add_computer(computer)
     assert ship.cost_total == 4.0
 
+
+def test_swapping():
+    # Test swapping between computer models
+    ship = Spacecraft(100)
+    assert ship.cost_total == 2.0
+
+    computer = Computer("model_3")
+    ship.add_computer(computer)
+    assert ship.cost_total == 4.0
+
+    new = Computer("model_4")
+    ship.add_computer(new)
+    assert ship.cost_total == 7.0
