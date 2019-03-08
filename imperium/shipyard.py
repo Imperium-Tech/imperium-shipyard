@@ -9,7 +9,7 @@ from imperium.models.armor import Armor
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
-QLabel, QLineEdit, QWidget)
+QLabel, QLineEdit, QWidget, QPushButton)
 
 
 class Window(QWidget):
@@ -114,6 +114,10 @@ class Window(QWidget):
         ###  END: Armor/Config Grid     ###
         ###################################
 
+        # Setting appropriate column widths
+        base_stats_group.setFixedWidth(150)
+        self.armor_config_group.setFixedWidth(225)
+
         # Overall layout grid
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
@@ -173,11 +177,12 @@ class Window(QWidget):
 
     def edit_armor(self):
         """
-        Add a new armor piece to the ship, creating a new box in the grid and adjusting values
+        Add a new armor piece to the ship, creating a new button in the grid and adjusting values
         """
         armor_type = self.armor_combo_box.currentText()
         self.armor_combo_box.setCurrentIndex(0)
 
+        # Error checking for invalid ship states
         if armor_type == "---":
             return
         if self.spacecraft.tonnage == 0:
@@ -187,11 +192,26 @@ class Window(QWidget):
         armor = Armor(armor_type)
         self.spacecraft.add_armor(armor)
 
-        box = QLabel(
-            "{} - Protect: {} | TL: {}".format(armor_type, armor.protection, armor.tl)
-        )
+        # Button to handle removing the piece of armor
+        button = QPushButton()
+        button.setCheckable(True)
+        button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
+        button.clicked.connect(lambda: self.remove_armor(armor))
+        button.clicked.connect(button.deleteLater)
+
+        # Adjusting values and adding widget
         self.num_armor += 1
-        self.armor_config_layout.addWidget(box, self.num_armor, 0)
+        self.armor_config_layout.addWidget(button, self.num_armor, 0)
+        self.update_stats()
+
+    def remove_armor(self, armor):
+        """
+        Handles removing a piece of armor from the ship, as well as updating GUI to reflect changes
+        :param armor:
+        :return:
+        """
+        self.spacecraft.remove_armor(armor)
+        self.num_armor -= 1
         self.update_stats()
 
 
