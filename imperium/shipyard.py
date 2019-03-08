@@ -3,6 +3,7 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
+from imperium.models.config import Config
 from imperium.models.json_reader import get_file_data
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armor import Armor
@@ -88,7 +89,7 @@ class Window(QWidget):
         self.armour_line_edit = add_stat_to_layout("Armour:", 7, read_only=True)
 
         # Cost
-        self.cost_line_edit = add_stat_to_layout("Cost:", 8, read_only=True)
+        self.cost_line_edit = add_stat_to_layout("Cost (MCr.):", 8, read_only=True)
 
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
@@ -102,15 +103,25 @@ class Window(QWidget):
         self.armor_config_group = QGroupBox("Armor/Config")
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
-        self.num_armor = 0
 
+        # Configuration armor for the hull of the ship
+        self.armor_config_layout.addWidget(QLabel("Hull Config: "), 0, 0)
+        self.hull_config_box = QComboBox()
+        for item in get_file_data("hull_config.json").keys():
+            self.hull_config_box.addItem(item)
+        self.hull_config_box.activated.connect(self.edit_hull_config)
+        self.armor_config_layout.addWidget(self.hull_config_box, 1, 0)
+
+        # Drop down list of the available armor to add
+        self.armor_config_layout.addWidget(QLabel("Armour: "), 2, 0)
         self.armor_combo_box = QComboBox()
         self.armor_combo_box.addItem("---")
         for item in get_file_data("hull_armor.json").keys():
             self.armor_combo_box.addItem(item)
         self.armor_combo_box.activated.connect(self.edit_armor)
 
-        self.armor_config_layout.addWidget(self.armor_combo_box, 0, 0)
+        self.occupied_rows = 3
+        self.armor_config_layout.addWidget(self.armor_combo_box, self.occupied_rows, 0)
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
@@ -140,14 +151,15 @@ class Window(QWidget):
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
-        self.armour_line_edit.setText(str(       self.spacecraft.armor_total        ))
-        self.cost_line_edit.setText(str(         self.spacecraft.cost_total         ))
+        self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
+        self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.cost_total))
 
     def edit_tonnage(self):
         """
         Update the spacecraft tonnage
         """
         new_tonnage = int(self.tonnage_line_edit.text())
+        self.reset_hull_config()
         self.spacecraft.set_tonnage(new_tonnage)
 
     def edit_fuel(self):
@@ -192,7 +204,7 @@ class Window(QWidget):
             return
 
         armor = Armor(armor_type)
-        self.spacecraft.add_armor(armor)
+        self.spacecraft.add_armour(armor)
 
         # Button to handle removing the piece of armor
         button = QPushButton()
@@ -202,8 +214,8 @@ class Window(QWidget):
         button.clicked.connect(button.deleteLater)
 
         # Adjusting values and adding widget
-        self.num_armor += 1
-        self.armor_config_layout.addWidget(button, self.num_armor, 0)
+        self.occupied_rows += 1
+        self.armor_config_layout.addWidget(button, self.occupied_rows, 0)
         self.update_stats()
 
     def remove_armor(self, armor):
@@ -212,8 +224,27 @@ class Window(QWidget):
         :param armor:
         :return:
         """
-        self.spacecraft.remove_armor(armor)
-        self.num_armor -= 1
+        self.spacecraft.remove_armour(armor)
+        self.occupied_rows -= 1
+        self.update_stats()
+
+    def edit_hull_config(self):
+        """
+        Handles editing the hull config with a new one, adjusting the GUI and values
+        """
+        text = self.hull_config_box.currentText()
+        config = Config(text)
+        self.spacecraft.edit_hull_config(config)
+        self.update_stats()
+
+    def reset_hull_config(self):
+        """
+        Handles resetting hull configuration to standard.
+        Used before setting a new tonnage for correct value parsing
+        """
+        self.hull_config_box.setCurrentIndex(0)
+        config = Config("Standard")
+        self.spacecraft.edit_hull_config(config)
         self.update_stats()
 
 

@@ -26,14 +26,15 @@ class Spacecraft:
         self.fuel_jump          = 0 # amount of fuel required for a jump
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
         self.cost_hull          = 0 # cost of the hull alone
+        self.base_cost_hull     = 0 # cost of the base hull without configurations
         self.cost_total         = 0 # current cost, updated on each edit
-        self.armor_total        = 0 # total armor pointage
+        self.armour_total        = 0 # total armour pointage
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
-        self.armour             = list() # list of armor objects
+        self.armour             = list() # list of armour objects
         self.sensors            = None   # sensor object
         self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
@@ -86,10 +87,10 @@ class Spacecraft:
                 self.cost_total -= item.get("cost")
             if item.get('tonnage') == int(new_tonnage):
                 new_cost = item.get("cost")
+                self.base_cost_hull = self.cost_hull = new_cost
 
         # update cargo, tonnage, cost
-        cost_change, cargo_change = self.get_armor_cost(new_tonnage - self.tonnage)
-
+        cost_change, cargo_change = self.get_armour_cost(new_tonnage - self.tonnage)
         self.cargo = self.cargo + (new_tonnage - self.tonnage) - cargo_change
         self.tonnage = new_tonnage
         self.cost_total += new_cost + cost_change
@@ -253,7 +254,7 @@ class Spacecraft:
 
         self.cost_total += 0.5 * round(self.tonnage // 100)
 
-    def get_armor_cost(self, change_in_tonnage):
+    def get_armour_cost(self, change_in_tonnage):
         """
         Gets the cargo and cost change when setting a new tonnage for the ship
         :returns: change in cargo and cost
@@ -425,25 +426,39 @@ class Spacecraft:
         else:
             print("Error: bayweapon not attached to the ship.")
 
-    def add_armor(self, armor):
+    def add_armour(self, armour):
         """
-        Handles adding a piece of armor to the ship, adjusting cost as needed
-        :param armor: armor object to add
+        Handles adding a piece of armour to the ship, adjusting cost as needed
+        :param armour: armour object to add
         """
-        self.cost_total += int(armor.cost_by_hull_percentage * self.tonnage)
-        self.cargo -= int(armor.hull_amount * self.tonnage)
-        self.armor_total += armor.protection
-        self.armour.append(armor)
+        self.cost_total += int(armour.cost_by_hull_percentage * self.tonnage)
+        self.cargo -= int(armour.hull_amount * self.tonnage)
+        self.armour_total += armour.protection
+        self.armour.append(armour)
 
-    def remove_armor(self, armour):
+    def remove_armour(self, armour):
         """
-        Handles removing a piece of armor from the ship
-        :param armor: full armor string to be parse
+        Handles removing a piece of armour from the ship
+        :param armour: full armour string to be parse
         """
         if armour in self.armour:
             self.armour.remove(armour)
-            self.armor_total -= armour.protection
+            self.armour_total -= armour.protection
             self.cost_total -= int(armour.cost_by_hull_percentage * self.tonnage)
             self.cargo += int(armour.hull_amount * self.tonnage)
         else:
-            print("Error: armor piece not attached to the ship.")
+            print("Error: armour piece not attached to the ship.")
+
+    def edit_hull_config(self, config):
+        """
+        Handles calculating the new hull cost with a new configuration, adjusting values as needed
+        :param config: config object to use
+        """
+        new_hull_cost = config.mod_hull_cost * self.base_cost_hull
+
+        # Replace hull cost
+        self.cost_total -= self.cost_hull
+        self.cost_total += new_hull_cost
+        self.cost_hull = new_hull_cost
+        self.hull_type = config.type
+
