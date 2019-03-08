@@ -65,3 +65,28 @@ def test_remove():
     assert ship.armour_total == 0
     assert ship.cost_total == 8
 
+
+def test_swap():
+    ship = Spacecraft(200)
+
+    armour = Armour("Titanium Steel")
+    assert armour.tl == 7
+    assert armour.protection == 2
+    assert armour.hull_amount == 0.05
+    assert armour.cost_by_hull_percentage == 0.05
+
+    ship.add_armour(armour)
+    assert ship.cargo == 190
+    assert ship.armour_total == 2
+    assert ship.cost_total == 18
+
+    ship.set_tonnage(100)
+    assert ship.cargo == 95
+    assert ship.armour_total == 2
+    assert ship.cost_total == 7
+
+    ship.remove_armour(armour)
+    assert ship.cargo == 100
+    assert ship.armour_total == 0
+    assert ship.cost_total == 2
+
