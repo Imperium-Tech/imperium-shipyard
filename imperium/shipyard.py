@@ -104,7 +104,7 @@ class Window(QWidget):
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
-        # Configuration armor for the hull of the ship
+        # Configuration for the hull of the ship
         self.armor_config_layout.addWidget(QLabel("Hull Config: "), 0, 0)
         self.hull_config_box = QComboBox()
         for item in get_file_data("hull_config.json").keys():
@@ -128,8 +128,8 @@ class Window(QWidget):
         ###################################
 
         # Setting appropriate column widths
-        base_stats_group.setFixedWidth(150)
-        self.armor_config_group.setFixedWidth(225)
+        base_stats_group.setFixedWidth(175)
+        self.armor_config_group.setFixedWidth(275)
 
         # Overall layout grid
         layout = QGridLayout()
@@ -174,7 +174,7 @@ class Window(QWidget):
         Update the spacecraft jump drive
         """
         drive_type = self.jump_line_edit.text()
-        if drive_type.isalpha() and len(drive_type) == 1:
+        if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
             result = self.spacecraft.add_jdrive(drive_type)
             if result:
                 self.jump_label.setText(drive_type)
