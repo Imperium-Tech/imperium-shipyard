@@ -14,8 +14,9 @@ class Spacecraft:
     The Spacecraft, primary class for organizing spaceship data
 
     :param hull_tonnage: the size of the hull, in tons
+    :param logger: error logger widget for GUI purposes. Expects a PyQT QLabel
     """
-    def __init__(self, hull_tonnage):
+    def __init__(self, hull_tonnage, logger=None):
         self.tonnage            = 0 # total tonnage of ship
         self.hull_hp            = 0 # calculated as 1 per 50 tonnage
         self.structure_hp       = 0 # calculated as 1 per 50 tonnage
@@ -27,10 +28,10 @@ class Spacecraft:
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
         self.cost_hull          = 0 # cost of the hull alone
         self.base_cost_hull     = 0 # cost of the base hull without configurations
-        self.cost_total         = 0 # current cost, updated on each edit
-        self.armour_total        = 0 # total armour pointage
+        self.cost_total         = 0 # current cost, updated on ech edit
+        self.armour_total       = 0 # total armour pointage
         self.hull_designation   = None   # A, B, C, etc.
-        self.hull_type          = None   # steamlined, distributed, standard, etc.
+        self.hull_type          = None   # streamlined, distributed, standard, etc.
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
@@ -44,6 +45,7 @@ class Spacecraft:
         self.drones             = list() # list of drone objects
         self.vehicles           = list() # list of vehicle objects
         self.additional_mods    = list() # list of strings describing misc features
+        self.logger             = logger # error logger for the GUI
 
         # set the tonnage to that given at init
         if hull_tonnage > 2000:
@@ -118,8 +120,7 @@ class Spacecraft:
         :param drive_type: The drive designation letter
         """
         if self.tonnage == 0:
-            print("Error: Tonnage not set before adding drive.")
-            return
+            return self.logger.setText("Error: Tonnage not set before adding drive.")
 
         # create new jdrive object
         new_jdrive = JDrive(drive_type)
@@ -145,8 +146,7 @@ class Spacecraft:
         :param drive_type: The drive designation letter
         """
         if self.tonnage == 0:
-            print("Error: Tonnage not set before adding drive.")
-            return
+            return self.logger.setText("Error: Tonnage not set before adding drive.")
 
         # create new mdrive object
         new_mdrive = MDrive(drive_type)
@@ -183,15 +183,15 @@ class Spacecraft:
 
         # Error checking to see if drive type is incompatible with the hull size
         if index >= len(performance_list):
-            print("Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_letter, self.tonnage))
-            return None
+            return self.logger.setText("Error: non-compatible drive to tonnage value - Drive {} to {}".format(
+                drive_letter, self.tonnage))
 
         value = performance_list[int(index)]
 
         # Error checking if the drive type is non-compatible with the hull size
         if value == 0:
-            print("Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_letter, self.tonnage))
-            return None
+            return self.logger.setText("Error: non-compatible drive to tonnage value - Drive {} to {}".format(
+                drive_letter, self.tonnage))
 
         if drive == "mdrive":
             self.thrust = value
@@ -288,7 +288,7 @@ class Spacecraft:
             if self.get_staterooms() > 0:
                 tonnage = misc.tonnage * self.get_staterooms()
             else:
-                print("Error: no staterooms exist on this ship - escape pods cannot be added.")
+                return self.logger.setText("Error: no staterooms exist on this ship - escape pods cannot be added.")
 
         self.cargo -= tonnage
 
@@ -351,8 +351,7 @@ class Spacecraft:
         """
         for s in self.screens:
             if s.name == screen.name:
-                print("Error: screen module already installed on ship.")
-                return
+                return self.logger.setText("Error: screen module already installed on ship.")
 
         self.screens.append(screen)
         self.cost_total += screen.cost
@@ -396,7 +395,7 @@ class Spacecraft:
 
         # Checking whether the new software exceeds the max computer rating
         if combined_rating > self.computer.rating:
-            print("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
+            self.logger.setText("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
                 combined_rating, self.computer.rating
             ))
             return
@@ -427,7 +426,7 @@ class Spacecraft:
             self.cargo += weapon.tonnage
             self.bays.remove(weapon)
         else:
-            print("Error: bayweapon not attached to the ship.")
+            self.logger.setText("Error: bayweapon not attached to the ship.")
 
     def add_armour(self, armour):
         """
@@ -450,7 +449,7 @@ class Spacecraft:
             self.cost_total -= int(armour.cost_by_hull_percentage * self.tonnage)
             self.cargo += int(armour.hull_amount * self.tonnage)
         else:
-            print("Error: armour piece not attached to the ship.")
+            self.logger.setText("Error: armour piece not attached to the ship.")
 
     def edit_hull_config(self, config):
         """
