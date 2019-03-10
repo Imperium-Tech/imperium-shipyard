@@ -154,11 +154,19 @@ class Window(QWidget):
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
         self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.cost_total))
 
+        # Set the cargo text to red when cargo going negative
+        if self.spacecraft.cargo < 0:
+            self.cargo_line_edit.setStyleSheet("color: red")
+        else:
+            self.cargo_line_edit.setStyleSheet("color: black")
+
     def edit_tonnage(self):
         """
         Update the spacecraft tonnage
         """
         new_tonnage = int(self.tonnage_line_edit.text())
+        if new_tonnage > 2000:
+            new_tonnage = 2000
         self.reset_hull_config()
         self.spacecraft.set_tonnage(new_tonnage)
 
@@ -173,7 +181,7 @@ class Window(QWidget):
         """
         Update the spacecraft jump drive
         """
-        drive_type = self.jump_line_edit.text()
+        drive_type = self.jump_line_edit.text().upper()
         if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
             result = self.spacecraft.add_jdrive(drive_type)
             if result:
@@ -183,8 +191,8 @@ class Window(QWidget):
         """
         Update the spacecraft thrust drive
         """
-        drive_type = self.thrust_line_edit.text()
-        if drive_type.isalpha() and len(drive_type) == 1:
+        drive_type = self.thrust_line_edit.text().upper()
+        if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
             result = self.spacecraft.add_mdrive(drive_type)
             if result:
                 self.thrust_label.setText(drive_type)
