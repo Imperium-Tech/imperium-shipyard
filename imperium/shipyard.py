@@ -18,6 +18,7 @@ class Window(QWidget):
         super(Window, self).__init__()
         # Create a placeholder Spacecraft
         self.spacecraft = Spacecraft(0)
+        self.logger = QLabel("")
 
         # Window Title
         self.setWindowTitle("Imperium Shipyard")
@@ -135,6 +136,7 @@ class Window(QWidget):
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
         layout.addWidget(self.armor_config_group, 0, 1)
+        layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
 
         # Update to current stats
@@ -184,8 +186,10 @@ class Window(QWidget):
         drive_type = self.jump_line_edit.text().upper()
         if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
             result = self.spacecraft.add_jdrive(drive_type)
-            if result:
+            if type(result) is bool:
                 self.jump_label.setText(drive_type)
+            elif type(result) is str:
+                self.logger.setText(result)
 
     def edit_mdrive(self):
         """
@@ -194,8 +198,10 @@ class Window(QWidget):
         drive_type = self.thrust_line_edit.text().upper()
         if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
             result = self.spacecraft.add_mdrive(drive_type)
-            if result:
+            if type(result) is bool:
                 self.thrust_label.setText(drive_type)
+            elif type(result) is str:
+                self.logger.setText(result)
 
     def edit_armor(self):
         """
@@ -208,8 +214,7 @@ class Window(QWidget):
         if armor_type == "---":
             return
         if self.spacecraft.tonnage == 0:
-            print("Error: Tonnage not set before adding armor.")
-            return
+            return self.logger.setText("Error: Tonnage not set before adding armor.")
 
         armor = Armour(armor_type)
         self.spacecraft.add_armour(armor)

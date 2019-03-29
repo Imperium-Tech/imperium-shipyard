@@ -28,7 +28,7 @@ class Spacecraft:
         self.cost_hull          = 0 # cost of the hull alone
         self.base_cost_hull     = 0 # cost of the base hull without configurations
         self.cost_total         = 0 # current cost, updated on each edit
-        self.armour_total        = 0 # total armour pointage
+        self.armour_total       = 0 # total armour pointage
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.jdrive             = None   # jdrive object
@@ -118,8 +118,7 @@ class Spacecraft:
         :param drive_type: The drive designation letter
         """
         if self.tonnage == 0:
-            print("Error: Tonnage not set before adding drive.")
-            return
+            return "Error: Tonnage not set before adding j-drive."
 
         # create new jdrive object
         new_jdrive = JDrive(drive_type)
@@ -137,7 +136,7 @@ class Spacecraft:
             self.cargo = self.cargo - new_jdrive.tonnage
             return True
         else:
-            return False
+            return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_type, self.tonnage)
 
     def add_mdrive(self, drive_type):
         """
@@ -145,8 +144,7 @@ class Spacecraft:
         :param drive_type: The drive designation letter
         """
         if self.tonnage == 0:
-            print("Error: Tonnage not set before adding drive.")
-            return
+            return "Error: Tonnage not set before adding m-drive."
 
         # create new mdrive object
         new_mdrive = MDrive(drive_type)
@@ -164,7 +162,7 @@ class Spacecraft:
             self.cargo = self.cargo - new_mdrive.tonnage
             return True
         else:
-            return False
+            return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_type, self.tonnage)
         
     def performance_by_volume(self, drive, drive_letter):
         """
@@ -183,14 +181,12 @@ class Spacecraft:
 
         # Error checking to see if drive type is incompatible with the hull size
         if index >= len(performance_list):
-            print("Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_letter, self.tonnage))
             return None
 
         value = performance_list[int(index)]
 
         # Error checking if the drive type is non-compatible with the hull size
         if value == 0:
-            print("Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_letter, self.tonnage))
             return None
 
         if drive == "mdrive":
@@ -288,7 +284,7 @@ class Spacecraft:
             if self.get_staterooms() > 0:
                 tonnage = misc.tonnage * self.get_staterooms()
             else:
-                print("Error: no staterooms exist on this ship - escape pods cannot be added.")
+                return "Error: no staterooms exist on this ship - escape pods cannot be added."
 
         self.cargo -= tonnage
 
@@ -351,8 +347,7 @@ class Spacecraft:
         """
         for s in self.screens:
             if s.name == screen.name:
-                print("Error: screen module already installed on ship.")
-                return
+                return "Error: screen module already installed on ship."
 
         self.screens.append(screen)
         self.cost_total += screen.cost
