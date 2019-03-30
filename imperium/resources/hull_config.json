@@ -1,4 +1,11 @@
 {
+    "Standard": {
+        "mod_hull_cost": 1.00,
+        "mod_additional": [
+            "Fuel scoops not included and less efficient on gas giants",
+            "Cannot takeoff on own, must relaunch in atmosphere"
+        ]
+    },
     "Streamlined": {
         "mod_hull_cost": 1.10,
         "mod_additional": [
@@ -11,14 +18,6 @@
         "mod_additional": [
             "Cannot mount fuel acoops",
             "Non-Aerodynamic"
-        ]
-    },
-    "Standard": {
-        "mod_hull_cost": 1.00,
-        "mod_additional": [
-            "Fuel scoops not included",
-            "Fuel scoops less efficient on gas giants",
-            "Cannot takeoff on own, must relaunch in atmosphere"
         ]
     }
 }
