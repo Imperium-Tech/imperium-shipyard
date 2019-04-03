@@ -5,7 +5,8 @@ Unit tests for the Shipyard.py
 """
 import pytest
 from PyQt5.QtWidgets import QApplication
-from PyQt5 import QtTest
+from PyQt5.QtTest import QTest
+from PyQt5.QtCore import Qt
 from imperium.shipyard import Window
 import sys
 
@@ -354,3 +355,41 @@ def test_armor_before_tonnage():
     assert window.cost_line_edit.text() == "0.0"
     assert window.logger.text() == "Error: Tonnage not set before adding armor."
 
+
+def test_remove_armor():
+    # Tests clicking an armor button to remove it
+    app = QApplication(sys.argv)
+
+    window = Window()
+
+    window.tonnage_line_edit.setText("100")
+    window.edit_tonnage()
+    window.update_stats()
+
+    window.armor_combo_box.setCurrentText("Titanium Steel")
+    window.edit_armor()
+
+    assert len(window.spacecraft.armour) == 1
+    assert window.spacecraft.armour_total == 2
+    assert window.spacecraft.cargo == 95
+    assert window.spacecraft.cost_total == 7.0
+    assert window.armour_line_edit.text() == "2"
+    assert window.cargo_line_edit.text() == "95"
+    assert window.cost_line_edit.text() == "7.0"
+
+    widget = window.armor_config_layout.itemAt(4).widget()
+    print(widget)
+    QTest.mouseClick(widget, Qt.LeftButton)
+
+    assert len(window.spacecraft.armour) == 0
+    assert window.spacecraft.armour_total == 0
+    assert window.spacecraft.cargo == 100
+    assert window.spacecraft.cost_total == 2.0
+    assert window.armour_line_edit.text() == "0"
+    assert window.cargo_line_edit.text() == "100"
+    assert window.cost_line_edit.text() == "2.0"
+
+
+"""
+HULL CONFIG TESTS
+"""
