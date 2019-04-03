@@ -289,3 +289,68 @@ def test_mdrive_invalid_type():
     assert window.cost_line_edit.text() == "2.0"
     assert window.logger.text() == "Error: non-compatible drive to tonnage value - Drive Z to 100"
 
+
+"""
+ARMOR TESTS
+"""
+def test_armour_add():
+    # Test adding armour to ship
+    app = QApplication(sys.argv)
+
+    window = Window()
+
+    window.tonnage_line_edit.setText("100")
+    window.edit_tonnage()
+    window.update_stats()
+
+    window.armor_combo_box.setCurrentText("Titanium Steel")
+    window.edit_armor()
+
+    assert len(window.spacecraft.armour) == 1
+    assert window.spacecraft.armour_total == 2
+    assert window.spacecraft.cargo == 95
+    assert window.spacecraft.cost_total == 7.0
+    assert window.armour_line_edit.text() == "2"
+    assert window.cargo_line_edit.text() == "95"
+    assert window.cost_line_edit.text() == "7.0"
+
+
+def test_invalid_armour():
+    # Test adding invalid armour to ship
+    app = QApplication(sys.argv)
+
+    window = Window()
+
+    window.tonnage_line_edit.setText("100")
+    window.edit_tonnage()
+    window.update_stats()
+
+    window.armor_combo_box.setCurrentText("---")
+    window.edit_armor()
+
+    assert len(window.spacecraft.armour) == 0
+    assert window.spacecraft.armour_total == 0
+    assert window.spacecraft.cargo == 100
+    assert window.spacecraft.cost_total == 2.0
+    assert window.armour_line_edit.text() == "0"
+    assert window.cargo_line_edit.text() == "100"
+    assert window.cost_line_edit.text() == "2.0"
+
+
+def test_armor_before_tonnage():
+    # Test adding armour before setting tonnage
+    app = QApplication(sys.argv)
+
+    window = Window()
+    window.armor_combo_box.setCurrentText("Titanium Steel")
+    window.edit_armor()
+
+    assert len(window.spacecraft.armour) == 0
+    assert window.spacecraft.armour_total == 0
+    assert window.spacecraft.cargo == 0
+    assert window.spacecraft.cost_total == 0.0
+    assert window.armour_line_edit.text() == "0"
+    assert window.cargo_line_edit.text() == "0"
+    assert window.cost_line_edit.text() == "0.0"
+    assert window.logger.text() == "Error: Tonnage not set before adding armor."
+
