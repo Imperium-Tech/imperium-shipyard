@@ -393,3 +393,38 @@ def test_remove_armor():
 """
 HULL CONFIG TESTS
 """
+def test_edit_hull_config():
+    # Tests setting the hull config
+    app = QApplication(sys.argv)
+
+    window = Window()
+    window.tonnage_line_edit.setText("100")
+    window.edit_tonnage()
+    window.update_stats()
+
+    window.hull_config_box.setCurrentText("Streamlined")
+    window.edit_hull_config()
+
+    assert window.spacecraft.cost_total == 2.2
+    assert window.cost_line_edit.text() == "2.2"
+
+
+def test_reset_hull_config():
+    # Test resetting the hull config
+    app = QApplication(sys.argv)
+
+    window = Window()
+    window.tonnage_line_edit.setText("100")
+    window.edit_tonnage()
+    window.update_stats()
+
+    window.hull_config_box.setCurrentText("Streamlined")
+    window.edit_hull_config()
+
+    assert window.spacecraft.cost_total == 2.2
+    assert window.cost_line_edit.text() == "2.2"
+
+    window.reset_hull_config()
+    assert window.spacecraft.cost_total == 2.0
+    assert window.cost_line_edit.text() == "2.0"
+
