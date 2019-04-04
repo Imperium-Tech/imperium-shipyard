@@ -11,10 +11,11 @@ from imperium.shipyard import Window
 import sys
 
 
+app = QApplication(sys.argv)
+
+
 def test_init():
     # Test init of the window and its starting values
-    app = QApplication(sys.argv)
-
     window = Window()
     assert window is not None
     assert window.spacecraft.tonnage == 0
@@ -34,8 +35,6 @@ def test_init():
 
 def test_edit_tonnage():
     # Test setting tonnage and checking GUI updates
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("200")
     window.edit_tonnage()
@@ -58,8 +57,6 @@ FUEL TESTS
 """
 def test_edit_fuel():
     # Test setting fuel and GUI updates
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -79,8 +76,6 @@ JDRIVE TESTS
 """
 def test_edit_jdrive_valid():
     # Test valid jdrive edit
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -101,8 +96,6 @@ def test_edit_jdrive_valid():
 
 def test_edit_jdrive_invalid():
     # Test invalid jdrive edit
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -161,8 +154,7 @@ def test_edit_jdrive_invalid():
 
 
 def test_jdrive_invalid_type():
-    app = QApplication(sys.argv)
-
+    # tests invalid jdrive type
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -187,8 +179,6 @@ MDRIVE TESTS
 """
 def test_edit_mdrive_valid():
     # Test valid mdrive edit
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -209,8 +199,6 @@ def test_edit_mdrive_valid():
 
 def test_edit_mdrive_invalid():
     # Test invalid mdrive edits
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -270,8 +258,6 @@ def test_edit_mdrive_invalid():
 
 def test_mdrive_invalid_type():
     # Testing too high mdrive for tonnage
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -296,8 +282,6 @@ ARMOR TESTS
 """
 def test_armour_add():
     # Test adding armour to ship
-    app = QApplication(sys.argv)
-
     window = Window()
 
     window.tonnage_line_edit.setText("100")
@@ -318,8 +302,6 @@ def test_armour_add():
 
 def test_invalid_armour():
     # Test adding invalid armour to ship
-    app = QApplication(sys.argv)
-
     window = Window()
 
     window.tonnage_line_edit.setText("100")
@@ -340,8 +322,6 @@ def test_invalid_armour():
 
 def test_armor_before_tonnage():
     # Test adding armour before setting tonnage
-    app = QApplication(sys.argv)
-
     window = Window()
     window.armor_combo_box.setCurrentText("Titanium Steel")
     window.edit_armor()
@@ -358,8 +338,6 @@ def test_armor_before_tonnage():
 
 def test_remove_armor():
     # Tests clicking an armor button to remove it
-    app = QApplication(sys.argv)
-
     window = Window()
 
     window.tonnage_line_edit.setText("100")
@@ -395,8 +373,6 @@ HULL CONFIG TESTS
 """
 def test_edit_hull_config():
     # Tests setting the hull config
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -411,8 +387,6 @@ def test_edit_hull_config():
 
 def test_reset_hull_config():
     # Test resetting the hull config
-    app = QApplication(sys.argv)
-
     window = Window()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
