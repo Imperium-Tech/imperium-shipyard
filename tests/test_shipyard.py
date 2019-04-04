@@ -31,6 +31,7 @@ def test_init():
     assert window.structure_hp_line_edit.text() == "0"
     assert window.armour_line_edit.text() == "0"
     assert window.cost_line_edit.text() == "0.0"
+    window.close()
 
 
 def test_edit_tonnage():
@@ -50,6 +51,7 @@ def test_edit_tonnage():
     assert window.cost_line_edit.text() == "8.0"
     assert window.hull_hp_line_edit.text() == "4"
     assert window.structure_hp_line_edit.text() == "4"
+    window.close()
 
 
 """
@@ -69,6 +71,7 @@ def test_edit_fuel():
     assert window.spacecraft.cargo == 50
     assert window.fuel_line_edit.text() == "50"
     assert window.cargo_line_edit.text() == "50"
+    window.close()
 
 
 """
@@ -92,6 +95,7 @@ def test_edit_jdrive_valid():
     assert window.cargo_line_edit.text() == "90"
     assert window.jump_label.text() == "A"
     assert window.cost_line_edit.text() == "12.0"
+    window.close()
 
 
 def test_edit_jdrive_invalid():
@@ -151,6 +155,7 @@ def test_edit_jdrive_invalid():
     assert window.cargo_line_edit.text() == "100"
     assert window.jump_label.text() == "-"
     assert window.cost_line_edit.text() == "2.0"
+    window.close()
 
 
 def test_jdrive_invalid_type():
@@ -172,6 +177,7 @@ def test_jdrive_invalid_type():
     assert window.jump_label.text() == "-"
     assert window.cost_line_edit.text() == "2.0"
     assert window.logger.text() == "Error: non-compatible drive to tonnage value - Drive Z to 100"
+    window.close()
 
 
 """
@@ -195,6 +201,7 @@ def test_edit_mdrive_valid():
     assert window.cargo_line_edit.text() == "98"
     assert window.thrust_label.text() == "A"
     assert window.cost_line_edit.text() == "6.0"
+    window.close()
 
 
 def test_edit_mdrive_invalid():
@@ -254,6 +261,7 @@ def test_edit_mdrive_invalid():
     assert window.cargo_line_edit.text() == "100"
     assert window.thrust_label.text() == "-"
     assert window.cost_line_edit.text() == "2.0"
+    window.close()
 
 
 def test_mdrive_invalid_type():
@@ -275,11 +283,12 @@ def test_mdrive_invalid_type():
     assert window.thrust_label.text() == "-"
     assert window.cost_line_edit.text() == "2.0"
     assert window.logger.text() == "Error: non-compatible drive to tonnage value - Drive Z to 100"
+    window.close()
 
 
 """
 ARMOR TESTS
-
+"""
 def test_armour_add():
     # Test adding armour to ship
     window = Window()
@@ -298,6 +307,7 @@ def test_armour_add():
     assert window.armour_line_edit.text() == "2"
     assert window.cargo_line_edit.text() == "95"
     assert window.cost_line_edit.text() == "7.0"
+    window.close()
 
 
 def test_invalid_armour():
@@ -318,6 +328,7 @@ def test_invalid_armour():
     assert window.armour_line_edit.text() == "0"
     assert window.cargo_line_edit.text() == "100"
     assert window.cost_line_edit.text() == "2.0"
+    window.close()
 
 
 def test_armor_before_tonnage():
@@ -334,6 +345,7 @@ def test_armor_before_tonnage():
     assert window.cargo_line_edit.text() == "0"
     assert window.cost_line_edit.text() == "0.0"
     assert window.logger.text() == "Error: Tonnage not set before adding armor."
+    window.close()
 
 
 def test_remove_armor():
@@ -366,11 +378,12 @@ def test_remove_armor():
     assert window.armour_line_edit.text() == "0"
     assert window.cargo_line_edit.text() == "100"
     assert window.cost_line_edit.text() == "2.0"
+    window.close()
 
-"""
+
 """
 HULL CONFIG TESTS
-
+"""
 def test_edit_hull_config():
     # Tests setting the hull config
     window = Window()
@@ -383,6 +396,7 @@ def test_edit_hull_config():
 
     assert window.spacecraft.cost_total == 2.2
     assert window.cost_line_edit.text() == "2.2"
+    window.close()
 
 
 def test_reset_hull_config():
@@ -401,5 +415,5 @@ def test_reset_hull_config():
     window.reset_hull_config()
     assert window.spacecraft.cost_total == 2.0
     assert window.cost_line_edit.text() == "2.0"
-"""
+    window.close()
 
