@@ -17,6 +17,7 @@ app = QApplication(sys.argv)
 def test_init():
     # Test init of the window and its starting values
     window = Window()
+    window.deleteLater()
     assert window is not None
     assert window.spacecraft.tonnage == 0
     assert window.logger.text() == ""
@@ -37,6 +38,7 @@ def test_init():
 def test_edit_tonnage():
     # Test setting tonnage and checking GUI updates
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("200")
     window.edit_tonnage()
     window.update_stats()
@@ -60,6 +62,7 @@ FUEL TESTS
 def test_edit_fuel():
     # Test setting fuel and GUI updates
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -80,6 +83,7 @@ JDRIVE TESTS
 def test_edit_jdrive_valid():
     # Test valid jdrive edit
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -101,6 +105,7 @@ def test_edit_jdrive_valid():
 def test_edit_jdrive_invalid():
     # Test invalid jdrive edit
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -161,6 +166,7 @@ def test_edit_jdrive_invalid():
 def test_jdrive_invalid_type():
     # tests invalid jdrive type
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -186,6 +192,7 @@ MDRIVE TESTS
 def test_edit_mdrive_valid():
     # Test valid mdrive edit
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -207,6 +214,7 @@ def test_edit_mdrive_valid():
 def test_edit_mdrive_invalid():
     # Test invalid mdrive edits
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -267,6 +275,7 @@ def test_edit_mdrive_invalid():
 def test_mdrive_invalid_type():
     # Testing too high mdrive for tonnage
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
 
@@ -292,6 +301,7 @@ ARMOR TESTS
 def test_armour_add():
     # Test adding armour to ship
     window = Window()
+    window.deleteLater()
 
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -313,6 +323,7 @@ def test_armour_add():
 def test_invalid_armour():
     # Test adding invalid armour to ship
     window = Window()
+    window.deleteLater()
 
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -334,6 +345,7 @@ def test_invalid_armour():
 def test_armor_before_tonnage():
     # Test adding armour before setting tonnage
     window = Window()
+    window.deleteLater()
     window.armor_combo_box.setCurrentText("Titanium Steel")
     window.edit_armor()
 
@@ -351,6 +363,7 @@ def test_armor_before_tonnage():
 def test_remove_armor():
     # Tests clicking an armor button to remove it
     window = Window()
+    window.deleteLater()
 
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
@@ -387,6 +400,7 @@ HULL CONFIG TESTS
 def test_edit_hull_config():
     # Tests setting the hull config
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
     window.update_stats()
@@ -402,6 +416,7 @@ def test_edit_hull_config():
 def test_reset_hull_config():
     # Test resetting the hull config
     window = Window()
+    window.deleteLater()
     window.tonnage_line_edit.setText("100")
     window.edit_tonnage()
     window.update_stats()
