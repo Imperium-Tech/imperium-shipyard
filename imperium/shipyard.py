@@ -147,7 +147,7 @@ class Window(QWidget):
         Updates the UI with the current Spacecraft stats
         """
         self.tonnage_line_edit.setText(str(      self.spacecraft.tonnage            ))
-        self.cargo_line_edit.setText(str(        self.spacecraft.cargo              ))
+        self.cargo_line_edit.setText(str(        self.spacecraft.get_remaining_cargo()))
         self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
         self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
@@ -157,7 +157,7 @@ class Window(QWidget):
         self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.get_total_cost()))
 
         # Set the cargo text to red when cargo going negative
-        if self.spacecraft.cargo < 0:
+        if self.spacecraft.get_remaining_cargo() < 0:
             self.cargo_line_edit.setStyleSheet("color: red")
         else:
             self.cargo_line_edit.setStyleSheet("color: black")
@@ -169,7 +169,6 @@ class Window(QWidget):
         new_tonnage = int(self.tonnage_line_edit.text())
         if new_tonnage > 2000:
             new_tonnage = 2000
-        self.reset_hull_config()
         self.spacecraft.set_tonnage(new_tonnage)
 
     def edit_fuel(self):
@@ -246,16 +245,6 @@ class Window(QWidget):
         """
         text = self.hull_config_box.currentText()
         config = Config(text)
-        self.spacecraft.edit_hull_config(config)
-        self.update_stats()
-
-    def reset_hull_config(self):
-        """
-        Handles resetting hull configuration to standard.
-        Used before setting a new tonnage for correct value parsing
-        """
-        self.hull_config_box.setCurrentIndex(0)
-        config = Config("Standard")
         self.spacecraft.edit_hull_config(config)
         self.update_stats()
 

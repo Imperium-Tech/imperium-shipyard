@@ -20,7 +20,6 @@ class Spacecraft:
         self.tonnage            = 0 # total tonnage of ship
         self.hull_hp            = 0 # calculated as 1 per 50 tonnage
         self.structure_hp       = 0 # calculated as 1 per 50 tonnage
-        self.cargo              = 0 # amount of cargo space in tons (total tonnage - fuel - other modules)
         self.jump               = 0 # max number of tiles covered in a single jump
         self.thrust             = 0 # max number of G accelerations available
         self.fuel_max           = 0 # amount of fuel tank
@@ -29,6 +28,7 @@ class Spacecraft:
         self.armour_total       = 0 # total armour pointage
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
+        self.bridge             = False  # whether a bridge is installed
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
@@ -48,9 +48,6 @@ class Spacecraft:
             hull_tonnage = 2000
 
         self.tonnage = hull_tonnage
-
-        # set cargo to maximum possible at first
-        self.cargo = hull_tonnage
 
         # set hp based on tonnage
         self.hull_hp = self.tonnage // 50
@@ -75,19 +72,21 @@ class Spacecraft:
         """
         cost_total = 0
 
-        # Tonnage
-        # TODO - add bridge cost
+        # Tonnage / Bridge
         if self.tonnage != 0:
             ton = get_file_data("hull_data.json")
             cost = ton.get(self.hull_designation).get("cost")
             cost_total += cost * self.hull_type.mod_hull_cost
+        if self.bridge is True:
+            cost_total += self.tonnage * .0005
 
         # Drives
-        # TODO - add PPlant tracking
         if self.jdrive is not None:
             cost_total += self.jdrive.cost
         if self.mdrive is not None:
             cost_total += self.mdrive.cost
+        if self.pplant is not None:
+            cost_total += self.pplant.cost
 
         # Armour
         for armour_item in self.armour:
@@ -98,7 +97,7 @@ class Spacecraft:
         if self.sensors is not None:
             cost_total += self.sensors.cost
 
-        # Turrets and Bayweapons
+        # Turrets / Bayweapons
         for turret in self.turrets:
             cost_total += turret.cost
         for bayweapon in self.bays:
@@ -120,6 +119,51 @@ class Spacecraft:
 
         return cost_total
 
+    def get_remaining_cargo(self):
+        """
+        Calculates the remaining cargo for the ship
+        :return: Remaining cargo number
+        """
+        cargo = self.tonnage
+
+        # Fuel / Bridge
+        if self.bridge is True:
+            cargo -= self.get_bridge_tonnage()
+        cargo -= self.fuel_max
+
+        # Drives / PPlant
+        if self.jdrive is not None:
+            cargo -= self.jdrive.tonnage
+        if self.mdrive is not None:
+            cargo -= self.mdrive.tonnage
+        if self.pplant is not None:
+            cargo -= self.pplant.tonnage
+
+        # Armour
+        for armour_item in self.armour:
+            hull_amount = armour_item.hull_amount
+            cargo -= int(self.tonnage * hull_amount)
+
+        # Sensors
+        if self.sensors is not None:
+            cargo -= self.sensors.tonnage
+
+        # Turrets / Bayweapons / Screens
+        for turret in self.turrets:
+            cargo -= turret.tonnage
+        for bayweapon in self.bays:
+            cargo -= bayweapon.tonnage
+        for screen in self.screens:
+            cargo -= screen.tonnage
+
+        # Drones / Vehicles
+        for drone in self.drones:
+            cargo -= drone.tonnage
+        for vehicle in self.vehicles:
+            cargo -= vehicle.tonnage
+
+        return cargo
+
     def set_tonnage(self, new_tonnage):
         """
         Sets the tonnage of an existing Spacecraft
@@ -131,9 +175,6 @@ class Spacecraft:
             if item.get('tonnage') == int(new_tonnage):
                 self.hull_designation = key
 
-        # update cargo, tonnage, cost
-        cargo_change = self.get_armour_cost(new_tonnage - self.tonnage)
-        self.cargo = self.cargo + (new_tonnage - self.tonnage) - cargo_change
         self.tonnage = new_tonnage
 
         # set hp based on tonnage
@@ -145,9 +186,6 @@ class Spacecraft:
         Sets the max fuel of an existing Spacecraft
         :param new_fuel: The fuel to update to
         """
-        if self.fuel_max != 0:
-            self.cargo = self.cargo + self.fuel_max
-        self.cargo = self.cargo - new_fuel
         self.fuel_max = new_fuel
 
     def add_jdrive(self, drive_type):
@@ -163,13 +201,7 @@ class Spacecraft:
 
         # Error checking to see if new drive type is incompatible
         if self.performance_by_volume("jdrive", drive_type) is not None:
-            # if drive already in place, replace stats
-            if self.jdrive is not None:
-                self.cargo = self.cargo + self.jdrive.tonnage
-
-            # assign object to ship, update cost & tonnage
             self.jdrive = new_jdrive
-            self.cargo = self.cargo - new_jdrive.tonnage
             return True
         else:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_type, self.tonnage)
@@ -187,13 +219,7 @@ class Spacecraft:
 
         # Error checking to see if new drive type is incompatible
         if self.performance_by_volume("mdrive", drive_type) is not None:
-            # if drive already in place, replace stats
-            if self.mdrive is not None:
-                self.cargo = self.cargo + self.mdrive.tonnage
-
-            # assign object to ship, update cost & tonnage
             self.mdrive = new_mdrive
-            self.cargo = self.cargo - new_mdrive.tonnage
             return True
         else:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_type, self.tonnage)
@@ -233,18 +259,14 @@ class Spacecraft:
     def add_pplant(self, plant_type):
         """
         Adds a power plant to the spaceship
+        # Todo - add error checking with m/j-drive
         :param plant_type: The plant designation letter
         """
         # create new pplant object
         new_pplant = PPlant(plant_type)
 
-        # if plant already in place, replace stats
-        if self.pplant is not None:
-            self.cargo = self.cargo + self.pplant.tonnage
-
         # assign object to ship, update cost & tonnage
         self.pplant = new_pplant
-        self.cargo = self.cargo - new_pplant.tonnage
         self.fuel_two_weeks = new_pplant.fuel_two_weeks
 
     def add_turret(self, turret):
@@ -253,7 +275,6 @@ class Spacecraft:
         :param turret: Turret object to append
         """
         self.turrets.append(turret)
-        self.cargo -= turret.tonnage
 
     def remove_turret(self, turret_index):
         """
@@ -265,35 +286,27 @@ class Spacecraft:
 
         turret = self.turrets[turret_index]
         self.turrets.remove(turret)
-        self.cargo += turret.tonnage
 
-    def add_bridge(self):
+    def get_bridge_tonnage(self):
         """
-        Handles adding a main component bridge to the ship based on the hull size
+        Handles calculating the cost of a main component bridge to the ship based on the hull size
         The bridge size is determined based upon the hull tonnage
         """
+        bridge_tonnage = 0
         if self.tonnage < 300:
-            self.cargo -= 10
+            bridge_tonnage= 10
         if 300 <= self.tonnage < 1100:
-            self.cargo -= 20
+            bridge_tonnage = 20
         if 1100 <= self.tonnage < 2000:
-            self.cargo -= 40
+            bridge_tonnage = 40
         if self.tonnage == 2000:
-            self.cargo -= 60
+            bridge_tonnage = 60
+        return bridge_tonnage
 
-    def get_armour_cost(self, change_in_tonnage):
-        """
-        Gets the cargo when setting a new tonnage for the ship
-        :returns: change in cargo
-        """
-        total_cargo = 0
+    def set_bridge(self):
+        # Toggles bridge state
+        self.bridge ^= True
 
-        for armour_item in self.armour:
-            hull_amount = armour_item.hull_amount
-            total_cargo += int(change_in_tonnage * hull_amount)
-
-        return total_cargo
-        
     def add_misc(self, misc):
         """
         Handles adding a single misc addon to the ship and updating tonnage
@@ -310,8 +323,6 @@ class Spacecraft:
             else:
                 return "Error: no staterooms exist on this ship - escape pods cannot be added."
 
-        self.cargo -= tonnage
-
     def remove_misc(self, misc):
         """
         Handles removing a single misc addon from the ship, adjusting tonnage
@@ -324,8 +335,6 @@ class Spacecraft:
             tonnage = misc.tonnage * self.tonnage
         if misc.name == "Escape Pods":
             tonnage = misc.tonnage * self.get_staterooms()
-
-        self.cargo += tonnage
 
     def get_staterooms(self):
         """
@@ -350,11 +359,7 @@ class Spacecraft:
         Handles adding/replacing a sensors system within the system, adjusting cost/tonnage
         :param sensor: sensor object to use
         """
-        if self.sensors is not None:
-            self.cargo += self.sensors.tonnage
-
         self.sensors = sensor
-        self.cargo -= sensor.tonnage
 
     def add_screen(self, screen):
         """
@@ -367,7 +372,6 @@ class Spacecraft:
                 return "Error: screen module already installed on ship."
 
         self.screens.append(screen)
-        self.cargo -= screen.tonnage
 
     def remove_screen(self, screen):
         """
@@ -376,7 +380,6 @@ class Spacecraft:
         """
         for s in self.screens:
             if s.name == screen.name:
-                self.cargo += s.tonnage
                 self.screens.remove(s)
                 
     def add_software(self, software):
@@ -421,7 +424,6 @@ class Spacecraft:
         Handles adding a single bayweapon onto the ship
         :param weapon: weapon object to add
         """
-        self.cargo -= weapon.tonnage
         self.bays.append(weapon)
 
     def remove_bayweapon(self, weapon):
@@ -430,7 +432,6 @@ class Spacecraft:
         :param weapon: weapon object to remove
         """
         if weapon in self.bays:
-            self.cargo += weapon.tonnage
             self.bays.remove(weapon)
         else:
             print("Error: bayweapon not attached to the ship.")
@@ -440,7 +441,6 @@ class Spacecraft:
         Handles adding a piece of armour to the ship
         :param armour: armour object to add
         """
-        self.cargo -= int(armour.hull_amount * self.tonnage)
         self.armour_total += armour.protection
         self.armour.append(armour)
 
@@ -452,7 +452,6 @@ class Spacecraft:
         if armour in self.armour:
             self.armour.remove(armour)
             self.armour_total -= armour.protection
-            self.cargo += int(armour.hull_amount * self.tonnage)
         else:
             print("Error: armour piece not attached to the ship.")
 
