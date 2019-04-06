@@ -78,7 +78,7 @@ class Spacecraft:
             cost = ton.get(self.hull_designation).get("cost")
             cost_total += cost * self.hull_type.mod_hull_cost
         if self.bridge is True:
-            cost_total += self.tonnage * .0005
+            cost_total += self.tonnage * .005
 
         # Drives
         if self.jdrive is not None:
@@ -116,6 +116,8 @@ class Spacecraft:
             cost_total += drone.cost
         for vehicle in self.vehicles:
             cost_total += vehicle.cost
+        for misc in self.additional_mods:
+            cost_total += misc.cost
 
         return cost_total
 
@@ -156,11 +158,16 @@ class Spacecraft:
         for screen in self.screens:
             cargo -= screen.tonnage
 
-        # Drones / Vehicles
+        # Drones / Vehicles / Misc
         for drone in self.drones:
-            cargo -= drone.tonnage
+            if drone.name == "Repair Drone":
+                cargo -= drone.tonnage * self.tonnage
+            else:
+                cargo -= drone.tonnage
         for vehicle in self.vehicles:
             cargo -= vehicle.tonnage
+        for misc in self.additional_mods:
+            cargo -= misc.tonnage
 
         return cargo
 
@@ -294,13 +301,13 @@ class Spacecraft:
         """
         bridge_tonnage = 0
         if self.tonnage < 300:
-            bridge_tonnage= 10
+            bridge_tonnage = 10
         if 300 <= self.tonnage < 1100:
             bridge_tonnage = 20
         if 1100 <= self.tonnage < 2000:
-            bridge_tonnage = 40
+            bridge_tonnage = 30
         if self.tonnage == 2000:
-            bridge_tonnage = 60
+            bridge_tonnage = 40
         return bridge_tonnage
 
     def set_bridge(self):
@@ -312,29 +319,32 @@ class Spacecraft:
         Handles adding a single misc addon to the ship and updating tonnage
         Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
         """
-        self.additional_mods.append(misc)
+        drones = ["Repair Drone", "Mining Drone", "Probe Drone"]
+        vehicles = ["ATV", "Air/Raft", "Life Boat/Launch", "Ship's Boat", "Pinnace", "Cutter", "Shuttle"]
 
-        tonnage = misc.tonnage
-        if misc.name == "Repair Drone":
-            tonnage = misc.tonnage * self.tonnage
-        if misc.name == "Escape Pods":
-            if self.get_staterooms() > 0:
-                tonnage = misc.tonnage * self.get_staterooms()
-            else:
+        if misc.name in drones:
+            self.drones.append(misc)
+        elif misc.name in vehicles:
+            self.vehicles.append(misc)
+        else:
+            if misc.name == "Escape Pods" and self.get_staterooms() < 0:
                 return "Error: no staterooms exist on this ship - escape pods cannot be added."
+            self.additional_mods.append(misc)
 
     def remove_misc(self, misc):
         """
         Handles removing a single misc addon from the ship, adjusting tonnage
         Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
         """
-        self.additional_mods.append(misc)
+        drones = ["Repair Drone", "Mining Drone", "Probe Drone"]
+        vehicles = ["ATV", "Air/Raft", "Life Boat/Launch", "Ship's Boat", "Pinnace", "Cutter", "Shuttle"]
 
-        tonnage = misc.tonnage
-        if misc.name == "Repair Drone":
-            tonnage = misc.tonnage * self.tonnage
-        if misc.name == "Escape Pods":
-            tonnage = misc.tonnage * self.get_staterooms()
+        if misc.name in drones:
+            self.drones.remove(misc)
+        elif misc.name in vehicles:
+            self.vehicles.remove(misc)
+        else:
+            self.additional_mods.remove(misc)
 
     def get_staterooms(self):
         """
@@ -356,14 +366,14 @@ class Spacecraft:
         
     def add_sensors(self, sensor):
         """
-        Handles adding/replacing a sensors system within the system, adjusting cost/tonnage
+        Handles adding/replacing a sensors system within the system
         :param sensor: sensor object to use
         """
         self.sensors = sensor
 
     def add_screen(self, screen):
         """
-        Handles adding a screen object to a ship, adjusting tonnage
+        Handles adding a screen object to a ship
         Checks whether the module has already been added previously
         :param screen: screen object to add
         """
@@ -461,3 +471,4 @@ class Spacecraft:
         :param config: config object to use
         """
         self.hull_type = config
+

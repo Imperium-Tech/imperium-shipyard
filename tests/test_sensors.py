@@ -35,18 +35,18 @@ def test_init():
 def test_add_replace():
     # Testing adding and replacing a sensor system
     ship = Spacecraft(100)
-    assert ship.cargo == 100
-    assert ship.cost_total == 2.0
+    assert ship.get_remaining_cargo() == 100
+    assert ship.get_total_cost() == 2.0
 
     sensor = Sensor("advanced")
 
     ship.add_sensors(sensor)
-    assert ship.cargo == 97
-    assert ship.cost_total == 4.0
+    assert ship.get_remaining_cargo() == 97
+    assert ship.get_total_cost() == 4.0
     assert ship.sensors is not None
 
     sensor = Sensor("basic_civilian")
     ship.add_sensors(sensor)
-    assert ship.cargo == 99
-    assert ship.cost_total == 2.05
+    assert ship.get_remaining_cargo() == 99
+    assert ship.get_total_cost() == 2.05
 
