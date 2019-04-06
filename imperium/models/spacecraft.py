@@ -78,6 +78,58 @@ class Spacecraft:
         # set hull type to standard
         self.hull_type = "Standard"
 
+    def get_total_cost(self):
+        """
+        Gets total cost of all objects for the ship
+        :return: total cost
+        """
+        cost_total = 0
+
+        # Tonnage
+        # TODO - add bridge cost
+        if self.tonnage != 0:
+            ton = get_file_data("hull_data.json")
+            cost_total += ton.get(self.hull_designation).get("cost")
+
+        # Drives
+        # TODO - add PPlant tracking
+        if self.jdrive is not None:
+            cost_total += self.jdrive.cost
+        if self.mdrive is not None:
+            cost_total += self.mdrive.cost
+
+        # Armour
+        for armour_item in self.armour:
+            cost = armour_item.cost_by_hull_percentage
+            cost_total += int(self.tonnage * cost)
+
+        # Sensors
+        if self.sensors is not None:
+            cost_total += self.sensors.cost
+
+        # Turrets and Bayweapons
+        # cost_total += (turret.cost for turret in self.turrets)
+        for turret in self.turrets:
+            cost_total += turret.cost
+        for bayweapon in self.bays:
+            cost_total += bayweapon.cost
+
+        # Screens / Computer / Software
+        for screen in self.screens:
+            cost_total += screen.cost
+        if self.computer is not None:
+            cost_total += self.computer.cost
+        for software in self.software:
+            cost_total += software.cost
+
+        # Drones / Vehicles
+        for drone in self.drones:
+            cost_total += drone.cost
+        for vehicle in self.vehicles:
+            cost_total += vehicle.cost
+
+        return cost_total
+
     def set_tonnage(self, new_tonnage):
         """
         Sets the tonnage of an existing Spacecraft
@@ -85,12 +137,12 @@ class Spacecraft:
         """
         tonnage_cost_data = get_file_data("hull_data.json")
         new_cost = 0
-        for item in tonnage_cost_data.values():
-            if item.get('tonnage') == self.tonnage:
-                self.cost_total -= item.get("cost")
+        for key in tonnage_cost_data:
+            item = tonnage_cost_data.get(key)
             if item.get('tonnage') == int(new_tonnage):
                 new_cost = item.get("cost")
                 self.base_cost_hull = self.cost_hull = new_cost
+                self.hull_designation = key
 
         # update cargo, tonnage, cost
         cost_change, cargo_change = self.get_armour_cost(new_tonnage - self.tonnage)

@@ -154,7 +154,7 @@ class Window(QWidget):
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
-        self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.cost_total))
+        self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.get_total_cost()))
 
         # Set the cargo text to red when cargo going negative
         if self.spacecraft.cargo < 0:
