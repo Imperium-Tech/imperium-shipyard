@@ -5,9 +5,6 @@ Houses the spacecraft class
 """
 from imperium.models.config import Config
 from imperium.models.json_reader import get_file_data
-from imperium.models.drives import JDrive
-from imperium.models.drives import MDrive
-from imperium.models.pplant import PPlant
 
 
 class Spacecraft:
@@ -195,7 +192,7 @@ class Spacecraft:
         """
         self.fuel_max = new_fuel
 
-    def add_jdrive(self, drive_type):
+    def add_jdrive(self, drive):
         """
         Adds a jump drive to the spaceship
         :param drive_type: The drive designation letter
@@ -203,17 +200,14 @@ class Spacecraft:
         if self.tonnage == 0:
             return "Error: Tonnage not set before adding j-drive."
 
-        # create new jdrive object
-        new_jdrive = JDrive(drive_type)
-
         # Error checking to see if new drive type is incompatible
-        if self.performance_by_volume("jdrive", drive_type) is not None:
-            self.jdrive = new_jdrive
+        if self.performance_by_volume("jdrive", drive.drive_type) is not None:
+            self.jdrive = drive
             return True
         else:
-            return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_type, self.tonnage)
+            return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
 
-    def add_mdrive(self, drive_type):
+    def add_mdrive(self, drive):
         """
         Adds a maneuver drive to the spaceship
         :param drive_type: The drive designation letter
@@ -221,15 +215,12 @@ class Spacecraft:
         if self.tonnage == 0:
             return "Error: Tonnage not set before adding m-drive."
 
-        # create new mdrive object
-        new_mdrive = MDrive(drive_type)
-
         # Error checking to see if new drive type is incompatible
-        if self.performance_by_volume("mdrive", drive_type) is not None:
-            self.mdrive = new_mdrive
+        if self.performance_by_volume("mdrive", drive.drive_type) is not None:
+            self.mdrive = drive
             return True
         else:
-            return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive_type, self.tonnage)
+            return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
         
     def performance_by_volume(self, drive, drive_letter):
         """
@@ -263,18 +254,15 @@ class Spacecraft:
 
         return 1
 
-    def add_pplant(self, plant_type):
+    def add_pplant(self, plant):
         """
         Adds a power plant to the spaceship
         # Todo - add error checking with m/j-drive
         :param plant_type: The plant designation letter
         """
-        # create new pplant object
-        new_pplant = PPlant(plant_type)
-
         # assign object to ship, update cost & tonnage
-        self.pplant = new_pplant
-        self.fuel_two_weeks = new_pplant.fuel_two_weeks
+        self.pplant = plant
+        self.fuel_two_weeks = plant.fuel_two_weeks
 
     def add_turret(self, turret):
         """

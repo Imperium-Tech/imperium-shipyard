@@ -35,13 +35,13 @@ def test_adding():
     assert ship.mdrive is None
     assert ship.jdrive is None
 
-    ship.add_jdrive("A")
+    ship.add_jdrive(JDrive("A"))
     assert ship.tonnage == 100
     assert ship.get_remaining_cargo() == 90
     assert ship.get_total_cost() == 12
     assert ship.jdrive is not None
 
-    ship.add_mdrive("A")
+    ship.add_mdrive(MDrive("A"))
     assert ship.tonnage == 100
     assert ship.get_remaining_cargo() == 88
     assert ship.get_total_cost() == 16
@@ -58,24 +58,24 @@ def test_changing():
     assert ship.get_total_cost() == 2
     assert ship.jdrive is None
 
-    ship.add_jdrive("A")
+    ship.add_jdrive(JDrive("A"))
     assert ship.tonnage == 100
     assert ship.get_remaining_cargo() == 90
     assert ship.get_total_cost() == 12
     assert ship.jdrive.drive_type == "A"
 
-    ship.add_jdrive("B")
+    ship.add_jdrive(JDrive("B"))
     assert ship.tonnage == 100
     assert ship.get_remaining_cargo() == 85
     assert ship.get_total_cost() == 22
     assert ship.jdrive.drive_type == "B"
 
-    ship.add_mdrive("A")
+    ship.add_mdrive(MDrive("A"))
     assert ship.get_remaining_cargo() == 83
     assert ship.get_total_cost() == 26
     assert ship.mdrive.drive_type == "A"
 
-    ship.add_mdrive("B")
+    ship.add_mdrive(MDrive("B"))
     assert ship.get_remaining_cargo() == 82
     assert ship.get_total_cost() == 30
     assert ship.mdrive.drive_type == "B"
@@ -87,12 +87,12 @@ def test_empty_ship():
     assert ship.get_remaining_cargo() == 0
     assert ship.jdrive is None
 
-    ship.add_jdrive("A")
+    ship.add_jdrive(JDrive("A"))
     assert ship.tonnage == 0
     assert ship.get_remaining_cargo() == 0
     assert ship.jdrive is None
 
-    ship.add_mdrive("A")
+    ship.add_mdrive(MDrive("A"))
     assert ship.tonnage == 0
     assert ship.get_remaining_cargo() == 0
     assert ship.mdrive is None
@@ -104,5 +104,5 @@ def test_incompatible_drive():
     assert ship.get_remaining_cargo() == 100
     assert ship.mdrive is None
 
-    ship.add_mdrive("Z")
+    ship.add_mdrive(MDrive("Z"))
     assert ship.mdrive is None
