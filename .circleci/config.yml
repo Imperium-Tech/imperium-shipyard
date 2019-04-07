@@ -50,7 +50,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest --cov-config=.coveragerc --cov=imperium tests/
+            pytest --cov=imperium tests/
             coveralls
 
       - store_artifacts:
