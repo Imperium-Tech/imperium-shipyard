@@ -1,0 +1,2 @@
+[run]
+omit = imperium/data_generators.py
