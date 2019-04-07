@@ -50,7 +50,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest --cov=imperium tests/
+            pytest --cov=imperium --omit=imperium/data_generators.py tests/
             coveralls
 
       - store_artifacts:
