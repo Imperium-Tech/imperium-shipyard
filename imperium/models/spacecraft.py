@@ -201,11 +201,10 @@ class Spacecraft:
             return "Error: Tonnage not set before adding j-drive."
 
         # Error checking to see if new drive type is incompatible
-        if self.performance_by_volume("jdrive", drive.drive_type) is not None:
-            self.jdrive = drive
-            return True
-        else:
+        if self.performance_by_volume("jdrive", drive.drive_type) is None:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
+
+        self.jdrive = drive
 
     def add_mdrive(self, drive):
         """
@@ -216,11 +215,10 @@ class Spacecraft:
             return "Error: Tonnage not set before adding m-drive."
 
         # Error checking to see if new drive type is incompatible
-        if self.performance_by_volume("mdrive", drive.drive_type) is not None:
-            self.mdrive = drive
-            return True
-        else:
+        if self.performance_by_volume("mdrive", drive.drive_type) is None:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
+
+        self.mdrive = drive
         
     def performance_by_volume(self, drive, drive_letter):
         """
@@ -257,12 +255,31 @@ class Spacecraft:
     def add_pplant(self, plant):
         """
         Adds a power plant to the spaceship
-        # Todo - add error checking with m/j-drive
-        :param plant_type: The plant designation letter
+        :param plant: plant object
         """
-        # assign object to ship, update cost & tonnage
+        if self.tonnage == 0:
+            return "Error: Tonnage not set before adding PPlant"
+
         self.pplant = plant
         self.fuel_two_weeks = plant.fuel_two_weeks
+        return True
+
+    def check_pplant_validity(self):
+        """
+        Checks whether the input pplant is valid based on the Drives
+        """
+        if self.pplant is not None:
+            if None not in (self.mdrive, self.jdrive):
+                max_drive = max(self.jdrive.drive_type, self.mdrive.drive_type)
+                if self.pplant.type < max_drive:
+                    return "Error: PPlant under max M/J-Drive. {} < {}".format(self.pplant.type, max(max_drive))
+            elif self.jdrive is not None:
+                if self.pplant.type < self.jdrive.drive_type:
+                    return "Error: PPlant under J-Drive. {} < {}".format(self.pplant.type, self.jdrive.drive_type)
+            elif self.mdrive is not None:
+                if self.pplant.type < self.mdrive.drive_type:
+                    return "Error: PPlant under M-Drive. {} < {}".format(self.pplant.type, self.mdrive.drive_type)
+        return True
 
     def add_turret(self, turret):
         """

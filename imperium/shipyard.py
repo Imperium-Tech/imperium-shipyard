@@ -6,6 +6,7 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
 from imperium.models.json_reader import get_file_data
+from imperium.models.pplant import PPlant
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from PyQt5.QtCore import Qt
@@ -81,17 +82,22 @@ class Window(QWidget):
         self.thrust_label = QLabel("-")
         base_stats_layout.addWidget(self.thrust_label, 4, 1)
 
+        # PPlant
+        self.pplant_line_edit = add_stat_to_layout("PPlant:", 5, signal_function=self.edit_pplant)
+        self.pplant_label = QLabel("-")
+        base_stats_layout.addWidget(self.pplant_label, 5, 1)
+
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 5, signal_function=self.edit_tonnage, read_only=True)
+        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 6, signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 6, signal_function=self.edit_tonnage, read_only=True)
+        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 7, signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
-        self.armour_line_edit = add_stat_to_layout("Armour:", 7, read_only=True)
+        self.armour_line_edit = add_stat_to_layout("Armour:", 8, read_only=True)
 
         # Cost
-        self.cost_line_edit = add_stat_to_layout("Cost (MCr.):", 8, read_only=True)
+        self.cost_line_edit = add_stat_to_layout("Cost (MCr.):", 9, read_only=True)
 
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
@@ -152,6 +158,7 @@ class Window(QWidget):
         self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
         self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
+        self.pplant_line_edit.setText(str(       self.spacecraft.fuel_two_weeks     ))
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
@@ -162,6 +169,14 @@ class Window(QWidget):
             self.cargo_line_edit.setStyleSheet("color: red")
         else:
             self.cargo_line_edit.setStyleSheet("color: black")
+
+        # Set the PPlant text red if its underfit
+        validity = self.spacecraft.check_pplant_validity()
+        if type(validity) is bool:
+            self.pplant_line_edit.setStyleSheet("color: black")
+        elif type(validity) is str:
+            self.pplant_line_edit.setStyleSheet("color: red")
+            self.logger.setText(validity)
 
     def edit_tonnage(self):
         """
@@ -184,26 +199,47 @@ class Window(QWidget):
         Update the spacecraft jump drive
         """
         drive_type = self.jump_line_edit.text().upper()
-        if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
+        if self.check_valid_type(drive_type):
             new_jdrive = JDrive(drive_type)
             result = self.spacecraft.add_jdrive(new_jdrive)
-            if type(result) is bool:
-                self.jump_label.setText(drive_type)
-            elif type(result) is str:
+            if type(result) is str:
                 self.logger.setText(result)
+            else:
+                self.jump_label.setText(drive_type)
 
     def edit_mdrive(self):
         """
         Update the spacecraft thrust drive
         """
         drive_type = self.thrust_line_edit.text().upper()
-        if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
+        if self.check_valid_type(drive_type):
             new_mdrive = MDrive(drive_type)
             result = self.spacecraft.add_mdrive(new_mdrive)
-            if type(result) is bool:
+            if type(result) is str:
+                self.logger.setText(result)
+            else:
                 self.thrust_label.setText(drive_type)
+
+    def edit_pplant(self):
+        """
+        Update the spacecraft pplant drive
+        """
+        pplant_type = self.pplant_line_edit.text().upper()
+        if self.check_valid_type(pplant_type):
+            new_pplant = PPlant(pplant_type)
+            result = self.spacecraft.add_pplant(new_pplant)
+            if type(result) is bool:
+                self.pplant_label.setText(pplant_type)
             elif type(result) is str:
                 self.logger.setText(result)
+
+    def check_valid_type(self, drive):
+        """
+        Checks whether input to the Drives is valid or not
+        :param type: Type input to check
+        :return: True iff it meets all criterion
+        """
+        return drive.isalpha() and len(drive) == 1 and drive != "I" and drive != "O"
 
     def edit_armor(self):
         """
