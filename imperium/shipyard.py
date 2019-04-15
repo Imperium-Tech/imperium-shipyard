@@ -12,7 +12,7 @@ from imperium.models.armour import Armour
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
-QLabel, QLineEdit, QWidget, QPushButton)
+                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox)
 
 
 class Window(QWidget):
@@ -112,23 +112,42 @@ class Window(QWidget):
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
+        # Hull Options
+        self.armor_config_layout.addWidget(QLabel("Hull Options:"), 0, 0)
+
+        self.bridge_check = QCheckBox("Bridge")
+        self.bridge_check.stateChanged.connect(self.check_bridge)
+        self.armor_config_layout.addWidget(self.bridge_check, 1, 0)
+
+        self.reflec_check = QCheckBox("Reflec")
+        self.reflec_check.stateChanged.connect(self.check_reflec)
+        self.armor_config_layout.addWidget(self.reflec_check, 2, 0)
+
+        self.seal_check = QCheckBox("Self-Sealing")
+        self.seal_check.stateChanged.connect(self.check_sealing)
+        self.armor_config_layout.addWidget(self.seal_check, 3, 0)
+
+        self.stealth_check = QCheckBox("Stealth")
+        self.stealth_check.stateChanged.connect(self.check_stealth)
+        self.armor_config_layout.addWidget(self.stealth_check, 4, 0)
+
         # Configuration for the hull of the ship
-        self.armor_config_layout.addWidget(QLabel("Hull Config: "), 0, 0)
+        self.armor_config_layout.addWidget(QLabel("Hull Config: "), 5, 0)
         self.hull_config_box = QComboBox()
         for item in get_file_data("hull_config.json").keys():
             self.hull_config_box.addItem(item)
         self.hull_config_box.activated.connect(self.edit_hull_config)
-        self.armor_config_layout.addWidget(self.hull_config_box, 1, 0)
+        self.armor_config_layout.addWidget(self.hull_config_box, 6, 0)
 
         # Drop down list of the available armor to add
-        self.armor_config_layout.addWidget(QLabel("Armour: "), 2, 0)
+        self.armor_config_layout.addWidget(QLabel("Armour: "), 7, 0)
         self.armor_combo_box = QComboBox()
         self.armor_combo_box.addItem("---")
         for item in get_file_data("hull_armor.json").keys():
             self.armor_combo_box.addItem(item)
         self.armor_combo_box.activated.connect(self.edit_armor)
 
-        self.occupied_rows = 3
+        self.occupied_rows = 8
         self.armor_config_layout.addWidget(self.armor_combo_box, self.occupied_rows, 0)
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
@@ -285,6 +304,22 @@ class Window(QWidget):
         text = self.hull_config_box.currentText()
         config = Config(text)
         self.spacecraft.edit_hull_config(config)
+        self.update_stats()
+
+    def check_bridge(self):
+        self.spacecraft.set_bridge()
+        self.update_stats()
+
+    def check_reflec(self):
+        self.spacecraft.set_reflec()
+        self.update_stats()
+
+    def check_sealing(self):
+        self.spacecraft.set_self_sealing()
+        self.update_stats()
+
+    def check_stealth(self):
+        self.spacecraft.set_stealth()
         self.update_stats()
 
 

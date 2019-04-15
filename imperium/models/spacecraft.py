@@ -26,6 +26,9 @@ class Spacecraft:
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.bridge             = False  # whether a bridge is installed
+        self.reflec             = False  # reflec opt
+        self.self_sealing       = False  # self-sealing opt
+        self.stealth            = False  # stealth opt
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
@@ -76,6 +79,14 @@ class Spacecraft:
             cost_total += cost * self.hull_type.mod_hull_cost
         if self.bridge is True:
             cost_total += self.tonnage * .005
+
+        # Hull options
+        if self.reflec is True:
+            cost_total += self.tonnage * 0.1
+        if self.self_sealing is True:
+            cost_total += self.tonnage * 0.01
+        if self.stealth is True:
+            cost_total += self.tonnage * 0.1
 
         # Drives
         if self.jdrive is not None:
@@ -477,3 +488,14 @@ class Spacecraft:
         """
         self.hull_type = config
 
+    def set_reflec(self):
+        # Toggles reflec state
+        self.reflec ^= True
+
+    def set_self_sealing(self):
+        # Toggles sealing state
+        self.self_sealing ^= True
+
+    def set_stealth(self):
+        # Toggles stealth state
+        self.stealth ^= True
