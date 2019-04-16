@@ -25,6 +25,32 @@ class Window(QWidget):
         # Window Title
         self.setWindowTitle("Imperium Shipyard")
 
+        def add_combo_box(layout, label, json, funct, x, y, null_spot=False):
+            layout.addWidget(QLabel(label), x, y)
+            combo_box = QComboBox()
+
+            if null_spot:
+                combo_box.addItem("---")
+            for item in get_file_data(json).keys():
+                combo_box.addItem(item)
+            combo_box.activated.connect(funct)
+            return combo_box
+
+        def add_hull_option(layout, name, funct, x, y):
+            """
+            Handles adding a hull option component check box and attaching a function to it
+            :param layout: which PyQT layout this widget belongs to
+            :param name: name to be displayed on the GUI
+            :param funct: function reference
+            :param x: row in the groupbox
+            :param y: column in the groupbox
+            :return: the created QCheckBox
+            """
+            box = QCheckBox(name)
+            box.stateChanged.connect(funct)
+            layout.addWidget(box, x, y)
+            return box
+
         ###################################
         ###  BEGIN: Base Stats Grid     ###
         ###################################
@@ -62,6 +88,7 @@ class Window(QWidget):
             return new_line_edit
 
         # Tonnage
+        # Todo - make this into a combo box rather than accepting random input
         self.tonnage_line_edit = add_stat_to_layout("Tonnage:", 0, signal_function=self.edit_tonnage, force_int=True)
         self.tonnage_line_edit.validator().setBottom(0)
 
@@ -112,50 +139,29 @@ class Window(QWidget):
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
-        """ Hull Options """
+        # Hull Options
         self.armor_config_layout.addWidget(QLabel("Hull Options:"), 0, 0)
 
-        def add_hull_option(name, funct, x, y):
-            """
-            Handles adding a hull option component check box and attaching a function to it
-            :param name: name to be displayed on the GUI
-            :param funct: function reference
-            :param x: row in the groupbox
-            :param y: column in the groupbox
-            :return: the created QCheckBox
-            """
-            box = QCheckBox(name)
-            box.stateChanged.connect(funct)
-            self.armor_config_layout.addWidget(box, x, y)
-            return box
-
         # Bridge
-        self.bridge_check = add_hull_option("Bridge", self.check_bridge, 1, 0)
+        self.bridge_check = add_hull_option(self.armor_config_layout, "Bridge", self.check_bridge, 1, 0)
 
         # Reflec
-        self.reflec_check = add_hull_option("Reflec", self.check_reflec, 2, 0)
+        self.reflec_check = add_hull_option(self.armor_config_layout, "Reflec", self.check_reflec, 2, 0)
 
         # Self-Sealing
-        self.seal_check = add_hull_option("Self-Sealing", self.check_sealing, 3, 0)
+        self.seal_check = add_hull_option(self.armor_config_layout, "Self-Sealing", self.check_sealing, 3, 0)
 
         # Stealth
-        self.stealth_check = add_hull_option("Stealth", self.check_stealth, 4, 0)
+        self.stealth_check = add_hull_option(self.armor_config_layout, "Stealth", self.check_stealth, 4, 0)
 
-        """ Hull configuration """
-        self.armor_config_layout.addWidget(QLabel("Hull Config: "), 5, 0)
-        self.hull_config_box = QComboBox()
-        for item in get_file_data("hull_config.json").keys():
-            self.hull_config_box.addItem(item)
-        self.hull_config_box.activated.connect(self.edit_hull_config)
+        # Hull config list
+        self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
+                                             "hull_config.json", self.edit_hull_config, 5, 0)
         self.armor_config_layout.addWidget(self.hull_config_box, 6, 0)
 
-        """ Armor list """
-        self.armor_config_layout.addWidget(QLabel("Armour: "), 7, 0)
-        self.armor_combo_box = QComboBox()
-        self.armor_combo_box.addItem("---")
-        for item in get_file_data("hull_armor.json").keys():
-            self.armor_combo_box.addItem(item)
-        self.armor_combo_box.activated.connect(self.edit_armor)
+        # Armor list
+        self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
+                                             "hull_armor.json", self.edit_armor, 7, 0, True)
 
         self.occupied_rows = 8
         self.armor_config_layout.addWidget(self.armor_combo_box, self.occupied_rows, 0)
