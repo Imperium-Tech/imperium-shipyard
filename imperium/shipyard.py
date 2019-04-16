@@ -26,6 +26,17 @@ class Window(QWidget):
         self.setWindowTitle("Imperium Shipyard")
 
         def add_combo_box(layout, label, json, funct, x, y, null_spot=False):
+            """
+            Handles adding a combo box widget with item names from a specific json file
+            :param layout: PyQT layout
+            :param label: label name
+            :param json: name of the json file
+            :param funct: function to connect items to
+            :param x: row in layout
+            :param y: col in layout
+            :param null_spot: whether or not to have a 'null' box item
+            :return: PyQT Combo Box
+            """
             layout.addWidget(QLabel(label), x, y)
             combo_box = QComboBox()
 
@@ -88,9 +99,14 @@ class Window(QWidget):
             return new_line_edit
 
         # Tonnage
-        # Todo - make this into a combo box rather than accepting random input
-        self.tonnage_line_edit = add_stat_to_layout("Tonnage:", 0, signal_function=self.edit_tonnage, force_int=True)
-        self.tonnage_line_edit.validator().setBottom(0)
+        base_stats_layout.addWidget(QLabel("Tonnage: "), 0, 0)
+        self.tonnage_box = QComboBox()
+        self.tonnage_box.addItem("0")
+        for item in get_file_data("hull_data.json").values():
+            tonnage = str(item.get('tonnage'))
+            self.tonnage_box.addItem(tonnage)
+        self.tonnage_box.activated.connect(self.edit_tonnage)
+        base_stats_layout.addWidget(self.tonnage_box, 0, 2)
 
         # Cargo
         self.cargo_line_edit = add_stat_to_layout("Cargo:", 1, read_only=True)
@@ -188,7 +204,6 @@ class Window(QWidget):
         """
         Updates the UI with the current Spacecraft stats
         """
-        self.tonnage_line_edit.setText(str(      self.spacecraft.tonnage            ))
         self.cargo_line_edit.setText(str(        self.spacecraft.get_remaining_cargo()))
         self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
         self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
@@ -217,10 +232,11 @@ class Window(QWidget):
         """
         Update the spacecraft tonnage
         """
-        new_tonnage = int(self.tonnage_line_edit.text())
+        new_tonnage = int(self.tonnage_box.currentText())
         if new_tonnage > 2000:
             new_tonnage = 2000
         self.spacecraft.set_tonnage(new_tonnage)
+        self.update_stats()
 
     def edit_fuel(self):
         """
