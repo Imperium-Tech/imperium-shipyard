@@ -112,26 +112,36 @@ class Window(QWidget):
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
-        # Hull Options
+        """ Hull Options """
         self.armor_config_layout.addWidget(QLabel("Hull Options:"), 0, 0)
 
-        self.bridge_check = QCheckBox("Bridge")
-        self.bridge_check.stateChanged.connect(self.check_bridge)
-        self.armor_config_layout.addWidget(self.bridge_check, 1, 0)
+        def add_hull_option(name, funct, x, y):
+            """
+            Handles adding a hull option component check box and attaching a function to it
+            :param name: name to be displayed on the GUI
+            :param funct: function reference
+            :param x: row in the groupbox
+            :param y: column in the groupbox
+            :return: the created QCheckBox
+            """
+            box = QCheckBox(name)
+            box.stateChanged.connect(funct)
+            self.armor_config_layout.addWidget(box, x, y)
+            return box
 
-        self.reflec_check = QCheckBox("Reflec")
-        self.reflec_check.stateChanged.connect(self.check_reflec)
-        self.armor_config_layout.addWidget(self.reflec_check, 2, 0)
+        # Bridge
+        self.bridge_check = add_hull_option("Bridge", self.check_bridge, 1, 0)
 
-        self.seal_check = QCheckBox("Self-Sealing")
-        self.seal_check.stateChanged.connect(self.check_sealing)
-        self.armor_config_layout.addWidget(self.seal_check, 3, 0)
+        # Reflec
+        self.reflec_check = add_hull_option("Reflec", self.check_reflec, 2, 0)
 
-        self.stealth_check = QCheckBox("Stealth")
-        self.stealth_check.stateChanged.connect(self.check_stealth)
-        self.armor_config_layout.addWidget(self.stealth_check, 4, 0)
+        # Self-Sealing
+        self.seal_check = add_hull_option("Self-Sealing", self.check_sealing, 3, 0)
 
-        # Configuration for the hull of the ship
+        # Stealth
+        self.stealth_check = add_hull_option("Stealth", self.check_stealth, 4, 0)
+
+        """ Hull configuration """
         self.armor_config_layout.addWidget(QLabel("Hull Config: "), 5, 0)
         self.hull_config_box = QComboBox()
         for item in get_file_data("hull_config.json").keys():
@@ -139,7 +149,7 @@ class Window(QWidget):
         self.hull_config_box.activated.connect(self.edit_hull_config)
         self.armor_config_layout.addWidget(self.hull_config_box, 6, 0)
 
-        # Drop down list of the available armor to add
+        """ Armor list """
         self.armor_config_layout.addWidget(QLabel("Armour: "), 7, 0)
         self.armor_combo_box = QComboBox()
         self.armor_combo_box.addItem("---")
@@ -307,18 +317,22 @@ class Window(QWidget):
         self.update_stats()
 
     def check_bridge(self):
+        # Handles bridge checkbox
         self.spacecraft.set_bridge()
         self.update_stats()
 
     def check_reflec(self):
+        # Handles reflec checkbox
         self.spacecraft.set_reflec()
         self.update_stats()
 
     def check_sealing(self):
+        # Handles self-sealing checkbox
         self.spacecraft.set_self_sealing()
         self.update_stats()
 
     def check_stealth(self):
+        # Handles stealth checkbox
         self.spacecraft.set_stealth()
         self.update_stats()
 
