@@ -263,6 +263,26 @@ class Spacecraft:
 
         return 1
 
+    def get_lowest_drive(self):
+        """
+        Handles getting the lowest possible drive type for a given tonnage
+        :return: letter of the drive type
+        """
+        data = get_file_data("hull_performance.json")
+        index = get_file_data("hull_performance_index.json")
+        idx = index.get(str(self.tonnage))
+
+        for drive in data:
+            jump_list = data.get(drive).get("jumps_per_hull_volume")
+
+            # check invalid first, else return drive type
+            if len(jump_list) <= idx:
+                continue
+            elif jump_list[idx] == 0:
+                continue
+            else:
+                return drive
+
     def add_pplant(self, plant):
         """
         Adds a power plant to the spaceship

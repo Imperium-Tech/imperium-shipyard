@@ -231,11 +231,28 @@ class Window(QWidget):
     def edit_tonnage(self):
         """
         Update the spacecraft tonnage
+        Updates the Drives to the lowest available type at that tonnage level
         """
         new_tonnage = int(self.tonnage_box.currentText())
+
+        # Cap tonnage to 2000
         if new_tonnage > 2000:
             new_tonnage = 2000
         self.spacecraft.set_tonnage(new_tonnage)
+
+        # Checks for updating the drive, if necessary
+        if new_tonnage != 0 and (self.spacecraft.jdrive is not None or self.spacecraft.mdrive is not None):
+            lowest_drive = self.spacecraft.get_lowest_drive()
+
+            if self.spacecraft.jdrive is not None:
+                self.jump_line_edit.setText(lowest_drive)
+                self.edit_jdrive()
+            if self.spacecraft.mdrive is not None:
+                self.thrust_line_edit.setText(lowest_drive)
+                self.edit_mdrive()
+            if self.spacecraft.pplant is not None and self.spacecraft.pplant.type != lowest_drive:
+                self.pplant_line_edit.setText(lowest_drive)
+                self.edit_pplant()
         self.update_stats()
 
     def edit_fuel(self):
