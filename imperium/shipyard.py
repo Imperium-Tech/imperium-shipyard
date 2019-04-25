@@ -6,7 +6,9 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
 from imperium.models.json_reader import get_file_data
+from imperium.models.option import Option
 from imperium.models.pplant import PPlant
+from imperium.models.screens import Screen
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from PyQt5.QtCore import Qt
@@ -155,32 +157,46 @@ class Window(QWidget):
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
-        # Hull Options
+        #### Hull Options ###
         self.armor_config_layout.addWidget(QLabel("Hull Options:"), 0, 0)
 
         # Bridge
         self.bridge_check = add_hull_option(self.armor_config_layout, "Bridge", self.check_bridge, 1, 0)
 
         # Reflec
-        self.reflec_check = add_hull_option(self.armor_config_layout, "Reflec", self.check_reflec, 2, 0)
+        self.reflec_check = add_hull_option(self.armor_config_layout, "Reflec",
+                                            lambda: self.modify_hull_option(self.reflec_check), 2, 0)
 
         # Self-Sealing
-        self.seal_check = add_hull_option(self.armor_config_layout, "Self-Sealing", self.check_sealing, 3, 0)
+        self.seal_check = add_hull_option(self.armor_config_layout, "Self-Sealing",
+                                          lambda: self.modify_hull_option(self.seal_check), 3, 0)
 
         # Stealth
-        self.stealth_check = add_hull_option(self.armor_config_layout, "Stealth", self.check_stealth, 4, 0)
+        self.stealth_check = add_hull_option(self.armor_config_layout, "Stealth",
+                                             lambda: self.modify_hull_option(self.stealth_check), 4, 0)
 
-        # Hull config list
+        ### Screen Options ###
+        self.armor_config_layout.addWidget(QLabel("Screen Options:"), 0, 1)
+
+        # Meson Screen
+        self.meson_screen = add_hull_option(self.armor_config_layout, "Meson Screen",
+                                            lambda: self.modify_screen(self.meson_screen), 1, 1)
+
+        # Nuclear Damper
+        self.nuclear_damper = add_hull_option(self.armor_config_layout, "Nuclear Damper",
+                                              lambda: self.modify_screen(self.nuclear_damper), 2, 1)
+
+        ### Hull config list ###
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
                                              "hull_config.json", self.edit_hull_config, 5, 0)
-        self.armor_config_layout.addWidget(self.hull_config_box, 6, 0)
+        self.armor_config_layout.addWidget(self.hull_config_box, 6, 0, 1, -1)
 
-        # Armor list
+        ### Armor list ###
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
                                              "hull_armor.json", self.edit_armor, 7, 0, True)
 
         self.occupied_rows = 8
-        self.armor_config_layout.addWidget(self.armor_combo_box, self.occupied_rows, 0)
+        self.armor_config_layout.addWidget(self.armor_combo_box, self.occupied_rows, 0, 1, -1)
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
@@ -334,7 +350,7 @@ class Window(QWidget):
 
         # Adjusting values and adding widget
         self.occupied_rows += 1
-        self.armor_config_layout.addWidget(button, self.occupied_rows, 0)
+        self.armor_config_layout.addWidget(button, self.occupied_rows, 0, 1, -1)
         self.update_stats()
 
     def remove_armor(self, armor):
@@ -360,19 +376,20 @@ class Window(QWidget):
         self.spacecraft.set_bridge()
         self.update_stats()
 
-    def check_reflec(self):
-        # Handles reflec checkbox
-        self.spacecraft.set_reflec()
+    def modify_hull_option(self, box):
+        # Handles adding/removing a hull option
+        opt_type = box.text()
+
+        option = Option(opt_type)
+        self.spacecraft.modify_hull_option(option)
         self.update_stats()
 
-    def check_sealing(self):
-        # Handles self-sealing checkbox
-        self.spacecraft.set_self_sealing()
-        self.update_stats()
+    def modify_screen(self, box):
+        # Handles adding/removing a screen
+        screen_type = box.text()
 
-    def check_stealth(self):
-        # Handles stealth checkbox
-        self.spacecraft.set_stealth()
+        screen = Screen(screen_type)
+        self.spacecraft.modify_screen(screen)
         self.update_stats()
 
 

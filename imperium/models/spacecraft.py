@@ -25,10 +25,8 @@ class Spacecraft:
         self.armour_total       = 0 # total armour pointage
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
+        self.hull_options       = list() # list of hull options installed
         self.bridge             = False  # whether a bridge is installed
-        self.reflec             = False  # reflec opt
-        self.self_sealing       = False  # self-sealing opt
-        self.stealth            = False  # stealth opt
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
         self.pplant             = None   # pplant object
@@ -81,12 +79,8 @@ class Spacecraft:
             cost_total += self.tonnage * .005
 
         # Hull options
-        if self.reflec is True:
-            cost_total += self.tonnage * 0.1
-        if self.self_sealing is True:
-            cost_total += self.tonnage * 0.01
-        if self.stealth is True:
-            cost_total += self.tonnage * 0.1
+        for opt in self.hull_options:
+            cost_total += self.tonnage * opt.cost_per_hull_ton
 
         # Drives
         if self.jdrive is not None:
@@ -407,27 +401,6 @@ class Spacecraft:
         """
         self.sensors = sensor
 
-    def add_screen(self, screen):
-        """
-        Handles adding a screen object to a ship
-        Checks whether the module has already been added previously
-        :param screen: screen object to add
-        """
-        for s in self.screens:
-            if s.name == screen.name:
-                return "Error: screen module already installed on ship."
-
-        self.screens.append(screen)
-
-    def remove_screen(self, screen):
-        """
-        Handles removing a screen object from the ship
-        :param screen: screen object to remove
-        """
-        for s in self.screens:
-            if s.name == screen.name:
-                self.screens.remove(s)
-                
     def add_software(self, software):
         """
         Handles adding/altering a piece of software on a ship. Contains error checking for
@@ -508,14 +481,24 @@ class Spacecraft:
         """
         self.hull_type = config
 
-    def set_reflec(self):
-        # Toggles reflec state
-        self.reflec ^= True
+    def modify_hull_option(self, option):
+        """
+        Updates a hull option for a ship, adding it if it doesn't exist and removing it if it does
+        :param option: Option object to use
+        """
+        for o in self.hull_options:
+            if o.name == option.name:
+                self.hull_options.remove(o)
+                return
+        self.hull_options.append(option)
 
-    def set_self_sealing(self):
-        # Toggles sealing state
-        self.self_sealing ^= True
-
-    def set_stealth(self):
-        # Toggles stealth state
-        self.stealth ^= True
+    def modify_screen(self, screen):
+        """
+        Updates a screen for a ship, adding it if it doesn't exist, removing it if it does
+        :param screen: Screen object to use
+        """
+        for s in self.screens:
+            if screen.name == s.name:
+                self.screens.remove(s)
+                return
+        self.screens.append(screen)
