@@ -28,34 +28,34 @@ def test_adding():
     extra = Screen("Nuclear Damper")
 
     ship = Spacecraft(200)
-    assert ship.cargo == 200
-    assert ship.cost_total == 8.0
+    assert ship.get_remaining_cargo() == 200
+    assert ship.get_total_cost() == 8.0
 
     ship.add_screen(damper)
-    assert ship.cargo == 150
-    assert ship.cost_total == 58.0
+    assert ship.get_remaining_cargo() == 150
+    assert ship.get_total_cost() == 58.0
 
     ship.add_screen(meson)
-    assert ship.cargo == 100
-    assert ship.cost_total == 118.0
+    assert ship.get_remaining_cargo() == 100
+    assert ship.get_total_cost() == 118.0
 
     ship.add_screen(extra)
-    assert ship.cargo == 100
-    assert ship.cost_total == 118.0
+    assert ship.get_remaining_cargo() == 100
+    assert ship.get_total_cost() == 118.0
 
 
 def test_removing():
     # Tests removing a screen object from the ship
     ship = Spacecraft(200)
-    assert ship.cargo == 200
-    assert ship.cost_total == 8.0
+    assert ship.get_remaining_cargo() == 200
+    assert ship.get_total_cost() == 8.0
 
     damper = Screen("Nuclear Damper")
     ship.add_screen(damper)
-    assert ship.cargo == 150
-    assert ship.cost_total == 58.0
+    assert ship.get_remaining_cargo() == 150
+    assert ship.get_total_cost() == 58.0
 
     ship.remove_screen(damper)
-    assert ship.cargo == 200
-    assert ship.cost_total == 8.0
+    assert ship.get_remaining_cargo() == 200
+    assert ship.get_total_cost() == 8.0
 

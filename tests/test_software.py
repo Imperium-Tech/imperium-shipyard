@@ -32,10 +32,10 @@ def test_adding():
     jump = Software("Jump Control", 2)
 
     ship.add_computer(computer)
-    assert ship.cost_total == 4.0
+    assert ship.get_total_cost() == 4.0
 
     ship.add_software(jump)
-    assert ship.cost_total == 4.2
+    assert ship.get_total_cost() == 4.2
     assert len(ship.software) == 1
 
 
@@ -47,16 +47,16 @@ def test_downgrading():
     downgrade = Software("Jump Control", 1)
 
     ship.add_computer(computer)
-    assert ship.cost_total == 4.0
+    assert ship.get_total_cost() == 4.0
 
     # Adding the level 2 jump
     ship.add_software(jump)
-    assert ship.cost_total == 4.2
+    assert ship.get_total_cost() == 4.2
     assert len(ship.software) == 1
 
     # Downgrading to the level 1 jump
     ship.add_software(downgrade)
-    assert ship.cost_total == 4.1
+    assert ship.get_total_cost() == 4.1
     assert len(ship.software) == 1
 
 
@@ -67,11 +67,11 @@ def test_invalid():
     jump = Software("Jump Control", 5)
 
     ship.add_computer(computer)
-    assert ship.cost_total == 4.0
+    assert ship.get_total_cost() == 4.0
 
     # Adding the level 2 jump
     ship.add_software(jump)
-    assert ship.cost_total == 4.0
+    assert ship.get_total_cost() == 4.0
     assert len(ship.software) == 0
 
 
@@ -83,15 +83,15 @@ def test_overflow():
     downgrade = Software("Jump Control", 4)
 
     ship.add_computer(computer)
-    assert ship.cost_total == 4.0
+    assert ship.get_total_cost() == 4.0
 
     # Adding the level 2 jump
     ship.add_software(jump)
-    assert ship.cost_total == 4.2
+    assert ship.get_total_cost() == 4.2
     assert len(ship.software) == 1
 
     # Trying to upgrade to the level 4 jump
     ship.add_software(downgrade)
-    assert ship.cost_total == 4.2
+    assert ship.get_total_cost() == 4.2
     assert len(ship.software) == 1
 

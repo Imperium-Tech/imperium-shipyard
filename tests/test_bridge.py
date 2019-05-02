@@ -9,32 +9,32 @@ from imperium.models.spacecraft import Spacecraft
 
 def test_small():
     spacecraft = Spacecraft(100)
-    spacecraft.add_bridge()
+    spacecraft.set_bridge()
 
-    assert spacecraft.cargo == 90
-    assert spacecraft.cost_total == 2.5
+    assert spacecraft.get_remaining_cargo() == 90
+    assert spacecraft.get_total_cost() == 2.5
 
 
 def test_medium():
     spacecraft = Spacecraft(400)
-    spacecraft.add_bridge()
+    spacecraft.set_bridge()
 
-    assert spacecraft.cargo == 380
-    assert spacecraft.cost_total == 18.0
+    assert spacecraft.get_remaining_cargo() == 380
+    assert spacecraft.get_total_cost() == 18.0
 
 
 def test_large():
     spacecraft = Spacecraft(1200)
-    spacecraft.add_bridge()
+    spacecraft.set_bridge()
 
-    assert spacecraft.cargo == 1160
-    assert spacecraft.cost_total == 126.0
+    assert spacecraft.get_remaining_cargo() == 1170
+    assert spacecraft.get_total_cost() == 126.0
 
 
 def test_bigly():
     spacecraft = Spacecraft(2000)
-    spacecraft.add_bridge()
+    spacecraft.set_bridge()
 
-    assert spacecraft.cargo == 1940
-    assert spacecraft.cost_total == 210.0
+    assert spacecraft.get_remaining_cargo() == 1960
+    assert spacecraft.get_total_cost() == 210.0
 

@@ -4,6 +4,7 @@ shipyard.py
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
 from imperium.models.config import Config
+from imperium.models.drives import MDrive, JDrive
 from imperium.models.json_reader import get_file_data
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
@@ -147,17 +148,17 @@ class Window(QWidget):
         Updates the UI with the current Spacecraft stats
         """
         self.tonnage_line_edit.setText(str(      self.spacecraft.tonnage            ))
-        self.cargo_line_edit.setText(str(        self.spacecraft.cargo              ))
+        self.cargo_line_edit.setText(str(        self.spacecraft.get_remaining_cargo()))
         self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
         self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
-        self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.cost_total))
+        self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.get_total_cost()))
 
         # Set the cargo text to red when cargo going negative
-        if self.spacecraft.cargo < 0:
+        if self.spacecraft.get_remaining_cargo() < 0:
             self.cargo_line_edit.setStyleSheet("color: red")
         else:
             self.cargo_line_edit.setStyleSheet("color: black")
@@ -169,7 +170,6 @@ class Window(QWidget):
         new_tonnage = int(self.tonnage_line_edit.text())
         if new_tonnage > 2000:
             new_tonnage = 2000
-        self.reset_hull_config()
         self.spacecraft.set_tonnage(new_tonnage)
 
     def edit_fuel(self):
@@ -185,7 +185,8 @@ class Window(QWidget):
         """
         drive_type = self.jump_line_edit.text().upper()
         if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
-            result = self.spacecraft.add_jdrive(drive_type)
+            new_jdrive = JDrive(drive_type)
+            result = self.spacecraft.add_jdrive(new_jdrive)
             if type(result) is bool:
                 self.jump_label.setText(drive_type)
             elif type(result) is str:
@@ -197,7 +198,8 @@ class Window(QWidget):
         """
         drive_type = self.thrust_line_edit.text().upper()
         if drive_type.isalpha() and len(drive_type) == 1 and drive_type != "I" and drive_type != "O":
-            result = self.spacecraft.add_mdrive(drive_type)
+            new_mdrive = MDrive(drive_type)
+            result = self.spacecraft.add_mdrive(new_mdrive)
             if type(result) is bool:
                 self.thrust_label.setText(drive_type)
             elif type(result) is str:
@@ -246,16 +248,6 @@ class Window(QWidget):
         """
         text = self.hull_config_box.currentText()
         config = Config(text)
-        self.spacecraft.edit_hull_config(config)
-        self.update_stats()
-
-    def reset_hull_config(self):
-        """
-        Handles resetting hull configuration to standard.
-        Used before setting a new tonnage for correct value parsing
-        """
-        self.hull_config_box.setCurrentIndex(0)
-        config = Config("Standard")
         self.spacecraft.edit_hull_config(config)
         self.update_stats()
 
