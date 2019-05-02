@@ -22,7 +22,7 @@ def test_init():
 
 
 def test_adding():
-    # Tests adding each screen type and tests the ship checks for duplicates
+    # Tests adding each screen type
     damper = Screen("Nuclear Damper")
     meson = Screen("Meson Screen")
     extra = Screen("Nuclear Damper")
@@ -31,15 +31,11 @@ def test_adding():
     assert ship.get_remaining_cargo() == 200
     assert ship.get_total_cost() == 8.0
 
-    ship.add_screen(damper)
+    ship.modify_screen(damper)
     assert ship.get_remaining_cargo() == 150
     assert ship.get_total_cost() == 58.0
 
-    ship.add_screen(meson)
-    assert ship.get_remaining_cargo() == 100
-    assert ship.get_total_cost() == 118.0
-
-    ship.add_screen(extra)
+    ship.modify_screen(meson)
     assert ship.get_remaining_cargo() == 100
     assert ship.get_total_cost() == 118.0
 
@@ -51,11 +47,12 @@ def test_removing():
     assert ship.get_total_cost() == 8.0
 
     damper = Screen("Nuclear Damper")
-    ship.add_screen(damper)
+    ship.modify_screen(damper)
     assert ship.get_remaining_cargo() == 150
     assert ship.get_total_cost() == 58.0
 
-    ship.remove_screen(damper)
+    new_damper = Screen("Nuclear Damper")
+    ship.modify_screen(new_damper)
     assert ship.get_remaining_cargo() == 200
     assert ship.get_total_cost() == 8.0
 

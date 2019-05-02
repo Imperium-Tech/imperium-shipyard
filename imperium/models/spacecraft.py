@@ -25,6 +25,7 @@ class Spacecraft:
         self.armour_total       = 0 # total armour pointage
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
+        self.hull_options       = list() # list of hull options installed
         self.bridge             = False  # whether a bridge is installed
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
@@ -76,6 +77,10 @@ class Spacecraft:
             cost_total += cost * self.hull_type.mod_hull_cost
         if self.bridge is True:
             cost_total += self.tonnage * .005
+
+        # Hull options
+        for opt in self.hull_options:
+            cost_total += self.tonnage * opt.cost_per_hull_ton
 
         # Drives
         if self.jdrive is not None:
@@ -201,11 +206,10 @@ class Spacecraft:
             return "Error: Tonnage not set before adding j-drive."
 
         # Error checking to see if new drive type is incompatible
-        if self.performance_by_volume("jdrive", drive.drive_type) is not None:
-            self.jdrive = drive
-            return True
-        else:
+        if self.performance_by_volume("jdrive", drive.drive_type) is None:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
+
+        self.jdrive = drive
 
     def add_mdrive(self, drive):
         """
@@ -216,11 +220,10 @@ class Spacecraft:
             return "Error: Tonnage not set before adding m-drive."
 
         # Error checking to see if new drive type is incompatible
-        if self.performance_by_volume("mdrive", drive.drive_type) is not None:
-            self.mdrive = drive
-            return True
-        else:
+        if self.performance_by_volume("mdrive", drive.drive_type) is None:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
+
+        self.mdrive = drive
         
     def performance_by_volume(self, drive, drive_letter):
         """
@@ -254,15 +257,54 @@ class Spacecraft:
 
         return 1
 
+    def get_lowest_drive(self):
+        """
+        Handles getting the lowest possible drive type for a given tonnage
+        :return: letter of the drive type
+        """
+        data = get_file_data("hull_performance.json")
+        index = get_file_data("hull_performance_index.json")
+        idx = index.get(str(self.tonnage))
+
+        for drive in data:
+            jump_list = data.get(drive).get("jumps_per_hull_volume")
+
+            # check invalid first, else return drive type
+            if len(jump_list) <= idx:
+                continue
+            elif jump_list[idx] == 0:
+                continue
+            else:
+                return drive
+
     def add_pplant(self, plant):
         """
         Adds a power plant to the spaceship
-        # Todo - add error checking with m/j-drive
-        :param plant_type: The plant designation letter
+        :param plant: plant object
         """
-        # assign object to ship, update cost & tonnage
+        if self.tonnage == 0:
+            return "Error: Tonnage not set before adding PPlant"
+
         self.pplant = plant
         self.fuel_two_weeks = plant.fuel_two_weeks
+        return True
+
+    def check_pplant_validity(self):
+        """
+        Checks whether the input pplant is valid based on the Drives
+        """
+        if self.pplant is not None:
+            if None not in (self.mdrive, self.jdrive):
+                max_drive = max(self.jdrive.drive_type, self.mdrive.drive_type)
+                if self.pplant.type < max_drive:
+                    return "Error: PPlant under max M/J-Drive. {} < {}".format(self.pplant.type, max(max_drive))
+            elif self.jdrive is not None:
+                if self.pplant.type < self.jdrive.drive_type:
+                    return "Error: PPlant under J-Drive. {} < {}".format(self.pplant.type, self.jdrive.drive_type)
+            elif self.mdrive is not None:
+                if self.pplant.type < self.mdrive.drive_type:
+                    return "Error: PPlant under M-Drive. {} < {}".format(self.pplant.type, self.mdrive.drive_type)
+        return True
 
     def add_turret(self, turret):
         """
@@ -359,27 +401,6 @@ class Spacecraft:
         """
         self.sensors = sensor
 
-    def add_screen(self, screen):
-        """
-        Handles adding a screen object to a ship
-        Checks whether the module has already been added previously
-        :param screen: screen object to add
-        """
-        for s in self.screens:
-            if s.name == screen.name:
-                return "Error: screen module already installed on ship."
-
-        self.screens.append(screen)
-
-    def remove_screen(self, screen):
-        """
-        Handles removing a screen object from the ship
-        :param screen: screen object to remove
-        """
-        for s in self.screens:
-            if s.name == screen.name:
-                self.screens.remove(s)
-                
     def add_software(self, software):
         """
         Handles adding/altering a piece of software on a ship. Contains error checking for
@@ -460,3 +481,24 @@ class Spacecraft:
         """
         self.hull_type = config
 
+    def modify_hull_option(self, option):
+        """
+        Updates a hull option for a ship, adding it if it doesn't exist and removing it if it does
+        :param option: Option object to use
+        """
+        for o in self.hull_options:
+            if o.name == option.name:
+                self.hull_options.remove(o)
+                return
+        self.hull_options.append(option)
+
+    def modify_screen(self, screen):
+        """
+        Updates a screen for a ship, adding it if it doesn't exist, removing it if it does
+        :param screen: Screen object to use
+        """
+        for s in self.screens:
+            if screen.name == s.name:
+                self.screens.remove(s)
+                return
+        self.screens.append(screen)

@@ -3,3 +3,4 @@
 [![Coverage Status](https://coveralls.io/repos/github/Milkshak3s/imperium-shipyard/badge.svg?branch=master)](https://coveralls.io/github/Milkshak3s/imperium-shipyard?branch=master)  
 Python ship designer for Traveller  
 
+<img src="imperium_design.png" alt="Diagram of Project Structure">
