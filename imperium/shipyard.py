@@ -239,8 +239,8 @@ class Window(QWidget):
             return spinbox
 
         # Jump Control
-        self.jump_label = add_software_to_layout("Jump Control", 6, (0, 6),
-                                                 lambda: self.edit_software(self.jump_label, "Jump Control"))
+        self.jump_control = add_software_to_layout("Jump Control", 6, (0, 6),
+                                                 lambda: self.edit_software(self.jump_control, "Jump Control"))
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
@@ -336,6 +336,7 @@ class Window(QWidget):
                 self.logger.setText(result)
             else:
                 self.jump_label.setText(drive_type)
+        self.update_stats()
 
     def edit_mdrive(self):
         """
@@ -349,6 +350,7 @@ class Window(QWidget):
                 self.logger.setText(result)
             else:
                 self.thrust_label.setText(drive_type)
+        self.update_stats()
 
     def edit_pplant(self):
         """
@@ -362,6 +364,7 @@ class Window(QWidget):
                 self.pplant_label.setText(pplant_type)
             elif type(result) is str:
                 self.logger.setText(result)
+        self.update_stats()
 
     def check_valid_type(self, drive):
         """
