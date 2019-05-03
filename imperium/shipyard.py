@@ -11,12 +11,13 @@ from imperium.models.option import Option
 from imperium.models.pplant import PPlant
 from imperium.models.screens import Screen
 from imperium.models.sensors import Sensor
+from imperium.models.software import Software
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
-                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox)
+                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox)
 
 
 class Window(QWidget):
@@ -216,11 +217,30 @@ class Window(QWidget):
                                      self.edit_sensors, 0, 0)
 
         # Computer Model
-        self.computers = add_combo_box(self.computer_config_layout, "Computer Model: ", "hull_computer.json",
+        self.computers = add_combo_box(self.computer_config_layout, "Computer/Software: ", "hull_computer.json",
                                        self.edit_computer, 2, 0, True)
-        self.computer_rating = self.computer_config_layout.addWidget(QLabel("Total rating: "), 4, 0)
+
+        self.computer_config_layout.addWidget(QLabel("Total rating: "), 4, 0)
         self.computer_rating = QLabel("--")
         self.computer_config_layout.addWidget(self.computer_rating, 4, 1)
+
+        self.computer_config_layout.addWidget(QLabel("Avail rating: "), 5, 0)
+        self.avail_rating = QLabel("--")
+        self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
+
+        # Software
+        def add_software_to_layout(name, x, range, funct):
+            label = QLabel(name)
+            spinbox = QSpinBox()
+            spinbox.setRange(range[0], range[1])
+            spinbox.valueChanged.connect(funct)
+            self.computer_config_layout.addWidget(label, x, 0)
+            self.computer_config_layout.addWidget(spinbox, x, 1)
+            return spinbox
+
+        # Jump Control
+        self.jump_label = add_software_to_layout("Jump Control", 6, (0, 6),
+                                                 lambda: self.edit_software(self.jump_label, "Jump Control"))
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
@@ -438,6 +458,18 @@ class Window(QWidget):
             self.computer_rating.setText(str(computer.rating))
 
         self.spacecraft.add_computer(computer)
+        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
+        self.update_stats()
+
+    def edit_software(self, box, software_name):
+        # Handles adding/changing software to a ship
+        if box.value() == 0:
+            self.spacecraft.remove_software(software_name)
+            return
+
+        software = Software(software_name, box.value())
+        self.spacecraft.modify_software(software)
+        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 
 

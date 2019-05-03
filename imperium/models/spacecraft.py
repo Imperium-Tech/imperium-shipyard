@@ -401,43 +401,6 @@ class Spacecraft:
         """
         self.sensors = sensor
 
-    def add_software(self, software):
-        """
-        Handles adding/altering a piece of software on a ship. Contains error checking for
-        computer rating limitations
-        :param software: software to add
-        """
-        # Calculating the current total software rating
-        current_rating = 0
-        for s in self.software:
-            current_rating += s.rating
-
-        # Represents the combined rating between the current rating and software rating
-        combined_rating = software.rating + current_rating
-
-        # Checking whether software is already installed and adjusting combined_rating cost
-        installed = False
-        installed_s = None
-        for s in self.software:
-            if s.type == software.type:
-                installed_s = s
-                difference = software.rating - s.rating
-                combined_rating = current_rating + difference
-                installed = True
-                break
-
-        # Checking whether the new software exceeds the max computer rating
-        if combined_rating > self.computer.rating:
-            print("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
-                combined_rating, self.computer.rating
-            ))
-            return
-
-        if installed:
-            self.software.remove(installed_s)
-
-        self.software.append(software)
-
     def add_bayweapon(self, weapon):
         """
         Handles adding a single bayweapon onto the ship
@@ -502,3 +465,68 @@ class Spacecraft:
                 self.screens.remove(s)
                 return
         self.screens.append(screen)
+
+    def add_software(self, software):
+        """
+        Handles adding/altering a piece of software on a ship. Contains error checking for
+        computer rating limitations
+        :param software: software to add
+        """
+        # Calculating the current total software rating
+        current_rating = 0
+        for s in self.software:
+            current_rating += s.rating
+
+        # Represents the combined rating between the current rating and software rating
+        combined_rating = software.rating + current_rating
+
+        # Checking whether software is already installed and adjusting combined_rating cost
+        installed = False
+        installed_s = None
+        for s in self.software:
+            if s.type == software.type:
+                installed_s = s
+                difference = software.rating - s.rating
+                combined_rating = current_rating + difference
+                installed = True
+                break
+
+        # Checking whether the new software exceeds the max computer rating
+        if combined_rating > self.computer.rating:
+            print("Error: cannot add software, exceeds computer rating limit - {}/{}".format(
+                combined_rating, self.computer.rating
+            ))
+            return
+
+        if installed:
+            self.software.remove(installed_s)
+
+        self.software.append(software)
+
+    def check_rating_ratio(self):
+        # Calculates available software rating based on installed software and computer capabilities
+        rating = 0
+        for s in self.software:
+            rating += s.rating
+
+        if self.computer is not None:
+            available_rating = self.computer.rating - rating
+        else:
+            available_rating = 0 - rating
+
+        return available_rating
+
+    def modify_software(self, software):
+        # Add/changes software
+        for s in self.software:
+            if s.type == software.type:
+                self.software.remove(s)
+                break
+
+        self.software.append(software)
+
+    def remove_software(self, software_name):
+        # Removes software from ship
+        for s in self.software:
+            if s.type == software_name:
+                self.software.remove(s)
