@@ -224,7 +224,7 @@ class Window(QWidget):
         self.computer_rating = QLabel("--")
         self.computer_config_layout.addWidget(self.computer_rating, 4, 1)
 
-        self.computer_config_layout.addWidget(QLabel("Avail rating: "), 5, 0)
+        self.computer_config_layout.addWidget(QLabel("Available rating: "), 5, 0)
         self.avail_rating = QLabel("--")
         self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
 
@@ -249,7 +249,7 @@ class Window(QWidget):
 
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
-        self.armor_config_group.setFixedWidth(275)
+        self.armor_config_group.setFixedWidth(250)
 
         # Overall layout grid
         layout = QGridLayout()
@@ -465,6 +465,7 @@ class Window(QWidget):
         # Handles adding/changing software to a ship
         if box.value() == 0:
             self.spacecraft.remove_software(software_name)
+            self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
             return
 
         software = Software(software_name, box.value())
