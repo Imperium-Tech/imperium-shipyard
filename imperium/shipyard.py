@@ -23,7 +23,7 @@ class Window(QWidget):
     def __init__(self):
         super(Window, self).__init__()
         # Create a placeholder Spacecraft
-        self.spacecraft = Spacecraft(0)
+        self.spacecraft = Spacecraft(100)
         self.logger = QLabel("")
 
         # Window Title
@@ -107,7 +107,6 @@ class Window(QWidget):
         # Tonnage
         base_stats_layout.addWidget(QLabel("Tonnage: "), 0, 0)
         self.tonnage_box = QComboBox()
-        self.tonnage_box.addItem("0")
         for item in get_file_data("hull_data.json").values():
             tonnage = str(item.get('tonnage'))
             self.tonnage_box.addItem(tonnage)
@@ -166,6 +165,7 @@ class Window(QWidget):
 
         # Bridge
         self.bridge_check = add_hull_option(self.armor_config_layout, "Bridge", self.check_bridge, 1, 0)
+        self.bridge_check.setChecked(True)
 
         # Reflec
         self.reflec_check = add_hull_option(self.armor_config_layout, "Reflec",
@@ -419,6 +419,7 @@ class Window(QWidget):
         self.update_stats()
 
     def edit_sensors(self):
+        # Handles adding sensor suite to ships
         sensor_type = self.sensors.currentText()
         sensor = Sensor(sensor_type)
 
@@ -426,6 +427,7 @@ class Window(QWidget):
         self.update_stats()
 
     def edit_computer(self):
+        # Handles adding/removing computers to a ship
         computer_type = self.computers.currentText()
 
         if computer_type == "---":
