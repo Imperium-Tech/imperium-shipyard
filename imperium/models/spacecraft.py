@@ -393,7 +393,7 @@ class Spacecraft:
         :param computer: computer object to use
         """
         self.computer = computer
-        
+
     def add_sensors(self, sensor):
         """
         Handles adding/replacing a sensors system within the system

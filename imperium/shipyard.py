@@ -217,7 +217,10 @@ class Window(QWidget):
 
         # Computer Model
         self.computers = add_combo_box(self.computer_config_layout, "Computer Model: ", "hull_computer.json",
-                                       self.edit_sensors, 2, 0)
+                                       self.edit_computer, 2, 0, True)
+        self.computer_rating = self.computer_config_layout.addWidget(QLabel("Total rating: "), 4, 0)
+        self.computer_rating = QLabel("--")
+        self.computer_config_layout.addWidget(self.computer_rating, 4, 1)
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
@@ -424,10 +427,17 @@ class Window(QWidget):
 
     def edit_computer(self):
         computer_type = self.computers.currentText()
-        computer = Computer(computer_type)
+
+        if computer_type == "---":
+            computer = None
+            self.computer_rating.setText("--")
+        else:
+            computer = Computer(computer_type)
+            self.computer_rating.setText(str(computer.rating))
 
         self.spacecraft.add_computer(computer)
         self.update_stats()
+
 
 if __name__ == '__main__':
     import sys
