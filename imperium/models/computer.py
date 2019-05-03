@@ -16,7 +16,7 @@ class Computer:
         self.addons     = list()
 
     def add_addon(self, name):
-        addon = get_file_data("hull_computer.json").get(name)
+        addon = get_file_data("hull_computer_addons.json").get(name)
 
         if addon.get("rating_increase") is not None:
             self.rating += addon.get("rating_increase")

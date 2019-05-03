@@ -3,12 +3,14 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
+from imperium.models.computer import Computer
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
 from imperium.models.json_reader import get_file_data
 from imperium.models.option import Option
 from imperium.models.pplant import PPlant
 from imperium.models.screens import Screen
+from imperium.models.sensors import Sensor
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from PyQt5.QtCore import Qt
@@ -47,6 +49,8 @@ class Window(QWidget):
             for item in get_file_data(json).keys():
                 combo_box.addItem(item)
             combo_box.activated.connect(funct)
+
+            layout.addWidget(combo_box, x + 1, y, 1, -1)
             return combo_box
 
         def add_hull_option(layout, name, funct, x, y):
@@ -189,17 +193,35 @@ class Window(QWidget):
         ### Hull config list ###
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
                                              "hull_config.json", self.edit_hull_config, 5, 0)
-        self.armor_config_layout.addWidget(self.hull_config_box, 6, 0, 1, -1)
 
         ### Armor list ###
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
                                              "hull_armor.json", self.edit_armor, 7, 0, True)
 
         self.occupied_rows = 8
-        self.armor_config_layout.addWidget(self.armor_combo_box, self.occupied_rows, 0, 1, -1)
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
+        ###################################
+
+        ###################################
+        ###  START: Sensors/Comp Grid   ###
+        ###################################
+        self.computer_config_group = QGroupBox("Sensors/Computers")
+        self.computer_config_layout = QGridLayout()
+        self.computer_config_layout.setAlignment(Qt.AlignTop)
+
+        # Sensors
+        self.sensors = add_combo_box(self.computer_config_layout, "Sensors: ", "hull_sensors.json",
+                                     self.edit_sensors, 0, 0)
+
+        # Computer Model
+        self.computers = add_combo_box(self.computer_config_layout, "Computer Model: ", "hull_computer.json",
+                                       self.edit_sensors, 2, 0)
+
+        self.computer_config_group.setLayout(self.computer_config_layout)
+        ###################################
+        ###  END: Sensors/Comp Grid     ###
         ###################################
 
         # Setting appropriate column widths
@@ -210,6 +232,7 @@ class Window(QWidget):
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
         layout.addWidget(self.armor_config_group, 0, 1)
+        layout.addWidget(self.computer_config_group, 0, 2)
         layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
 
@@ -392,6 +415,19 @@ class Window(QWidget):
         self.spacecraft.modify_screen(screen)
         self.update_stats()
 
+    def edit_sensors(self):
+        sensor_type = self.sensors.currentText()
+        sensor = Sensor(sensor_type)
+
+        self.spacecraft.add_sensors(sensor)
+        self.update_stats()
+
+    def edit_computer(self):
+        computer_type = self.computers.currentText()
+        computer = Computer(computer_type)
+
+        self.spacecraft.add_computer(computer)
+        self.update_stats()
 
 if __name__ == '__main__':
     import sys

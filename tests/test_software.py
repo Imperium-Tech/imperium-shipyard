@@ -28,7 +28,7 @@ def test_init():
 def test_adding():
     # Testing adding a single piece of software to a ship
     ship = Spacecraft(100)
-    computer = Computer("model_3")
+    computer = Computer("Model 3")
     jump = Software("Jump Control", 2)
 
     ship.add_computer(computer)
@@ -42,7 +42,7 @@ def test_adding():
 def test_downgrading():
     # Testing adding a single piece of software to a ship
     ship = Spacecraft(100)
-    computer = Computer("model_3")
+    computer = Computer("Model 3")
     jump = Software("Jump Control", 2)
     downgrade = Software("Jump Control", 1)
 
@@ -63,7 +63,7 @@ def test_downgrading():
 def test_invalid():
     # Testing adding a software too high rating for a computer
     ship = Spacecraft(100)
-    computer = Computer("model_3")
+    computer = Computer("Model 3")
     jump = Software("Jump Control", 5)
 
     ship.add_computer(computer)
@@ -78,7 +78,7 @@ def test_invalid():
 def test_overflow():
     # Testing when trying to install a software above the limit
     ship = Spacecraft(100)
-    computer = Computer("model_3")
+    computer = Computer("Model 3")
     jump = Software("Jump Control", 2)
     downgrade = Software("Jump Control", 4)
 
