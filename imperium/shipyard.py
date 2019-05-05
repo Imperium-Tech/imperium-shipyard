@@ -230,6 +230,14 @@ class Window(QWidget):
 
         # Software
         def add_software_to_layout(name, x, range, funct):
+            """
+            Handles adding software and its functionality to the GUI through the use of a SpinBox
+            :param name: name of the label
+            :param x: row of the component
+            :param range: range of software levels
+            :param funct: funct pointer to call on change
+            :return: made SpinBox
+            """
             label = QLabel(name)
             spinbox = QSpinBox()
             spinbox.setRange(range[0], range[1])
@@ -238,9 +246,20 @@ class Window(QWidget):
             self.computer_config_layout.addWidget(spinbox, x, 1)
             return spinbox
 
-        # Jump Control
         self.jump_control = add_software_to_layout("Jump Control", 6, (0, 6),
                                                  lambda: self.edit_software(self.jump_control, "Jump Control"))
+
+        self.fire_control = add_software_to_layout("Fire Control", 7, (0, 5),
+                                                   lambda: self.edit_software(self.fire_control, "Fire Control"))
+
+        self.evade = add_software_to_layout("Evade", 8, (0, 3),
+                                                   lambda: self.edit_software(self.evade, "Evade"))
+
+        self.auto_repair = add_software_to_layout("Auto-Repair", 9, (0, 2),
+                                                   lambda: self.edit_software(self.auto_repair, "Auto-Repair"))
+
+        self.intellect = add_software_to_layout("Intellect", 10, (0, 1),
+                                                   lambda: self.edit_software(self.intellect, "Intellect"))
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
@@ -296,6 +315,9 @@ class Window(QWidget):
         Updates the Drives to the lowest available type at that tonnage level
         """
         new_tonnage = int(self.tonnage_box.currentText())
+
+        if new_tonnage == self.spacecraft.tonnage:
+            return
 
         # Cap tonnage to 2000
         if new_tonnage > 2000:
