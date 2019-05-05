@@ -261,6 +261,12 @@ class Window(QWidget):
         self.intellect = add_software_to_layout("Intellect", 10, (0, 1),
                                                    lambda: self.edit_software(self.intellect, "Intellect"))
 
+        self.manoeuvre = add_software_to_layout("Manoeuvre", 11, (0, 1),
+                                                   lambda: self.edit_software(self.manoeuvre, "Manoeuvre"))
+
+        self.library = add_software_to_layout("Library", 12, (0, 1),
+                                                   lambda: self.edit_software(self.library, "Library"))
+
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
         ###  END: Sensors/Comp Grid     ###
