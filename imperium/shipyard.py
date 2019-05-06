@@ -74,6 +74,7 @@ class Window(QWidget):
         ###################################
         base_stats_group = QGroupBox("Base Stats")
         base_stats_layout = QGridLayout()
+        base_stats_layout.setAlignment(Qt.AlignTop)
 
         # Add stat function
         def add_stat_to_layout(label, row, signal_function=None, force_int=False, read_only=False):
