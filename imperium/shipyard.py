@@ -229,43 +229,16 @@ class Window(QWidget):
         self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
 
         # Software
-        def add_software_to_layout(name, x, range, funct):
-            """
-            Handles adding software and its functionality to the GUI through the use of a SpinBox
-            :param name: name of the label
-            :param x: row of the component
-            :param range: range of software levels
-            :param funct: funct pointer to call on change
-            :return: made SpinBox
-            """
-            label = QLabel(name)
-            spinbox = QSpinBox()
-            spinbox.setRange(range[0], range[1])
-            spinbox.valueChanged.connect(funct)
-            self.computer_config_layout.addWidget(label, x, 0)
-            self.computer_config_layout.addWidget(spinbox, x, 1)
-            return spinbox
+        self.num_rows = 7
 
-        self.jump_control = add_software_to_layout("Jump Control", 6, (0, 6),
-                                                 lambda: self.edit_software(self.jump_control, "Jump Control"))
-
-        self.fire_control = add_software_to_layout("Fire Control", 7, (0, 5),
-                                                   lambda: self.edit_software(self.fire_control, "Fire Control"))
-
-        self.evade = add_software_to_layout("Evade", 8, (0, 3),
-                                                   lambda: self.edit_software(self.evade, "Evade"))
-
-        self.auto_repair = add_software_to_layout("Auto-Repair", 9, (0, 2),
-                                                   lambda: self.edit_software(self.auto_repair, "Auto-Repair"))
-
-        self.intellect = add_software_to_layout("Intellect", 10, (0, 1),
-                                                   lambda: self.edit_software(self.intellect, "Intellect"))
-
-        self.manoeuvre = add_software_to_layout("Manoeuvre", 11, (0, 1),
-                                                   lambda: self.edit_software(self.manoeuvre, "Manoeuvre"))
-
-        self.library = add_software_to_layout("Library", 12, (0, 1),
-                                                   lambda: self.edit_software(self.library, "Library"))
+        self.software_box = QComboBox()
+        for item in get_file_data("hull_software.json").keys():
+            self.software_box.addItem(item)
+        button = QPushButton("Add")
+        button.clicked.connect(lambda: self.add_software(self.software_box))
+        self.computer_config_layout.addWidget(self.software_box, 6, 0)
+        self.computer_config_layout.addWidget(QLabel(), 6, 1)
+        self.computer_config_layout.addWidget(button, 6, 2)
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
@@ -481,6 +454,7 @@ class Window(QWidget):
         # Handles adding/removing computers to a ship
         computer_type = self.computers.currentText()
 
+        # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
             self.computer_rating.setText("--")
@@ -492,15 +466,85 @@ class Window(QWidget):
         self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 
-    def edit_software(self, box, software_name):
-        # Handles adding/changing software to a ship
-        if box.value() == 0:
-            self.spacecraft.remove_software(software_name)
-            self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
+    def add_software(self, box):
+        """
+        Handles adding new software to the GUI
+        :param box: software box of the GUI, self.software_box
+        """
+        # If there are no items left
+        if box.count() == 0:
             return
 
-        software = Software(software_name, box.value())
-        self.spacecraft.modify_software(software)
+        # Removing item from software list
+        software_name = box.currentText()
+        box.removeItem(box.currentIndex())
+
+        # GUI elements for newly added software
+        software_label = QLabel(software_name)
+        software_combobox = QComboBox()
+        software_button = QPushButton("Remove")
+
+        # Combobox functionality
+        software_combobox.addItem("-")
+        for item in get_file_data("hull_software.json").get(software_name):
+            if item != "mod_additional":
+                software_combobox.addItem(item)
+        software_combobox.currentTextChanged.connect(lambda: self.modify_software_level(software_label, software_combobox))
+
+        # Button functionality
+        software_button.clicked.connect(lambda: self.remove_software(software_label, software_combobox, software_button))
+        software_button.clicked.connect(software_label.deleteLater)
+        software_button.clicked.connect(software_combobox.deleteLater)
+        software_button.clicked.connect(software_button.deleteLater)
+
+        # Adding widgets to GUI
+        self.computer_config_layout.addWidget(software_label, self.num_rows, 0)
+        self.computer_config_layout.addWidget(software_combobox, self.num_rows, 1)
+        self.computer_config_layout.addWidget(software_button, self.num_rows, 2)
+        self.num_rows += 1
+
+    def remove_software(self, label, box, button):
+        """
+        Handles removing the GUI elements on "Remove" button click
+        :param label: QLabel of that row
+        :param box: QComboBox for that software
+        :param button: QPushButton
+        """
+        software_name = label.text()
+
+        # Removing software from ship
+        if software_name != "-":
+            self.spacecraft.remove_software(software_name)
+
+        # Removing software from GUI
+        self.computer_config_layout.removeWidget(label)
+        self.computer_config_layout.removeWidget(box)
+        self.computer_config_layout.removeWidget(button)
+        self.num_rows -= 1
+
+        # Adding item back to combobox
+        self.software_box.addItem(software_name)
+        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
+        self.update_stats()
+
+    def modify_software_level(self, label, box):
+        """
+        Modifies the level of an already added software piece, removing if the level is '-'
+        :param label: QLabel of that row
+        :param box: QComboBox of that software
+        """
+
+        # Get software name/level
+        software_level = box.currentText()
+        software_name = label.text()
+
+        # Check if software level is '-'
+        if software_level == "-":
+            self.spacecraft.remove_software(software_name)
+        else:
+            software = Software(software_name, software_level)
+            self.spacecraft.modify_software(software)
+
         self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 

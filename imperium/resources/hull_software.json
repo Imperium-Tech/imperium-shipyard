@@ -109,7 +109,7 @@
         "mod_additional": [
           "Allows basic control of the ship"
         ],
-        "1": {
+        "0": {
             "tl": 8,
             "rating": 0,
             "cost": 0.0
@@ -119,7 +119,7 @@
         "mod_additional": [
           "Allows a ship to understand and obey verbal commands"
         ],
-        "1": {
+        "0": {
             "tl": 11,
             "rating": 10,
             "cost": 1.0
@@ -129,7 +129,7 @@
         "mod_additional": [
           "Contains a wealth of data on numerous subjects"
         ],
-        "1": {
+        "0": {
             "tl": 8,
             "rating": 0,
             "cost": 0.0
