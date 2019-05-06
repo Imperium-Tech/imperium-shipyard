@@ -10,21 +10,21 @@ from imperium.models.spacecraft import Spacecraft
 
 def test_init():
     # Testing initialization of various sensors
-    sensor = Sensor("standard")
+    sensor = Sensor("Standard")
     assert sensor.cost == 0
     assert sensor.tonnage == 0
     assert sensor.sensors_dm == -4
     assert sensor.tl == 8
     assert sensor.equipment is not None
 
-    sensor = Sensor("basic_military")
+    sensor = Sensor("Basic Military")
     assert sensor.cost == 1
     assert sensor.tonnage == 2
     assert sensor.sensors_dm == 0
     assert sensor.tl == 10
     assert sensor.equipment is not None
 
-    sensor = Sensor("very_advanced")
+    sensor = Sensor("Very Advanced")
     assert sensor.cost == 4
     assert sensor.tonnage == 5
     assert sensor.sensors_dm == 2
@@ -38,14 +38,14 @@ def test_add_replace():
     assert ship.get_remaining_cargo() == 100
     assert ship.get_total_cost() == 2.0
 
-    sensor = Sensor("advanced")
+    sensor = Sensor("Advanced")
 
     ship.add_sensors(sensor)
     assert ship.get_remaining_cargo() == 97
     assert ship.get_total_cost() == 4.0
     assert ship.sensors is not None
 
-    sensor = Sensor("basic_civilian")
+    sensor = Sensor("Basic Civilian")
     ship.add_sensors(sensor)
     assert ship.get_remaining_cargo() == 99
     assert ship.get_total_cost() == 2.05

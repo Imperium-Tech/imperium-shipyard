@@ -1,5 +1,5 @@
 {
-    "standard": {
+    "Standard": {
         "tl": 8,
         "sensors_dm": -4,
         "equipment": [
@@ -9,7 +9,7 @@
         "tonnage": 0,
         "cost": 0.0
     },
-    "basic_civilian": {
+    "Basic Civilian": {
         "tl": 9,
         "sensors_dm": -2,
         "equipment": [
@@ -19,7 +19,7 @@
         "tonnage": 1,
         "cost": 0.05
     },
-    "basic_military": {
+    "Basic Military": {
         "tl": 10,
         "sensors_dm": 0,
         "equipment": [
@@ -30,7 +30,7 @@
         "tonnage": 2,
         "cost": 1.0
     },
-    "advanced": {
+    "Advanced": {
         "tl": 11,
         "sensors_dm": 1,
         "equipment": [
@@ -42,7 +42,7 @@
         "tonnage": 3,
         "cost": 2.0
     },
-    "very_advanced": {
+    "Very Advanced": {
         "tl": 12,
         "sensors_dm": 2,
         "equipment": [

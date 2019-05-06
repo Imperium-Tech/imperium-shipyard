@@ -5,6 +5,8 @@
 Unit tests for functionality of the drive classes
 """
 import pytest
+
+from imperium.models.pplant import PPlant
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.drives import (JDrive, MDrive)
 
@@ -22,6 +24,11 @@ def test_init():
     assert mdrive.drive_type == "A"
     assert mdrive.tonnage == 2
     assert mdrive.cost == 4
+
+    pplant = PPlant("A")
+    assert pplant.fuel_two_weeks == 2
+    assert pplant.cost == 8
+    assert pplant.tonnage == 4
 
 
 def test_adding():
@@ -46,6 +53,12 @@ def test_adding():
     assert ship.get_remaining_cargo() == 88
     assert ship.get_total_cost() == 16
     assert ship.mdrive is not None
+
+    ship.add_pplant(PPlant("A"))
+    assert ship.tonnage == 100
+    assert ship.get_remaining_cargo() == 84
+    assert ship.get_total_cost() == 24
+    assert ship.pplant is not None
 
 
 def test_changing():
@@ -80,6 +93,16 @@ def test_changing():
     assert ship.get_total_cost() == 30
     assert ship.mdrive.drive_type == "B"
 
+    ship.add_pplant(PPlant("A"))
+    assert ship.get_remaining_cargo() == 78
+    assert ship.get_total_cost() == 38
+    assert ship.pplant.type == "A"
+
+    ship.add_pplant(PPlant("B"))
+    assert ship.get_remaining_cargo() == 75
+    assert ship.get_total_cost() == 46
+    assert ship.pplant.type == "B"
+
 
 def test_empty_ship():
     ship = Spacecraft(0)
@@ -97,6 +120,11 @@ def test_empty_ship():
     assert ship.get_remaining_cargo() == 0
     assert ship.mdrive is None
 
+    ship.add_pplant(PPlant("A"))
+    assert ship.tonnage == 0
+    assert ship.get_remaining_cargo() == 0
+    assert ship.pplant is None
+
 
 def test_incompatible_drive():
     ship = Spacecraft(100)
@@ -106,3 +134,26 @@ def test_incompatible_drive():
 
     ship.add_mdrive(MDrive("Z"))
     assert ship.mdrive is None
+
+
+def test_pplant_validity():
+    # Tests 4 cases for pplant validities
+    ship = Spacecraft(100)
+    assert ship.tonnage == 100
+    assert ship.get_remaining_cargo() == 100
+
+    ship.add_jdrive(JDrive("B"))
+    ship.add_pplant(PPlant("B"))
+
+    assert ship.check_pplant_validity() == True
+
+    ship.add_pplant(PPlant("A"))
+    assert ship.check_pplant_validity() == "Error: PPlant under J-Drive. A < B"
+
+    ship = Spacecraft(100)
+    ship.add_mdrive(MDrive("B"))
+    ship.add_pplant(PPlant("A"))
+    assert ship.check_pplant_validity() == "Error: PPlant under M-Drive. A < B"
+
+    ship.add_jdrive(JDrive("B"))
+    assert ship.check_pplant_validity() == "Error: PPlant under max M/J-Drive. A < B"
