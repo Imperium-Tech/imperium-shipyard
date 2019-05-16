@@ -7,6 +7,7 @@ from imperium.models.computer import Computer
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
 from imperium.models.json_reader import get_file_data
+from imperium.models.misc import Misc
 from imperium.models.option import Option
 from imperium.models.pplant import PPlant
 from imperium.models.screens import Screen
@@ -230,9 +231,10 @@ class Window(QWidget):
         self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
 
         # Software
-        self.num_rows = 7
+        self.software_num_rows = 7
 
         self.software_box = QComboBox()
+        self.software_box.addItem("---")
         for item in get_file_data("hull_software.json").keys():
             self.software_box.addItem(item)
         button = QPushButton("Add")
@@ -246,17 +248,57 @@ class Window(QWidget):
         ###  END: Sensors/Comp Grid     ###
         ###################################
 
+        ###################################
+        ###  START: Misc Items Grid     ###
+        ###################################
+        self.misc_config_group = QGroupBox("Misc Items")
+        self.misc_config_layout = QGridLayout()
+        self.misc_config_layout.setAlignment(Qt.AlignTop)
+
+        # Combobox of misc items
+        self.misc_box = QComboBox()
+        self.misc_box.addItem("---")
+        for item in get_file_data("hull_misc.json").keys():
+            self.misc_box.addItem(item)
+
+        # Button that triggers the add
+        button = QPushButton("Add")
+        button.clicked.connect(lambda: self.add_misc(self.misc_box))
+
+        # Adding elements to GUI
+        self.misc_config_layout.addWidget(self.misc_box, 0, 0)
+        self.misc_config_layout.addWidget(QLabel(), 0, 1)
+        self.misc_config_layout.addWidget(button, 0, 2)
+        self.misc_num_rows = 1
+
+        self.misc_config_group.setLayout(self.misc_config_layout)
+        ###################################
+        ###  END: Misc Items Grid       ###
+        ###################################
+
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
         self.armor_config_group.setFixedWidth(250)
+        self.computer_config_group.setFixedWidth(250)
+        self.misc_config_group.setFixedWidth(250)
+
+        # Setting appropriate layout heights
+        FIXED_HEIGHT = 400
+        base_stats_group.setFixedHeight(FIXED_HEIGHT)
+        self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
         layout.addWidget(self.armor_config_group, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
+        layout.addWidget(self.misc_config_group, 0, 3)
         layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
+
 
         # Update to current stats
         self.update_stats()
@@ -473,7 +515,7 @@ class Window(QWidget):
         :param box: software box of the GUI, self.software_box
         """
         # If there are no items left
-        if box.count() == 0:
+        if box.count() == 0 or box.currentText() == "---":
             return
 
         # Removing item from software list
@@ -499,10 +541,12 @@ class Window(QWidget):
         software_button.clicked.connect(software_button.deleteLater)
 
         # Adding widgets to GUI
-        self.computer_config_layout.addWidget(software_label, self.num_rows, 0)
-        self.computer_config_layout.addWidget(software_combobox, self.num_rows, 1)
-        self.computer_config_layout.addWidget(software_button, self.num_rows, 2)
-        self.num_rows += 1
+        self.computer_config_layout.addWidget(software_label, self.software_num_rows, 0)
+        self.computer_config_layout.addWidget(software_combobox, self.software_num_rows, 1)
+        self.computer_config_layout.addWidget(software_button, self.software_num_rows, 2)
+        self.software_box.setCurrentIndex(0)
+        self.software_num_rows += 1
+
 
     def remove_software(self, label, box, button):
         """
@@ -521,7 +565,7 @@ class Window(QWidget):
         self.computer_config_layout.removeWidget(label)
         self.computer_config_layout.removeWidget(box)
         self.computer_config_layout.removeWidget(button)
-        self.num_rows -= 1
+        self.software_num_rows -= 1
 
         # Adding item back to combobox
         self.software_box.addItem(software_name)
@@ -547,6 +591,77 @@ class Window(QWidget):
             self.spacecraft.modify_software(software)
 
         self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
+        self.update_stats()
+
+    def add_misc(self, box):
+        """
+        Handles adding new misc items to the GUI
+        :param box: misc box of the GUI, self.misc_box
+        """
+        # If there are no items left
+        if box.count() == 0 or box.currentText() == "---":
+            return
+
+        # Removing item from software list
+        misc_name = box.currentText()
+        box.removeItem(box.currentIndex())
+
+        # GUI elements for newly added software
+        label = QLabel(misc_name)
+
+        line_edit = QLineEdit()
+        line_edit.setFixedWidth(25)
+        line_edit.setValidator(QIntValidator(line_edit))
+        line_edit.validator().setBottom(0)
+
+        button = QPushButton("Remove")
+
+        # Spinbox functionality
+        line_edit.editingFinished.connect(lambda: self.modify_misc_item(label, line_edit))
+
+        # Button functionality
+        button.clicked.connect(lambda: self.remove_misc(label, line_edit, button))
+        button.clicked.connect(label.deleteLater)
+        button.clicked.connect(line_edit.deleteLater)
+        button.clicked.connect(button.deleteLater)
+
+        # Adding widgets to GUI
+        self.misc_config_layout.addWidget(label, self.misc_num_rows, 0)
+        self.misc_config_layout.addWidget(line_edit, self.misc_num_rows, 1)
+        self.misc_config_layout.addWidget(button, self.misc_num_rows, 2)
+        self.misc_box.setCurrentIndex(0)
+        self.misc_num_rows += 1
+
+    def remove_misc(self, label, line, button):
+        """
+        Handles removing the misc item from the GUI on button click
+        :param label: QLabel
+        :param line: QLineEdit
+        :param button: QButton
+        """
+        misc_name = label.text()
+
+        # Remove item from spacecraftpyt
+        self.spacecraft.remove_misc(misc_name)
+
+        # Removing software from GUI
+        self.misc_config_layout.removeWidget(label)
+        self.misc_config_layout.removeWidget(line)
+        self.misc_config_layout.removeWidget(button)
+        self.misc_num_rows -= 1
+
+        # Adding item back to combobox
+        self.misc_box.addItem(misc_name)
+        self.update_stats()
+
+    def modify_misc_item(self, label, line):
+        # Get software name/level
+        name = label.text()
+        num_misc = line.text()
+
+        # Create item, add to ship
+        misc = Misc(name, int(num_misc))
+        self.spacecraft.modify_misc(misc)
         self.update_stats()
 
 
