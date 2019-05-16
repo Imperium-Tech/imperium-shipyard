@@ -9,6 +9,10 @@ from imperium.models.spacecraft import Spacecraft
 
 
 def test_init():
+    # Test ship rating check before computer addition
+    ship = Spacecraft(100)
+    assert ship.check_rating_ratio() == 0
+
     # Initializing a computer and adding a mod to it, testing the end values
     computer = Computer("Model 5")
     assert computer.rating == 25
@@ -28,6 +32,7 @@ def test_adding():
     computer = Computer("Model 3")
     ship.add_computer(computer)
     assert ship.get_total_cost() == 4.0
+    assert ship.check_rating_ratio() == 15
 
 
 def test_swapping():
@@ -38,7 +43,9 @@ def test_swapping():
     computer = Computer("Model 3")
     ship.add_computer(computer)
     assert ship.get_total_cost() == 4.0
+    assert ship.check_rating_ratio() == 15
 
     new = Computer("Model 4")
     ship.add_computer(new)
     assert ship.get_total_cost() == 7.0
+    assert ship.check_rating_ratio() == 20

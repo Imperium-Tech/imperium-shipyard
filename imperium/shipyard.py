@@ -655,7 +655,11 @@ class Window(QWidget):
         self.update_stats()
 
     def modify_misc_item(self, label, line):
-        # Get software name/level
+        """
+        Handles altering the spacecraft with updated misc item on item change
+        :param label: QLabel of misc item
+        :param line: QLineEdit, quantity of item
+        """
         name = label.text()
         num_misc = line.text()
 

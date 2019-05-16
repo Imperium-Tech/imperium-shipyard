@@ -69,3 +69,18 @@ def test_repair_drones():
     assert ship.get_remaining_cargo() == 100
     assert ship.get_total_cost() == 2.0
 
+
+def test_swap():
+    ship = Spacecraft(100)
+
+    # Adding repair drones and checking dynamic costs
+    repair_drones = Misc("Repair Drone", 1)
+    ship.modify_misc(repair_drones)
+    assert ship.get_remaining_cargo() == 99.99
+    assert ship.get_total_cost() == 2.2
+
+    # Swapping for more drones
+    repair_drones = Misc("Repair Drone", 2)
+    ship.modify_misc(repair_drones)
+    assert ship.get_remaining_cargo() == 99.98
+    assert ship.get_total_cost() == 2.4

@@ -331,17 +331,6 @@ class Spacecraft:
         # Toggles bridge state
         self.bridge ^= True
 
-    def get_staterooms(self):
-        """
-        Counts the number of staterooms present in the additional mods
-        :return: number of staterooms
-        """
-        num_staterooms = 0
-        for mod in self.additional_mods:
-            if mod.name == "Stateroom":
-                num_staterooms += 1
-        return num_staterooms
-
     def add_computer(self, computer):
         """
         Handles adding/replacing a computer object in the ship

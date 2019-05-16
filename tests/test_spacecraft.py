@@ -125,3 +125,12 @@ def test_fuel_add():
     assert ship.get_remaining_cargo() == 50
     assert ship.fuel_max == 50
 
+
+def test_lowest_drive():
+    ship = Spacecraft(100)
+    assert ship.tonnage == 100
+    assert ship.get_remaining_cargo() == 100
+
+    drive = ship.get_lowest_drive()
+    assert drive == "A"
+
