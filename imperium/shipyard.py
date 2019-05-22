@@ -251,7 +251,7 @@ class Window(QWidget):
         ###################################
         ###  START: Misc Items Grid     ###
         ###################################
-        self.misc_config_group = QGroupBox("Misc Items")
+        self.misc_config_group = QGroupBox("Living/Vehicles/Drones")
         self.misc_config_layout = QGridLayout()
         self.misc_config_layout.setAlignment(Qt.AlignTop)
 
