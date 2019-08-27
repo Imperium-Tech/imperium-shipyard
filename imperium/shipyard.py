@@ -193,6 +193,13 @@ class Window(QWidget):
         self.nuclear_damper = add_hull_option(self.armor_config_layout, "Nuclear Damper",
                                               lambda: self.modify_screen(self.nuclear_damper), 2, 1)
 
+        ### Fuel Options ###
+        self.armor_config_layout.addWidget(QLabel("Fuel Options:"), 3, 1)
+
+        # Fuel Scoop
+        self.fuel_scoop = add_hull_option(self.armor_config_layout, "Fuel Scoop",
+                                          lambda: None, 4, 1)
+
         ### Hull config list ###
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
                                              "hull_config.json", self.edit_hull_config, 5, 0)
@@ -255,11 +262,15 @@ class Window(QWidget):
         self.misc_config_layout = QGridLayout()
         self.misc_config_layout.setAlignment(Qt.AlignTop)
 
-        # Combobox of misc items
+        # Combobox of misc items with dict relating to index position
+        self.misc_dict = {}
+        idx = 1
         self.misc_box = QComboBox()
-        self.misc_box.addItem("---")
+        self.misc_box.addItem(" ")
         for item in get_file_data("hull_misc.json").keys():
+            self.misc_dict[item] = idx
             self.misc_box.addItem(item)
+            idx += 1
 
         # Button that triggers the add
         button = QPushButton("Add")
@@ -298,7 +309,6 @@ class Window(QWidget):
         layout.addWidget(self.misc_config_group, 0, 3)
         layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
-
 
         # Update to current stats
         self.update_stats()
@@ -547,7 +557,6 @@ class Window(QWidget):
         self.software_box.setCurrentIndex(0)
         self.software_num_rows += 1
 
-
     def remove_software(self, label, box, button):
         """
         Handles removing the GUI elements on "Remove" button click
@@ -598,8 +607,9 @@ class Window(QWidget):
         Handles adding new misc items to the GUI
         :param box: misc box of the GUI, self.misc_box
         """
-        # If there are no items left
-        if box.count() == 0 or box.currentText() == "---":
+        # If there are no items left or trying to add invalid item
+        invalids = [" ", "--- Living ---", "--- Vehicles ---", "--- Drones ---"]
+        if box.count() == 0 or box.currentText() in invalids:
             return
 
         # Removing item from software list
@@ -641,7 +651,7 @@ class Window(QWidget):
         """
         misc_name = label.text()
 
-        # Remove item from spacecraftpyt
+        # Remove item from spacecraft
         self.spacecraft.remove_misc(misc_name)
 
         # Removing software from GUI
@@ -651,7 +661,8 @@ class Window(QWidget):
         self.misc_num_rows -= 1
 
         # Adding item back to combobox
-        self.misc_box.addItem(misc_name)
+        idx = self.misc_dict.get(misc_name)
+        self.misc_box.insertItem(idx, misc_name)
         self.update_stats()
 
     def modify_misc_item(self, label, line):

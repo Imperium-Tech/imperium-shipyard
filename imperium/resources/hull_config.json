@@ -16,7 +16,7 @@
     "Distributed": {
         "mod_hull_cost": 0.90,
         "mod_additional": [
-            "Cannot mount fuel acoops",
+            "Cannot mount fuel scoops",
             "Non-Aerodynamic"
         ]
     }
