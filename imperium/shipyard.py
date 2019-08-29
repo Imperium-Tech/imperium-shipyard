@@ -655,6 +655,10 @@ class Window(QWidget):
         self.misc_box.setCurrentIndex(0)
         self.misc_num_rows += 1
 
+        # Adding 1 item to start with for UI purposes
+        line_edit.setText("1")
+        self.modify_misc_item(label, line_edit)
+
     def remove_misc(self, label, line, button):
         """
         Handles removing the misc item from the GUI on button click
