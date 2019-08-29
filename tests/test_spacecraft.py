@@ -134,3 +134,15 @@ def test_lowest_drive():
     drive = ship.get_lowest_drive()
     assert drive == "A"
 
+
+def test_fuel_scoop():
+    ship = Spacecraft(100)
+    assert ship.hull_type.type == "Standard"
+    assert ship.fuel_scoop is False
+    assert ship.get_total_cost() == 2.0
+
+    ship.modify_fuel_scoops()
+    assert ship.hull_type.type == "Standard"
+    assert ship.fuel_scoop is True
+    assert ship.get_total_cost() == 3.0
+
