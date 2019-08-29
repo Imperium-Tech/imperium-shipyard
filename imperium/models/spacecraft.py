@@ -26,6 +26,7 @@ class Spacecraft:
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.hull_options       = list() # list of hull options installed
+        self.fuel_scoop         = False  # whether fuel scoops are installed
         self.bridge             = False  # whether a bridge is installed
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
@@ -79,6 +80,10 @@ class Spacecraft:
         # Hull options
         for opt in self.hull_options:
             cost_total += self.tonnage * opt.cost_per_hull_ton
+
+        # Fuel scoops
+        if self.hull_type.type != "Streamlined" and self.fuel_scoop is True:
+            cost_total += 1
 
         # Drives
         if self.jdrive is not None:
@@ -452,3 +457,7 @@ class Spacecraft:
         for m in self.misc:
             if m.name == misc_name:
                 self.misc.remove(m)
+
+    def modify_fuel_scoops(self):
+        # Toggles fuel scoops state
+        self.fuel_scoop ^= True

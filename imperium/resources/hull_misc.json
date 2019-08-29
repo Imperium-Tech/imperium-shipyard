@@ -111,14 +111,6 @@
         "cost": 0.05,
         "mod_additional": "Vehicle, stored in or on the ship"
     },
-    "Fuel Scoop": {
-        "cost": 1,
-        "tonnage": 0,
-        "mod_additional": [
-          "Allows an unstreamlined ship to gather unrefined fuel from a gas giant",
-          "Streamlined ships have this built-in"
-        ]
-    },
     "Fuel Processor": {
         "cost": 0.05,
         "tonnage": 1,

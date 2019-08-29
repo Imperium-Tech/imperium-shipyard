@@ -198,7 +198,7 @@ class Window(QWidget):
 
         # Fuel Scoop
         self.fuel_scoop = add_hull_option(self.armor_config_layout, "Fuel Scoop",
-                                          lambda: None, 4, 1)
+                                          lambda: self.modify_fuel_scoops(), 4, 1)
 
         ### Hull config list ###
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
@@ -472,6 +472,19 @@ class Window(QWidget):
         text = self.hull_config_box.currentText()
         config = Config(text)
         self.spacecraft.edit_hull_config(config)
+
+        # Distributed hulls can't have fuel scoops
+        if config.type == "Distributed":
+            self.fuel_scoop.setDisabled(True)
+        else:
+            self.fuel_scoop.setEnabled(True)
+
+        # Streamlined hulls have scoops built in. Set fuel scoops to unchecked on config swap
+        if config.type == "Streamlined":
+            self.fuel_scoop.setChecked(True)
+        else:
+            self.fuel_scoop.setChecked(False)
+
         self.update_stats()
 
     def check_bridge(self):
@@ -677,6 +690,11 @@ class Window(QWidget):
         # Create item, add to ship
         misc = Misc(name, int(num_misc))
         self.spacecraft.modify_misc(misc)
+        self.update_stats()
+
+    def modify_fuel_scoops(self):
+        # Flips the fuel scoop box
+        self.spacecraft.modify_fuel_scoops()
         self.update_stats()
 
 
