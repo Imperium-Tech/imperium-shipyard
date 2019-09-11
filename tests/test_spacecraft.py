@@ -125,3 +125,24 @@ def test_fuel_add():
     assert ship.get_remaining_cargo() == 50
     assert ship.fuel_max == 50
 
+
+def test_lowest_drive():
+    ship = Spacecraft(100)
+    assert ship.tonnage == 100
+    assert ship.get_remaining_cargo() == 100
+
+    drive = ship.get_lowest_drive()
+    assert drive == "A"
+
+
+def test_fuel_scoop():
+    ship = Spacecraft(100)
+    assert ship.hull_type.type == "Standard"
+    assert ship.fuel_scoop is False
+    assert ship.get_total_cost() == 2.0
+
+    ship.modify_fuel_scoops()
+    assert ship.hull_type.type == "Standard"
+    assert ship.fuel_scoop is True
+    assert ship.get_total_cost() == 3.0
+

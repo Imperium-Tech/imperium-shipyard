@@ -11,12 +11,14 @@ class Misc:
     """
     Represents a miscellaneous object that is applied to a ship
     Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
+    :param name: represents the name of the object, found within hull_misc.json
+    :param num: represents the number of that object, multiples tonnage and cost
     """
-    def __init__(self, name):
+    def __init__(self, name, num):
         data = get_file_data("hull_misc.json")
         obj = data.get(name)
 
         self.name               = name
-        self.cost               = obj.get("cost")
+        self.cost               = obj.get("cost") * num
         self.mod_additional     = obj.get("mod_additional")
-        self.tonnage            = obj.get("tonnage")
+        self.tonnage            = obj.get("tonnage") * num

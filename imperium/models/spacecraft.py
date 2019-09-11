@@ -26,6 +26,7 @@ class Spacecraft:
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.hull_options       = list() # list of hull options installed
+        self.fuel_scoop         = False  # whether fuel scoops are installed
         self.bridge             = False  # whether a bridge is installed
         self.jdrive             = None   # jdrive object
         self.mdrive             = None   # mdrive object
@@ -37,9 +38,7 @@ class Spacecraft:
         self.screens            = list() # list of screen objects
         self.computer           = None   # computer object
         self.software           = list() # list of installed software
-        self.drones             = list() # list of drone objects
-        self.vehicles           = list() # list of vehicle objects
-        self.additional_mods    = list() # list of strings describing misc features
+        self.misc               = list() # list of misc items
 
         # set the tonnage to that given at init
         if hull_tonnage > 2000:
@@ -82,6 +81,10 @@ class Spacecraft:
         for opt in self.hull_options:
             cost_total += self.tonnage * opt.cost_per_hull_ton
 
+        # Fuel scoops
+        if self.hull_type.type != "Streamlined" and self.fuel_scoop is True:
+            cost_total += 1
+
         # Drives
         if self.jdrive is not None:
             cost_total += self.jdrive.cost
@@ -113,12 +116,8 @@ class Spacecraft:
         for software in self.software:
             cost_total += software.cost
 
-        # Drones / Vehicles
-        for drone in self.drones:
-            cost_total += drone.cost
-        for vehicle in self.vehicles:
-            cost_total += vehicle.cost
-        for misc in self.additional_mods:
+        # Misc
+        for misc in self.misc:
             cost_total += misc.cost
 
         return cost_total
@@ -160,15 +159,8 @@ class Spacecraft:
         for screen in self.screens:
             cargo -= screen.tonnage
 
-        # Drones / Vehicles / Misc
-        for drone in self.drones:
-            if drone.name == "Repair Drone":
-                cargo -= drone.tonnage * self.tonnage
-            else:
-                cargo -= drone.tonnage
-        for vehicle in self.vehicles:
-            cargo -= vehicle.tonnage
-        for misc in self.additional_mods:
+        # Misc
+        for misc in self.misc:
             cargo -= misc.tonnage
 
         return cargo
@@ -344,49 +336,6 @@ class Spacecraft:
         # Toggles bridge state
         self.bridge ^= True
 
-    def add_misc(self, misc):
-        """
-        Handles adding a single misc addon to the ship and updating tonnage
-        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
-        """
-        drones = ["Repair Drone", "Mining Drone", "Probe Drone"]
-        vehicles = ["ATV", "Air/Raft", "Life Boat/Launch", "Ship's Boat", "Pinnace", "Cutter", "Shuttle"]
-
-        if misc.name in drones:
-            self.drones.append(misc)
-        elif misc.name in vehicles:
-            self.vehicles.append(misc)
-        else:
-            if misc.name == "Escape Pods" and self.get_staterooms() < 0:
-                return "Error: no staterooms exist on this ship - escape pods cannot be added."
-            self.additional_mods.append(misc)
-
-    def remove_misc(self, misc):
-        """
-        Handles removing a single misc addon from the ship, adjusting tonnage
-        Repair Drone and Escape Pods have special calculations for tonnage and is scaled accordingly
-        """
-        drones = ["Repair Drone", "Mining Drone", "Probe Drone"]
-        vehicles = ["ATV", "Air/Raft", "Life Boat/Launch", "Ship's Boat", "Pinnace", "Cutter", "Shuttle"]
-
-        if misc.name in drones:
-            self.drones.remove(misc)
-        elif misc.name in vehicles:
-            self.vehicles.remove(misc)
-        else:
-            self.additional_mods.remove(misc)
-
-    def get_staterooms(self):
-        """
-        Counts the number of staterooms present in the additional mods
-        :return: number of staterooms
-        """
-        num_staterooms = 0
-        for mod in self.additional_mods:
-            if mod.name == "Stateroom":
-                num_staterooms += 1
-        return num_staterooms
-
     def add_computer(self, computer):
         """
         Handles adding/replacing a computer object in the ship
@@ -493,3 +442,22 @@ class Spacecraft:
         for s in self.software:
             if s.type == software_name:
                 self.software.remove(s)
+
+    def modify_misc(self, misc):
+        # Add/changes number of a misc item
+        for m in self.misc:
+            if m.name == misc.name:
+                self.misc.remove(m)
+                break
+
+        self.misc.append(misc)
+
+    def remove_misc(self, misc_name):
+        # Removes misc from ship
+        for m in self.misc:
+            if m.name == misc_name:
+                self.misc.remove(m)
+
+    def modify_fuel_scoops(self):
+        # Toggles fuel scoops state
+        self.fuel_scoop ^= True

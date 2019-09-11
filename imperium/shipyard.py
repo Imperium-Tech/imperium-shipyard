@@ -7,6 +7,7 @@ from imperium.models.computer import Computer
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
 from imperium.models.json_reader import get_file_data
+from imperium.models.misc import Misc
 from imperium.models.option import Option
 from imperium.models.pplant import PPlant
 from imperium.models.screens import Screen
@@ -192,6 +193,13 @@ class Window(QWidget):
         self.nuclear_damper = add_hull_option(self.armor_config_layout, "Nuclear Damper",
                                               lambda: self.modify_screen(self.nuclear_damper), 2, 1)
 
+        ### Fuel Options ###
+        self.armor_config_layout.addWidget(QLabel("Fuel Options:"), 3, 1)
+
+        # Fuel Scoop
+        self.fuel_scoop = add_hull_option(self.armor_config_layout, "Fuel Scoop",
+                                          lambda: self.modify_fuel_scoops(), 4, 1)
+
         ### Hull config list ###
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
                                              "hull_config.json", self.edit_hull_config, 5, 0)
@@ -230,9 +238,10 @@ class Window(QWidget):
         self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
 
         # Software
-        self.num_rows = 7
+        self.software_num_rows = 7
 
         self.software_box = QComboBox()
+        self.software_box.addItem("---")
         for item in get_file_data("hull_software.json").keys():
             self.software_box.addItem(item)
         button = QPushButton("Add")
@@ -246,15 +255,58 @@ class Window(QWidget):
         ###  END: Sensors/Comp Grid     ###
         ###################################
 
+        ###################################
+        ###  START: Misc Items Grid     ###
+        ###################################
+        self.misc_config_group = QGroupBox("Living/Vehicles/Drones")
+        self.misc_config_layout = QGridLayout()
+        self.misc_config_layout.setAlignment(Qt.AlignTop)
+
+        # Combobox of misc items with dict relating to index position
+        self.misc_dict = {}
+        idx = 1
+        self.misc_box = QComboBox()
+        self.misc_box.addItem(" ")
+        for item in get_file_data("hull_misc.json").keys():
+            self.misc_dict[item] = idx
+            self.misc_box.addItem(item)
+            idx += 1
+
+        # Button that triggers the add
+        button = QPushButton("Add")
+        button.clicked.connect(lambda: self.add_misc(self.misc_box))
+
+        # Adding elements to GUI
+        self.misc_config_layout.addWidget(self.misc_box, 0, 0)
+        self.misc_config_layout.addWidget(QLabel(), 0, 1)
+        self.misc_config_layout.addWidget(button, 0, 2)
+        self.misc_num_rows = 1
+
+        self.misc_config_group.setLayout(self.misc_config_layout)
+        ###################################
+        ###  END: Misc Items Grid       ###
+        ###################################
+
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
         self.armor_config_group.setFixedWidth(250)
+        self.computer_config_group.setFixedWidth(250)
+        self.misc_config_group.setFixedWidth(250)
+
+        # Setting appropriate layout heights
+        FIXED_HEIGHT = 400
+        base_stats_group.setFixedHeight(FIXED_HEIGHT)
+        self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
         layout.addWidget(self.armor_config_group, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
+        layout.addWidget(self.misc_config_group, 0, 3)
         layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
 
@@ -273,7 +325,7 @@ class Window(QWidget):
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
-        self.cost_line_edit.setText("{:0.1f}".format(self.spacecraft.get_total_cost()))
+        self.cost_line_edit.setText("{:0.2f}".format(self.spacecraft.get_total_cost()))
 
         # Set the cargo text to red when cargo going negative
         if self.spacecraft.get_remaining_cargo() < 0:
@@ -420,6 +472,19 @@ class Window(QWidget):
         text = self.hull_config_box.currentText()
         config = Config(text)
         self.spacecraft.edit_hull_config(config)
+
+        # Distributed hulls can't have fuel scoops
+        if config.type == "Distributed":
+            self.fuel_scoop.setDisabled(True)
+        else:
+            self.fuel_scoop.setEnabled(True)
+
+        # Streamlined hulls have scoops built in. Set fuel scoops to unchecked on config swap
+        if config.type == "Streamlined":
+            self.fuel_scoop.setChecked(True)
+        else:
+            self.fuel_scoop.setChecked(False)
+
         self.update_stats()
 
     def check_bridge(self):
@@ -473,7 +538,7 @@ class Window(QWidget):
         :param box: software box of the GUI, self.software_box
         """
         # If there are no items left
-        if box.count() == 0:
+        if box.count() == 0 or box.currentText() == "---":
             return
 
         # Removing item from software list
@@ -499,10 +564,11 @@ class Window(QWidget):
         software_button.clicked.connect(software_button.deleteLater)
 
         # Adding widgets to GUI
-        self.computer_config_layout.addWidget(software_label, self.num_rows, 0)
-        self.computer_config_layout.addWidget(software_combobox, self.num_rows, 1)
-        self.computer_config_layout.addWidget(software_button, self.num_rows, 2)
-        self.num_rows += 1
+        self.computer_config_layout.addWidget(software_label, self.software_num_rows, 0)
+        self.computer_config_layout.addWidget(software_combobox, self.software_num_rows, 1)
+        self.computer_config_layout.addWidget(software_button, self.software_num_rows, 2)
+        self.software_box.setCurrentIndex(0)
+        self.software_num_rows += 1
 
     def remove_software(self, label, box, button):
         """
@@ -521,7 +587,7 @@ class Window(QWidget):
         self.computer_config_layout.removeWidget(label)
         self.computer_config_layout.removeWidget(box)
         self.computer_config_layout.removeWidget(button)
-        self.num_rows -= 1
+        self.software_num_rows -= 1
 
         # Adding item back to combobox
         self.software_box.addItem(software_name)
@@ -547,6 +613,92 @@ class Window(QWidget):
             self.spacecraft.modify_software(software)
 
         self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
+        self.update_stats()
+
+    def add_misc(self, box):
+        """
+        Handles adding new misc items to the GUI
+        :param box: misc box of the GUI, self.misc_box
+        """
+        # If there are no items left or trying to add invalid item
+        invalids = [" ", "--- Living ---", "--- Vehicles ---", "--- Drones ---"]
+        if box.count() == 0 or box.currentText() in invalids:
+            return
+
+        # Removing item from software list
+        misc_name = box.currentText()
+        box.removeItem(box.currentIndex())
+
+        # GUI elements for newly added software
+        label = QLabel(misc_name)
+
+        line_edit = QLineEdit()
+        line_edit.setFixedWidth(25)
+        line_edit.setValidator(QIntValidator(line_edit))
+        line_edit.validator().setBottom(0)
+
+        button = QPushButton("Remove")
+
+        # Spinbox functionality
+        line_edit.editingFinished.connect(lambda: self.modify_misc_item(label, line_edit))
+
+        # Button functionality
+        button.clicked.connect(lambda: self.remove_misc(label, line_edit, button))
+        button.clicked.connect(label.deleteLater)
+        button.clicked.connect(line_edit.deleteLater)
+        button.clicked.connect(button.deleteLater)
+
+        # Adding widgets to GUI
+        self.misc_config_layout.addWidget(label, self.misc_num_rows, 0)
+        self.misc_config_layout.addWidget(line_edit, self.misc_num_rows, 1)
+        self.misc_config_layout.addWidget(button, self.misc_num_rows, 2)
+        self.misc_box.setCurrentIndex(0)
+        self.misc_num_rows += 1
+
+        # Adding 1 item to start with for UI purposes
+        line_edit.setText("1")
+        self.modify_misc_item(label, line_edit)
+
+    def remove_misc(self, label, line, button):
+        """
+        Handles removing the misc item from the GUI on button click
+        :param label: QLabel
+        :param line: QLineEdit
+        :param button: QButton
+        """
+        misc_name = label.text()
+
+        # Remove item from spacecraft
+        self.spacecraft.remove_misc(misc_name)
+
+        # Removing software from GUI
+        self.misc_config_layout.removeWidget(label)
+        self.misc_config_layout.removeWidget(line)
+        self.misc_config_layout.removeWidget(button)
+        self.misc_num_rows -= 1
+
+        # Adding item back to combobox
+        idx = self.misc_dict.get(misc_name)
+        self.misc_box.insertItem(idx, misc_name)
+        self.update_stats()
+
+    def modify_misc_item(self, label, line):
+        """
+        Handles altering the spacecraft with updated misc item on item change
+        :param label: QLabel of misc item
+        :param line: QLineEdit, quantity of item
+        """
+        name = label.text()
+        num_misc = line.text()
+
+        # Create item, add to ship
+        misc = Misc(name, int(num_misc))
+        self.spacecraft.modify_misc(misc)
+        self.update_stats()
+
+    def modify_fuel_scoops(self):
+        # Flips the fuel scoop box
+        self.spacecraft.modify_fuel_scoops()
         self.update_stats()
 
 
