@@ -741,11 +741,30 @@ class Window(QWidget):
         """
         row = len(self.spacecraft.hardpoints) + 2
 
+        # Defining HP and remove button
+        button = QPushButton("-")
         test = QLabel("HP")
-        self.hp_config_layout.addWidget(test, row, 0)
-        self.spacecraft.hardpoints.append("TEST")
+
+        # Functionality of the button
+        button.clicked.connect(lambda: self.remove_hardpoint(button, test))
+        button.clicked.connect(button.deleteLater)
+        button.clicked.connect(test.deleteLater)
+
+        self.hp_config_layout.addWidget(button, row, 0)
+        self.hp_config_layout.addWidget(test, row, 1)
+        self.spacecraft.add_hardpoint(test)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
-        self.update_stats()
+
+    def remove_hardpoint(self, button, test):
+        """
+        Handles the functionality of removing a single hardpoint from the ship and GUI
+        :param button:
+        :param test:
+        """
+        self.hp_config_layout.removeWidget(button)
+        self.hp_config_layout.removeWidget(test)
+        self.spacecraft.remove_hardpoint(test)
+        self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
 
 if __name__ == '__main__':

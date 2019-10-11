@@ -465,3 +465,13 @@ class Spacecraft:
     def modify_fuel_scoops(self):
         # Toggles fuel scoops state
         self.fuel_scoop ^= True
+
+    def add_hardpoint(self, hp):
+        # Adds a hardpoint to the ship
+        self.hardpoints.append(hp)
+
+    def remove_hardpoint(self, hp):
+        # Removes a hardpoint from ship, if exists
+        for h in self.hardpoints:
+            if h == hp:
+                self.hardpoints.remove(h)
