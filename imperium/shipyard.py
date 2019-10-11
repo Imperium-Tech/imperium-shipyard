@@ -294,6 +294,21 @@ class Window(QWidget):
         self.hp_config_layout = QGridLayout()
         self.hp_config_layout.setAlignment(Qt.AlignTop)
 
+        # Total and available hardpoints
+        self.hp_config_layout.addWidget(QLabel("Total: "), 0, 0)
+        self.total_hp = QLabel(str(self.spacecraft.num_hardpoints))
+        self.hp_config_layout.addWidget(self.total_hp, 0, 1)
+
+        self.hp_config_layout.addWidget(QLabel("Avail: "), 0, 2)
+        self.avail_hp = QLabel(str(self.spacecraft.num_hardpoints - len(self.spacecraft.turrets)))
+        self.hp_config_layout.addWidget(self.avail_hp, 0, 3)
+
+        # Add button connecting to adding a hardpoint
+        add_hp = QPushButton("Add")
+        add_hp.clicked.connect(self.add_hardpoint)
+        self.hp_config_layout.addWidget(add_hp, 0, 4)
+
+
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
         ###  END: Hardpoint Grid        ###
@@ -312,7 +327,6 @@ class Window(QWidget):
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
         self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
         self.hp_config_group.setFixedHeight(FIXED_HEIGHT)
-        # self.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         layout = QGridLayout()
@@ -383,6 +397,12 @@ class Window(QWidget):
             if self.spacecraft.pplant is not None and self.spacecraft.pplant.type != lowest_drive:
                 self.pplant_line_edit.setText(lowest_drive)
                 self.edit_pplant()
+
+        # Update hardpoint counter
+        self.total_hp.setText(str(self.spacecraft.num_hardpoints))
+        self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+
+        # Update stats
         self.update_stats()
 
     def edit_fuel(self):
@@ -713,6 +733,18 @@ class Window(QWidget):
     def modify_fuel_scoops(self):
         # Flips the fuel scoop box
         self.spacecraft.modify_fuel_scoops()
+        self.update_stats()
+
+    def add_hardpoint(self):
+        """
+        Handles adding a hardpoint to the ship with an arrow to modify turret options
+        """
+        row = len(self.spacecraft.hardpoints) + 2
+
+        test = QLabel("HP")
+        self.hp_config_layout.addWidget(test, row, 0)
+        self.spacecraft.hardpoints.append("TEST")
+        self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
 
 

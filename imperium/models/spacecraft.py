@@ -23,6 +23,8 @@ class Spacecraft:
         self.fuel_jump          = 0 # amount of fuel required for a jump
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
         self.armour_total       = 0 # total armour pointage
+        self.num_hardpoints     = 0 # total number of hardpoints
+        self.hardpoints         = list() # list of added hardpoints
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.hull_options       = list() # list of hull options installed
@@ -49,6 +51,7 @@ class Spacecraft:
         # set hp based on tonnage
         self.hull_hp = self.tonnage // 50
         self.structure_hp = self.tonnage // 50
+        self.num_hardpoints = self.tonnage // 100
 
         # pull hull cost from json, set that
         data = get_file_data("hull_data.json")
@@ -181,6 +184,7 @@ class Spacecraft:
         # set hp based on tonnage
         self.hull_hp = self.tonnage // 50
         self.structure_hp = self.tonnage // 50
+        self.num_hardpoints = self.tonnage // 100
 
     def set_fuel(self, new_fuel):
         """
