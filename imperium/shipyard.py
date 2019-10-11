@@ -287,6 +287,18 @@ class Window(QWidget):
         ###  END: Misc Items Grid       ###
         ###################################
 
+        ###################################
+        ###  START: Hardpoint Grid      ###
+        ###################################
+        self.hp_config_group = QGroupBox("Hardpoints:")
+        self.hp_config_layout = QGridLayout()
+        self.hp_config_layout.setAlignment(Qt.AlignTop)
+
+        self.hp_config_group.setLayout(self.hp_config_layout)
+        ###################################
+        ###  END: Hardpoint Grid        ###
+        ###################################
+
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
         self.armor_config_group.setFixedWidth(250)
@@ -294,12 +306,13 @@ class Window(QWidget):
         self.misc_config_group.setFixedWidth(250)
 
         # Setting appropriate layout heights
-        FIXED_HEIGHT = 400
+        FIXED_HEIGHT = 350
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
         self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.setFixedHeight(FIXED_HEIGHT)
+        self.hp_config_group.setFixedHeight(FIXED_HEIGHT)
+        # self.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         layout = QGridLayout()
@@ -307,7 +320,8 @@ class Window(QWidget):
         layout.addWidget(self.armor_config_group, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
         layout.addWidget(self.misc_config_group, 0, 3)
-        layout.addWidget(self.logger, 1, 0, 1, -1)
+        layout.addWidget(self.hp_config_group, 1, 0)
+        # layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
 
         # Update to current stats
