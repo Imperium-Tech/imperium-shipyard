@@ -21,6 +21,8 @@ from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
                              QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox)
 
+from imperium.models.turrets import Turret
+
 
 class Window(QWidget):
     def __init__(self):
@@ -312,6 +314,7 @@ class Window(QWidget):
 
         # Global list to hold active button objects
         self.active_hp_buttons = list()
+        self.num_active = 1
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
@@ -756,12 +759,10 @@ class Window(QWidget):
         """
         Handles adding a hardpoint to the ship with an arrow to modify turret options
         """
-        row = len(self.spacecraft.hardpoints) + 1
-        print(row)
+        print(self.num_active)
 
-        # Defining HP and remove button
-        remove = QPushButton("HP {}".format(row))
-        hardpoint = Hardpoint(row)
+        remove = QPushButton("HP {}".format(self.num_active))
+        hardpoint = Hardpoint(self.num_active)
         active = QPushButton(">")
         active.setMaximumWidth(30)
 
@@ -772,11 +773,12 @@ class Window(QWidget):
         active.clicked.connect(lambda: self.display_turret(self.turret_config_layout, active, hardpoint))
 
         # Adding to GUI
-        self.hp_config_layout.addWidget(remove, row, 0, 1, 4)
-        self.hp_config_layout.addWidget(active, row, 4)
+        self.hp_config_layout.addWidget(remove, self.num_active, 0, 1, 4)
+        self.hp_config_layout.addWidget(active, self.num_active, 4)
 
         # Adding hp to ship, updating available hps
         self.active_hp_buttons.append(active)
+        self.num_active += 1
         self.spacecraft.add_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
@@ -791,7 +793,9 @@ class Window(QWidget):
         self.hp_config_layout.removeWidget(active)
 
         # Adding hp to ship, updating available hps
+        self.num_active -= 1
         self.active_hp_buttons.remove(active)
+        print(self.num_active)
         self.spacecraft.remove_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
@@ -814,6 +818,28 @@ class Window(QWidget):
         # Displaying hardpoint information
         label = QLabel(str(hardpoint.id))
         layout.addWidget(label, 0, 0)
+
+        turret_box = QComboBox()
+        turret_box.addItem("---")
+        idx = 1
+        for key in get_file_data("hull_turrets.json").get("models").keys():
+            turret_box.addItem(key)
+            if hardpoint.turret is not None and hardpoint.turret.name == key:
+                turret_box.setCurrentIndex(idx)
+            idx += 1
+
+        turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(hardpoint, turret_box))
+        layout.addWidget(turret_box, 1, 0)
+
+    def modify_turret_model(self, hardpoint, box):
+        """
+        Handles modifying what type of turret a hardpoint has
+        :param hardpoint: hardpoint object
+        :param box: PyQT ComboBox
+        """
+        model = box.currentText()
+        turret = Turret(model)
+        hardpoint.add_turret(turret)
 
 
 if __name__ == '__main__':
