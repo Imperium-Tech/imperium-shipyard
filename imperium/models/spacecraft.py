@@ -473,5 +473,5 @@ class Spacecraft:
     def remove_hardpoint(self, hp):
         # Removes a hardpoint from ship, if exists
         for h in self.hardpoints:
-            if h == hp:
+            if h is hp:
                 self.hardpoints.remove(h)

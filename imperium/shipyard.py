@@ -310,6 +310,9 @@ class Window(QWidget):
         add_hp.clicked.connect(self.add_hardpoint)
         self.hp_config_layout.addWidget(add_hp, 0, 4)
 
+        # Global list to hold active button objects
+        self.active_hp_buttons = list()
+
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
         ###  END: Hardpoint Grid        ###
@@ -753,41 +756,64 @@ class Window(QWidget):
         """
         Handles adding a hardpoint to the ship with an arrow to modify turret options
         """
-        row = len(self.spacecraft.hardpoints) + 2
+        row = len(self.spacecraft.hardpoints) + 1
+        print(row)
 
         # Defining HP and remove button
-        remove = QPushButton("HP")
-        hardpoint = Hardpoint()
+        remove = QPushButton("HP {}".format(row))
+        hardpoint = Hardpoint(row)
         active = QPushButton(">")
         active.setMaximumWidth(30)
 
-        # Functionality of the button
+        # Button functionalities
         remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, active))
         remove.clicked.connect(remove.deleteLater)
         remove.clicked.connect(active.deleteLater)
+        active.clicked.connect(lambda: self.display_turret(self.turret_config_layout, active, hardpoint))
 
         # Adding to GUI
         self.hp_config_layout.addWidget(remove, row, 0, 1, 4)
         self.hp_config_layout.addWidget(active, row, 4)
 
         # Adding hp to ship, updating available hps
+        self.active_hp_buttons.append(active)
         self.spacecraft.add_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
     def remove_hardpoint(self, button, hardpoint, active):
         """
         Handles the functionality of removing a single hardpoint from the ship and GUI
-        :param button:
-        :param hardpoint:
-        :param label:
-        :param active:
+        :param button: hardpoint button to remove
+        :param hardpoint: hardpoint class
+        :param active: button to display information
         """
         self.hp_config_layout.removeWidget(button)
         self.hp_config_layout.removeWidget(active)
 
         # Adding hp to ship, updating available hps
+        self.active_hp_buttons.remove(active)
         self.spacecraft.remove_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+
+    def display_turret(self, layout, active, hardpoint):
+        """
+        Handles displaying a hardpoint's information and updating the active buttons
+        :param active: active button to set disabled
+        :param hardpoint: hardpoint holding a turret to display
+        """
+        for button in self.active_hp_buttons:
+            if button is active:
+                button.setDisabled(True)
+            else:
+                button.setEnabled(True)
+
+        # Clear the previous layout
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        # Displaying hardpoint information
+        label = QLabel(str(hardpoint.id))
+        layout.addWidget(label, 0, 0)
 
 
 if __name__ == '__main__':
