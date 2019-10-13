@@ -6,6 +6,7 @@ Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/impe
 from imperium.models.computer import Computer
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
+from imperium.models.hardpoint import Hardpoint
 from imperium.models.json_reader import get_file_data
 from imperium.models.misc import Misc
 from imperium.models.option import Option
@@ -305,13 +306,25 @@ class Window(QWidget):
 
         # Add button connecting to adding a hardpoint
         add_hp = QPushButton("Add")
+        add_hp.setMaximumWidth(30)
         add_hp.clicked.connect(self.add_hardpoint)
         self.hp_config_layout.addWidget(add_hp, 0, 4)
-
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
         ###  END: Hardpoint Grid        ###
+        ###################################
+
+        ###################################
+        ###  START: Turret Grid         ###
+        ###################################
+        self.turret_config_group = QGroupBox("Active Turret:")
+        self.turret_config_layout = QGridLayout()
+        self.turret_config_layout.setAlignment(Qt.AlignTop)
+
+        self.turret_config_group.setLayout(self.turret_config_layout)
+        ###################################
+        ###  END: Turret Grid           ###
         ###################################
 
         # Setting appropriate column widths
@@ -335,6 +348,7 @@ class Window(QWidget):
         layout.addWidget(self.computer_config_group, 0, 2)
         layout.addWidget(self.misc_config_group, 0, 3)
         layout.addWidget(self.hp_config_group, 1, 0)
+        layout.addWidget(self.turret_config_group, 1, 1)
         # layout.addWidget(self.logger, 1, 0, 1, -1)
         self.setLayout(layout)
 
@@ -742,28 +756,37 @@ class Window(QWidget):
         row = len(self.spacecraft.hardpoints) + 2
 
         # Defining HP and remove button
-        button = QPushButton("-")
-        test = QLabel("HP")
+        remove = QPushButton("HP")
+        hardpoint = Hardpoint()
+        active = QPushButton(">")
+        active.setMaximumWidth(30)
 
         # Functionality of the button
-        button.clicked.connect(lambda: self.remove_hardpoint(button, test))
-        button.clicked.connect(button.deleteLater)
-        button.clicked.connect(test.deleteLater)
+        remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, active))
+        remove.clicked.connect(remove.deleteLater)
+        remove.clicked.connect(active.deleteLater)
 
-        self.hp_config_layout.addWidget(button, row, 0)
-        self.hp_config_layout.addWidget(test, row, 1)
-        self.spacecraft.add_hardpoint(test)
+        # Adding to GUI
+        self.hp_config_layout.addWidget(remove, row, 0, 1, 4)
+        self.hp_config_layout.addWidget(active, row, 4)
+
+        # Adding hp to ship, updating available hps
+        self.spacecraft.add_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
-    def remove_hardpoint(self, button, test):
+    def remove_hardpoint(self, button, hardpoint, active):
         """
         Handles the functionality of removing a single hardpoint from the ship and GUI
         :param button:
-        :param test:
+        :param hardpoint:
+        :param label:
+        :param active:
         """
         self.hp_config_layout.removeWidget(button)
-        self.hp_config_layout.removeWidget(test)
-        self.spacecraft.remove_hardpoint(test)
+        self.hp_config_layout.removeWidget(active)
+
+        # Adding hp to ship, updating available hps
+        self.spacecraft.remove_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
 
