@@ -106,10 +106,8 @@ class Spacecraft:
             cost_total += self.sensors.cost
 
         # Turrets / Bayweapons
-        for turret in self.turrets:
-            cost_total += turret.cost
-        for bayweapon in self.bays:
-            cost_total += bayweapon.cost
+        for hardpoint in self.hardpoints:
+            cost_total += hardpoint.get_cost()
 
         # Screens / Computer / Software
         for screen in self.screens:
@@ -155,10 +153,8 @@ class Spacecraft:
             cargo -= self.sensors.tonnage
 
         # Turrets / Bayweapons / Screens
-        for turret in self.turrets:
-            cargo -= turret.tonnage
-        for bayweapon in self.bays:
-            cargo -= bayweapon.tonnage
+        for hardpoint in self.hardpoints:
+            cargo -= hardpoint.get_tonnage()
         for screen in self.screens:
             cargo -= screen.tonnage
 

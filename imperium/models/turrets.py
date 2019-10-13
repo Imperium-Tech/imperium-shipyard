@@ -25,9 +25,10 @@ class Turret:
 
     def get_cost(self):
         cost = 0
-        cost += self.tonnage
+        cost += self.cost
         for wep in self.weapons:
             cost += wep.cost
+        return cost
 
     def add_weapon(self, part):
         """

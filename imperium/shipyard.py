@@ -798,6 +798,7 @@ class Window(QWidget):
         print(self.num_active)
         self.spacecraft.remove_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+        self.update_stats()
 
     def display_turret(self, layout, active, hardpoint):
         """
@@ -815,10 +816,11 @@ class Window(QWidget):
         for i in reversed(range(layout.count())):
             layout.itemAt(i).widget().setParent(None)
 
-        # Displaying hardpoint information
+        """ Displaying hardpoint/turret information """
         label = QLabel(str(hardpoint.id))
         layout.addWidget(label, 0, 0)
 
+        # Combobox for turret model on hardpoint
         turret_box = QComboBox()
         turret_box.addItem("---")
         idx = 1
@@ -827,6 +829,23 @@ class Window(QWidget):
             if hardpoint.turret is not None and hardpoint.turret.name == key:
                 turret_box.setCurrentIndex(idx)
             idx += 1
+
+        # Checkboxes for pop-up and fixed mounting
+        popup_label = QLabel("Pop-up Cover:")
+        popup_check = QCheckBox()
+        if hardpoint.popup is True:
+            popup_check.setChecked(True)
+        popup_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Pop-up Turret"))
+        layout.addWidget(popup_label, 2, 0)
+        layout.addWidget(popup_check, 2, 1)
+
+        fixed_label = QLabel("Fixed Mounting:")
+        fixed_check = QCheckBox()
+        if hardpoint.fixed is True:
+            fixed_check.setChecked(True)
+        fixed_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Fixed Mounting"))
+        layout.addWidget(fixed_label, 3, 0)
+        layout.addWidget(fixed_check, 3, 1)
 
         turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(hardpoint, turret_box))
         layout.addWidget(turret_box, 1, 0)
@@ -838,8 +857,17 @@ class Window(QWidget):
         :param box: PyQT ComboBox
         """
         model = box.currentText()
-        turret = Turret(model)
+        if model == "---":
+            turret = None
+        else:
+            turret = Turret(model)
         hardpoint.add_turret(turret)
+        self.update_stats()
+
+    def modify_turret_option(self, hardpoint, part):
+        # Handles modifying a hardpoint's addon
+        hardpoint.modify_addon(part)
+        self.update_stats()
 
 
 if __name__ == '__main__':
