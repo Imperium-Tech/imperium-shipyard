@@ -792,6 +792,12 @@ class Window(QWidget):
         :param hardpoint: hardpoint class
         :param active: button to display information
         """
+        # Wipe out turret layout if removed turret is displayed
+        if active.isEnabled() == False:
+            for i in reversed(range(self.turret_config_layout.count())):
+                self.turret_config_layout.itemAt(i).widget().setParent(None)
+
+        # Removing GUI elements
         self.hp_config_layout.removeWidget(button)
         self.hp_config_layout.removeWidget(active)
 
