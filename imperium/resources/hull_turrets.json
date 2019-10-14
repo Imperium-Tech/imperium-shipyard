@@ -41,6 +41,7 @@
     },
     "weapons": {
         "Pulse Laser": {
+            "name": "Pulse Laser",
             "tl": 7,
             "opt_range": "Short",
             "damage": "1d6",
@@ -50,6 +51,7 @@
             ]
         },
         "Beam Laser": {
+            "name": "Beam Laser",
             "tl": 7,
             "opt_range": "Medium",
             "damage": "2d6",
@@ -59,6 +61,7 @@
             ]
         },
         "Particle Beam": {
+            "name": "Particle Beam",
             "tl": 8,
             "opt_range": "Long",
             "damage": "3d6 + crew_hit",
@@ -69,6 +72,7 @@
             ]
         },
         "Missile Rack": {
+            "name": "Missile Rack",
             "tl": 6,
             "opt_range": "Special",
             "damage": "Missile Dependent",
@@ -80,6 +84,7 @@
             ]
         },
         "Sandcaster": {
+            "name": "Sandcaster",
             "tl": 7,
             "opt_range": "Special",
             "damage": "Special",

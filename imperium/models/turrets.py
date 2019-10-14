@@ -20,46 +20,20 @@ class Turret:
         self.model           = data.get("models").get(model_type)  # model of the turret
         self.tonnage         = self.model.get("tonnage")           # size of the turret and addons
         self.max_wep         = self.model.get("num_weapons")       # max number of weapons per turret type
-        self.weapons         = list()                              # list of the weapons on this turret
+        self.weapons         = [None for _ in range(self.max_wep)] # list of the weapons on this turret
         self.cost            = self.model.get("cost")              # cost of the turret and addons
 
     def get_cost(self):
         cost = 0
         cost += self.cost
         for wep in self.weapons:
-            cost += wep.cost
+            if wep is not None:
+                cost += wep.get("cost")
         return cost
 
-    def add_weapon(self, part):
-        """
-        Handles adding weapons to the turret
-        :param part: Name of the weapon to add
-        """
-        if len(self.weapons) == self.max_wep:
-            print("Error: cannot add '{}'. Max # of weapons reached for {}: {}/{}".format(
-                part, self.name, len(self.weapons), self.max_wep))
-            return
-
-        weapon = self.data.get("weapons").get(part)
-
-        self.weapons.append(weapon)
-        self.cost += weapon.get("cost")
-
-    def remove_weapon(self, part):
-        """
-        Handles removing a specific weapon from the turret
-        :param part: Name of the weapon to remove
-        """
-        if len(self.weapons) == 0:
-            print("Error: no weapons to remove.")
-            return
-
-        wep = self.data.get("weapons").get(part)
-
-        # Check if any weapon matches this weapon. If none, print error.
-        for w in self.weapons:
-            if wep == w:
-                self.weapons.remove(w)
-                self.cost -= w.get("cost")
-                return
-        print("Error: {} not attached to {}".format(part, self.name))
+    def modify_weapon(self, part, idx):
+        if part == "---":
+            wep = None
+        else:
+            wep = self.data.get("weapons").get(part)
+        self.weapons[idx] = wep

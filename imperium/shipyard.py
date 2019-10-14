@@ -317,7 +317,7 @@ class Window(QWidget):
 
         # Global list to hold active button objects
         self.active_hp_buttons = list()
-        self.num_active = 2
+        self.num_active = 1
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
@@ -834,7 +834,7 @@ class Window(QWidget):
                 turret_box.setCurrentIndex(idx)
             idx += 1
 
-        turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(hardpoint, turret_box))
+        turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(layout, hardpoint, turret_box))
         layout.addWidget(turret_label, 1, 0)
         layout.addWidget(turret_box, 2, 0, 1, -1)
 
@@ -855,7 +855,52 @@ class Window(QWidget):
         layout.addWidget(fixed_label, 3, 2)
         layout.addWidget(fixed_check, 3, 3)
 
-    def modify_turret_model(self, hardpoint, box):
+        """ Displaying turret weapon information """
+        if hardpoint.turret is None:
+            return
+
+        self.display_turret_weps(layout, hardpoint)
+
+    def display_turret_weps(self, layout, hardpoint):
+        """
+        Handles displaying the weapons for a turret
+        :param layout: PyQT Grid Layout to add to
+        :param hardpoint: hardpoint object with turret
+        """
+        # Clearing out old weapons
+        for i in reversed(range(3, layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        # Creating objects to display weapons
+        row = 4
+        for idx in range(hardpoint.turret.max_wep):
+            label, combobox = self.add_turret_weapon(idx, hardpoint)
+            layout.addWidget(label, row + idx, 0)
+            layout.addWidget(combobox, row + idx, 1)
+
+    def add_turret_weapon(self, idx, hardpoint):
+        """
+        Helper function that handles creating the label and combobox for a turret weapon, as well
+        as setting up the connection function on activation
+        :param idx: index of the weapon in array
+        :param hardpoint: hardpoint object
+        :return: label of weapon and filled combobox
+        """
+        label = QLabel("Wep {}:".format(idx))
+        combobox = QComboBox()
+        combobox.addItem("---")
+        counter = 1
+        for key in get_file_data("hull_turrets.json").get("weapons").keys():
+            combobox.addItem(key)
+            if hardpoint.turret.weapons[idx] is not None and key == hardpoint.turret.weapons[idx].get("name"):
+                combobox.setCurrentIndex(counter)
+            counter += 1
+
+        combobox.currentTextChanged.connect(
+            lambda: self.modify_turret_wep(hardpoint.turret, combobox.currentText(), idx))
+        return label, combobox
+
+    def modify_turret_model(self, layout, hardpoint, box):
         """
         Handles modifying what type of turret a hardpoint has
         :param hardpoint: hardpoint object
@@ -866,12 +911,20 @@ class Window(QWidget):
             turret = None
         else:
             turret = Turret(model)
+
+        # Add turret to hardpoint, redo UI display
         hardpoint.add_turret(turret)
+        self.display_turret_weps(layout, hardpoint)
         self.update_stats()
 
     def modify_turret_option(self, hardpoint, part):
         # Handles modifying a hardpoint's addon
         hardpoint.modify_addon(part)
+        self.update_stats()
+
+    def modify_turret_wep(self, turret, wep, idx):
+        # Handles modifying a turret's weapons
+        turret.modify_weapon(wep, idx)
         self.update_stats()
 
 
