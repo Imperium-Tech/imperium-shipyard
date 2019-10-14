@@ -35,7 +35,6 @@ class Spacecraft:
         self.pplant             = None   # pplant object
         self.armour             = list() # list of armour objects
         self.sensors            = None   # sensor object
-        self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
         self.computer           = None   # computer object

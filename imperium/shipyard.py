@@ -306,7 +306,7 @@ class Window(QWidget):
         self.hp_config_layout.addWidget(self.total_hp, 0, 1)
 
         self.hp_config_layout.addWidget(QLabel("Avail: "), 0, 2)
-        self.avail_hp = QLabel(str(self.spacecraft.num_hardpoints - len(self.spacecraft.turrets)))
+        self.avail_hp = QLabel(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.hp_config_layout.addWidget(self.avail_hp, 0, 3)
 
         # Add button connecting to adding a hardpoint
