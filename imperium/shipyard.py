@@ -3,6 +3,9 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
+import random
+import string
+
 from imperium.models.computer import Computer
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
@@ -314,7 +317,7 @@ class Window(QWidget):
 
         # Global list to hold active button objects
         self.active_hp_buttons = list()
-        self.num_active = 1
+        self.num_active = 2
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
@@ -486,6 +489,7 @@ class Window(QWidget):
         """
         Add a new armor piece to the ship, creating a new button in the grid and adjusting values
         """
+        # TODO - fix bug when adding new armors after removing a middle one
         armor_type = self.armor_combo_box.currentText()
         self.armor_combo_box.setCurrentIndex(0)
 
@@ -759,9 +763,8 @@ class Window(QWidget):
         """
         Handles adding a hardpoint to the ship with an arrow to modify turret options
         """
-        print(self.num_active)
-
-        remove = QPushButton("HP {}".format(self.num_active))
+        name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        remove = QPushButton("HP {}".format(name))
         hardpoint = Hardpoint(self.num_active)
         active = QPushButton(">")
         active.setMaximumWidth(30)
@@ -793,9 +796,9 @@ class Window(QWidget):
         self.hp_config_layout.removeWidget(active)
 
         # Adding hp to ship, updating available hps
+        # TODO - fix num active bug when removing middle hardpoints
         self.num_active -= 1
         self.active_hp_buttons.remove(active)
-        print(self.num_active)
         self.spacecraft.remove_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
@@ -817,10 +820,11 @@ class Window(QWidget):
             layout.itemAt(i).widget().setParent(None)
 
         """ Displaying hardpoint/turret information """
-        label = QLabel(str(hardpoint.id))
+        label = QLabel("---- HP: {} ----".format(str(hardpoint.id)))
         layout.addWidget(label, 0, 0)
 
         # Combobox for turret model on hardpoint
+        turret_label = QLabel("Turret Model:")
         turret_box = QComboBox()
         turret_box.addItem("---")
         idx = 1
@@ -830,25 +834,26 @@ class Window(QWidget):
                 turret_box.setCurrentIndex(idx)
             idx += 1
 
+        turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(hardpoint, turret_box))
+        layout.addWidget(turret_label, 1, 0)
+        layout.addWidget(turret_box, 2, 0, 1, -1)
+
         # Checkboxes for pop-up and fixed mounting
         popup_label = QLabel("Pop-up Cover:")
         popup_check = QCheckBox()
         if hardpoint.popup is True:
             popup_check.setChecked(True)
         popup_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Pop-up Turret"))
-        layout.addWidget(popup_label, 2, 0)
-        layout.addWidget(popup_check, 2, 1)
+        layout.addWidget(popup_label, 3, 0)
+        layout.addWidget(popup_check, 3, 1)
 
         fixed_label = QLabel("Fixed Mounting:")
         fixed_check = QCheckBox()
         if hardpoint.fixed is True:
             fixed_check.setChecked(True)
         fixed_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Fixed Mounting"))
-        layout.addWidget(fixed_label, 3, 0)
-        layout.addWidget(fixed_check, 3, 1)
-
-        turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(hardpoint, turret_box))
-        layout.addWidget(turret_box, 1, 0)
+        layout.addWidget(fixed_label, 3, 2)
+        layout.addWidget(fixed_check, 3, 3)
 
     def modify_turret_model(self, hardpoint, box):
         """
