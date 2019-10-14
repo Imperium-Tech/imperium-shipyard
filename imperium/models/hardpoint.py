@@ -49,7 +49,7 @@ class Hardpoint:
         Handles getting the total tonnage of a hardpoint and its options
         :return: tonnage
         """
-        tonnage = 0
+        tonnage = 1
 
         if self.turret is not None:
             tonnage += self.turret.tonnage

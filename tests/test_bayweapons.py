@@ -29,8 +29,8 @@ def test_add_remove():
     assert ship.get_remaining_cargo() == 100
     
     ship.add_bayweapon(wep)
-    assert ship.get_total_cost() == 14
-    assert ship.get_remaining_cargo() == 49
+    assert ship.get_total_cost() == 2
+    assert ship.get_remaining_cargo() == 100
 
     ship.remove_bayweapon(wep)
     assert ship.get_total_cost() == 2

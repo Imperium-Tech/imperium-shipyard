@@ -298,24 +298,6 @@ class Spacecraft:
                     return "Error: PPlant under M-Drive. {} < {}".format(self.pplant.type, self.mdrive.drive_type)
         return True
 
-    def add_turret(self, turret):
-        """
-        Adds a single turret to the spaceship
-        :param turret: Turret object to append
-        """
-        self.turrets.append(turret)
-
-    def remove_turret(self, turret_index):
-        """
-        Removes a single turret from the spaceship
-        :param turret_index: Index of the turret to remove
-        """
-        if len(self.turrets) != (turret_index + 1):
-            return
-
-        turret = self.turrets[turret_index]
-        self.turrets.remove(turret)
-
     def get_bridge_tonnage(self):
         """
         Handles calculating the cost of a main component bridge to the ship based on the hull size

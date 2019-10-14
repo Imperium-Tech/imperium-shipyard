@@ -784,6 +784,7 @@ class Window(QWidget):
         self.num_active += 1
         self.spacecraft.add_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+        self.update_stats()
 
     def remove_hardpoint(self, button, hardpoint, active):
         """
@@ -874,15 +875,19 @@ class Window(QWidget):
         :param hardpoint: hardpoint object with turret
         """
         # Clearing out old weapons
-        for i in reversed(range(3, layout.count())):
+        for i in reversed(range(7, layout.count())):
             layout.itemAt(i).widget().setParent(None)
+
+        # If turret is None, don't display weps
+        if hardpoint.turret is None:
+            return
 
         # Creating objects to display weapons
         row = 4
         for idx in range(hardpoint.turret.max_wep):
             label, combobox = self.add_turret_weapon(idx, hardpoint)
             layout.addWidget(label, row + idx, 0)
-            layout.addWidget(combobox, row + idx, 1)
+            layout.addWidget(combobox, row + idx, 1, 1, -1)
 
     def add_turret_weapon(self, idx, hardpoint):
         """
