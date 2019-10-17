@@ -106,7 +106,7 @@ class Window(QWidget):
                 new_line_edit.setValidator(QIntValidator(new_line_edit))
             if read_only:
                 new_line_edit.setReadOnly(True)
-            
+
             new_line_edit.editingFinished.connect(self.update_stats)
             base_stats_layout.addWidget(new_label, row, 0)
             base_stats_layout.addWidget(new_line_edit, row, 2)
@@ -358,7 +358,7 @@ class Window(QWidget):
         layout.addWidget(self.misc_config_group, 0, 3)
         layout.addWidget(self.hp_config_group, 1, 0)
         layout.addWidget(self.turret_config_group, 1, 1)
-        # layout.addWidget(self.logger, 1, 0, 1, -1)
+        layout.addWidget(self.logger, 2, 0, 1, -1)
         self.setLayout(layout)
 
         # Update to current stats
@@ -764,23 +764,23 @@ class Window(QWidget):
         Handles adding a hardpoint to the ship with an arrow to modify turret options
         """
         name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
-        remove = QPushButton("HP {}".format(name))
+        activate = QPushButton("HP {}".format(name))
         hardpoint = Hardpoint(self.num_active)
-        active = QPushButton(">")
-        active.setMaximumWidth(30)
+        remove = QPushButton("X")
+        remove.setMaximumWidth(30)
 
         # Button functionalities
-        remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, active))
+        remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, activate))
         remove.clicked.connect(remove.deleteLater)
-        remove.clicked.connect(active.deleteLater)
-        active.clicked.connect(lambda: self.display_turret(self.turret_config_layout, active, hardpoint))
+        remove.clicked.connect(activate.deleteLater)
+        activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
 
         # Adding to GUI
-        self.hp_config_layout.addWidget(remove, self.num_active, 0, 1, 4)
-        self.hp_config_layout.addWidget(active, self.num_active, 4)
+        self.hp_config_layout.addWidget(activate, self.num_active, 0, 1, 4)
+        self.hp_config_layout.addWidget(remove, self.num_active, 4)
 
         # Adding hp to ship, updating available hps
-        self.active_hp_buttons.append(active)
+        self.active_hp_buttons.append(activate)
         self.num_active += 1
         self.spacecraft.add_hardpoint(hardpoint)
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
@@ -889,6 +889,23 @@ class Window(QWidget):
             layout.addWidget(label, row + idx, 0)
             layout.addWidget(combobox, row + idx, 1, 1, -1)
 
+        # Creating objects to display missile ammo and sandcaster barrels
+        layout.addWidget(QLabel(""), 7, 0)
+        layout.addWidget(QLabel("Turret Ammo:"), 8, 0)
+
+        # Missile ammo
+        row = 9
+        for key in hardpoint.turret.missiles.keys():
+            label, edit = self.add_turret_ammo(hardpoint, key)
+            layout.addWidget(label, row, 0)
+            layout.addWidget(edit, row, 1)
+            row += 1
+
+        # Sandcaster barrels
+        label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
+        layout.addWidget(label, row, 0)
+        layout.addWidget(edit, row, 1)
+
     def add_turret_weapon(self, idx, hardpoint):
         """
         Helper function that handles creating the label and combobox for a turret weapon, as well
@@ -910,6 +927,28 @@ class Window(QWidget):
         combobox.currentTextChanged.connect(
             lambda: self.modify_turret_wep(hardpoint.turret, combobox.currentText(), idx))
         return label, combobox
+
+    def add_turret_ammo(self, hardpoint, key):
+        """
+        Handles creating the widgets for a turret ammo, either missile ammo or sandcaster ammo
+        :param idx: index of the gridlayout
+        :param hardpoint: hardpoint object
+        :param key: key object
+        :return: QLabel and QLineEdit with connected function
+        """
+        label = QLabel("{} Missiles (12/#):".format(key))
+        edit = QLineEdit()
+        edit.setValidator(QIntValidator(edit))
+        edit.validator().setBottom(0)
+        edit.setMaximumWidth(20)
+
+        if key != "Sandcaster":
+            edit.setText(str(hardpoint.turret.missiles.get(key)))
+            edit.editingFinished.connect(lambda: self.modify_turret_ammo(hardpoint.turret, key, edit))
+        else:
+            edit.setText(str(hardpoint.turret.sandcaster_barrels))
+            edit.editingFinished.connect(lambda: self.modify_turret_sandcaster(hardpoint.turret, edit))
+        return label, edit
 
     def modify_turret_model(self, layout, hardpoint, box):
         """
@@ -938,6 +977,17 @@ class Window(QWidget):
         turret.modify_weapon(wep, idx)
         self.update_stats()
 
+    def modify_turret_ammo(self, turret, type, edit):
+        # Handles modifying a turret's ammo
+        num = int(edit.text())
+        turret.modify_missile_ammo(type, num)
+        self.update_stats()
+
+    def modify_turret_sandcaster(self, turret, edit):
+        # Handles modifying a turret's sandcaster
+        num = int(edit.text())
+        turret.modify_sandcaster_barrel(num)
+        self.update_stats()
 
 if __name__ == '__main__':
     import sys

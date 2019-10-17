@@ -81,7 +81,12 @@
               "Launcher for small anti-ship missiles",
               "Damage depends on the type of missile used",
               "Require ammunition - 12 missiles take up one ton of space"
-            ]
+            ],
+            "types": {
+                "Basic": 0.015,
+                "Smart": 0.03,
+                "Nuclear": 0.045
+            }
         },
         "Sandcaster": {
             "name": "Sandcaster",
@@ -93,7 +98,8 @@
               "Defensive weapon that dispense small particles which counteract the strength of lasers",
               "Reduces the damage from a beam weapon by 1d6",
               "Requires ammunition - 12 barrels take up one ton of space, cost .01 MCr."
-            ]
+            ],
+            "barrel_cost": 0.01
         }
     }
 }

@@ -52,7 +52,7 @@ class Hardpoint:
         tonnage = 1
 
         if self.turret is not None:
-            tonnage += self.turret.tonnage
+            tonnage += self.turret.get_tonnage()
         if self.popup is True:
             tonnage += 2.0
 
