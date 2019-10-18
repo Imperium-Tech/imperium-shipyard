@@ -896,15 +896,19 @@ class Window(QWidget):
         # Missile ammo
         row = 9
         for key in hardpoint.turret.missiles.keys():
-            label, edit = self.add_turret_ammo(hardpoint, key)
+            label = QLabel("{} Missiles:".format(key))
+            total_label, edit = self.add_turret_ammo(hardpoint, key)
             layout.addWidget(label, row, 0)
-            layout.addWidget(edit, row, 1)
+            layout.addWidget(total_label, row, 1)
+            layout.addWidget(edit, row, 2)
             row += 1
 
         # Sandcaster barrels
-        label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
+        label = QLabel("Sandcaster Barrels:")
+        total_label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
         layout.addWidget(label, row, 0)
-        layout.addWidget(edit, row, 1)
+        layout.addWidget(total_label, row, 1)
+        layout.addWidget(edit, row, 2)
 
     def add_turret_weapon(self, idx, hardpoint):
         """
@@ -936,19 +940,20 @@ class Window(QWidget):
         :param key: key object
         :return: QLabel and QLineEdit with connected function
         """
-        label = QLabel("{} Missiles (12/#):".format(key))
         edit = QLineEdit()
         edit.setValidator(QIntValidator(edit))
         edit.validator().setBottom(0)
         edit.setMaximumWidth(20)
 
         if key != "Sandcaster":
+            total_label = QLabel(str(hardpoint.turret.missiles.get(key) * 12))
             edit.setText(str(hardpoint.turret.missiles.get(key)))
-            edit.editingFinished.connect(lambda: self.modify_turret_ammo(hardpoint.turret, key, edit))
+            edit.editingFinished.connect(lambda: self.modify_turret_ammo(hardpoint.turret, key, total_label, edit))
         else:
+            total_label = QLabel(str(hardpoint.turret.sandcaster_barrels * 20))
             edit.setText(str(hardpoint.turret.sandcaster_barrels))
-            edit.editingFinished.connect(lambda: self.modify_turret_sandcaster(hardpoint.turret, edit))
-        return label, edit
+            edit.editingFinished.connect(lambda: self.modify_turret_sandcaster(hardpoint.turret, total_label, edit))
+        return total_label, edit
 
     def modify_turret_model(self, layout, hardpoint, box):
         """
@@ -977,17 +982,20 @@ class Window(QWidget):
         turret.modify_weapon(wep, idx)
         self.update_stats()
 
-    def modify_turret_ammo(self, turret, type, edit):
+    def modify_turret_ammo(self, turret, type, total_label, edit):
         # Handles modifying a turret's ammo
         num = int(edit.text())
         turret.modify_missile_ammo(type, num)
+        total_label.setText(str(num * 12))
         self.update_stats()
 
-    def modify_turret_sandcaster(self, turret, edit):
+    def modify_turret_sandcaster(self, turret, total_label, edit):
         # Handles modifying a turret's sandcaster
         num = int(edit.text())
         turret.modify_sandcaster_barrel(num)
+        total_label.setText(str(num * 20))
         self.update_stats()
+
 
 if __name__ == '__main__':
     import sys
