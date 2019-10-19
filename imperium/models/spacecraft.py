@@ -23,6 +23,8 @@ class Spacecraft:
         self.fuel_jump          = 0 # amount of fuel required for a jump
         self.fuel_two_weeks     = 0 # amount of fuel required for 2 weeks of operation
         self.armour_total       = 0 # total armour pointage
+        self.num_hardpoints     = 0 # total number of hardpoints
+        self.hardpoints         = list() # list of added hardpoints
         self.hull_designation   = None   # A, B, C, etc.
         self.hull_type          = None   # steamlined, distributed, standard, etc.
         self.hull_options       = list() # list of hull options installed
@@ -33,7 +35,6 @@ class Spacecraft:
         self.pplant             = None   # pplant object
         self.armour             = list() # list of armour objects
         self.sensors            = None   # sensor object
-        self.turrets            = list() # list of turret objects
         self.bays               = list() # list of bay objects
         self.screens            = list() # list of screen objects
         self.computer           = None   # computer object
@@ -49,6 +50,7 @@ class Spacecraft:
         # set hp based on tonnage
         self.hull_hp = self.tonnage // 50
         self.structure_hp = self.tonnage // 50
+        self.num_hardpoints = self.tonnage // 100
 
         # pull hull cost from json, set that
         data = get_file_data("hull_data.json")
@@ -103,10 +105,8 @@ class Spacecraft:
             cost_total += self.sensors.cost
 
         # Turrets / Bayweapons
-        for turret in self.turrets:
-            cost_total += turret.cost
-        for bayweapon in self.bays:
-            cost_total += bayweapon.cost
+        for hardpoint in self.hardpoints:
+            cost_total += hardpoint.get_cost()
 
         # Screens / Computer / Software
         for screen in self.screens:
@@ -152,10 +152,8 @@ class Spacecraft:
             cargo -= self.sensors.tonnage
 
         # Turrets / Bayweapons / Screens
-        for turret in self.turrets:
-            cargo -= turret.tonnage
-        for bayweapon in self.bays:
-            cargo -= bayweapon.tonnage
+        for hardpoint in self.hardpoints:
+            cargo -= hardpoint.get_tonnage()
         for screen in self.screens:
             cargo -= screen.tonnage
 
@@ -181,6 +179,7 @@ class Spacecraft:
         # set hp based on tonnage
         self.hull_hp = self.tonnage // 50
         self.structure_hp = self.tonnage // 50
+        self.num_hardpoints = self.tonnage // 100
 
     def set_fuel(self, new_fuel):
         """
@@ -297,24 +296,6 @@ class Spacecraft:
                 if self.pplant.type < self.mdrive.drive_type:
                     return "Error: PPlant under M-Drive. {} < {}".format(self.pplant.type, self.mdrive.drive_type)
         return True
-
-    def add_turret(self, turret):
-        """
-        Adds a single turret to the spaceship
-        :param turret: Turret object to append
-        """
-        self.turrets.append(turret)
-
-    def remove_turret(self, turret_index):
-        """
-        Removes a single turret from the spaceship
-        :param turret_index: Index of the turret to remove
-        """
-        if len(self.turrets) != (turret_index + 1):
-            return
-
-        turret = self.turrets[turret_index]
-        self.turrets.remove(turret)
 
     def get_bridge_tonnage(self):
         """
@@ -461,3 +442,13 @@ class Spacecraft:
     def modify_fuel_scoops(self):
         # Toggles fuel scoops state
         self.fuel_scoop ^= True
+
+    def add_hardpoint(self, hp):
+        # Adds a hardpoint to the ship
+        self.hardpoints.append(hp)
+
+    def remove_hardpoint(self, hp):
+        # Removes a hardpoint from ship, if exists
+        for h in self.hardpoints:
+            if h is hp:
+                self.hardpoints.remove(h)

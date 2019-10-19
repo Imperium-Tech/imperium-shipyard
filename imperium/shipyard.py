@@ -3,9 +3,13 @@ shipyard.py
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
+import random
+import string
+
 from imperium.models.computer import Computer
 from imperium.models.config import Config
 from imperium.models.drives import MDrive, JDrive
+from imperium.models.hardpoint import Hardpoint
 from imperium.models.json_reader import get_file_data
 from imperium.models.misc import Misc
 from imperium.models.option import Option
@@ -19,6 +23,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
                              QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox)
+
+from imperium.models.turrets import Turret
 
 
 class Window(QWidget):
@@ -100,7 +106,7 @@ class Window(QWidget):
                 new_line_edit.setValidator(QIntValidator(new_line_edit))
             if read_only:
                 new_line_edit.setReadOnly(True)
-            
+
             new_line_edit.editingFinished.connect(self.update_stats)
             base_stats_layout.addWidget(new_label, row, 0)
             base_stats_layout.addWidget(new_line_edit, row, 2)
@@ -287,6 +293,49 @@ class Window(QWidget):
         ###  END: Misc Items Grid       ###
         ###################################
 
+        ###################################
+        ###  START: Hardpoint Grid      ###
+        ###################################
+        self.hp_config_group = QGroupBox("Hardpoints:")
+        self.hp_config_layout = QGridLayout()
+        self.hp_config_layout.setAlignment(Qt.AlignTop)
+
+        # Total and available hardpoints
+        self.hp_config_layout.addWidget(QLabel("Total: "), 0, 0)
+        self.total_hp = QLabel(str(self.spacecraft.num_hardpoints))
+        self.hp_config_layout.addWidget(self.total_hp, 0, 1)
+
+        self.hp_config_layout.addWidget(QLabel("Avail: "), 0, 2)
+        self.avail_hp = QLabel(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+        self.hp_config_layout.addWidget(self.avail_hp, 0, 3)
+
+        # Add button connecting to adding a hardpoint
+        add_hp = QPushButton("Add")
+        add_hp.setMaximumWidth(30)
+        add_hp.clicked.connect(self.add_hardpoint)
+        self.hp_config_layout.addWidget(add_hp, 0, 4)
+
+        # Global list to hold active button objects
+        self.active_hp_buttons = list()
+        self.num_active = 1
+
+        self.hp_config_group.setLayout(self.hp_config_layout)
+        ###################################
+        ###  END: Hardpoint Grid        ###
+        ###################################
+
+        ###################################
+        ###  START: Turret Grid         ###
+        ###################################
+        self.turret_config_group = QGroupBox("Active Turret:")
+        self.turret_config_layout = QGridLayout()
+        self.turret_config_layout.setAlignment(Qt.AlignTop)
+
+        self.turret_config_group.setLayout(self.turret_config_layout)
+        ###################################
+        ###  END: Turret Grid           ###
+        ###################################
+
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
         self.armor_config_group.setFixedWidth(250)
@@ -294,12 +343,12 @@ class Window(QWidget):
         self.misc_config_group.setFixedWidth(250)
 
         # Setting appropriate layout heights
-        FIXED_HEIGHT = 400
+        FIXED_HEIGHT = 350
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
         self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.setFixedHeight(FIXED_HEIGHT)
+        self.hp_config_group.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         layout = QGridLayout()
@@ -307,7 +356,9 @@ class Window(QWidget):
         layout.addWidget(self.armor_config_group, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
         layout.addWidget(self.misc_config_group, 0, 3)
-        layout.addWidget(self.logger, 1, 0, 1, -1)
+        layout.addWidget(self.hp_config_group, 1, 0)
+        layout.addWidget(self.turret_config_group, 1, 1)
+        layout.addWidget(self.logger, 2, 0, 1, -1)
         self.setLayout(layout)
 
         # Update to current stats
@@ -369,6 +420,12 @@ class Window(QWidget):
             if self.spacecraft.pplant is not None and self.spacecraft.pplant.type != lowest_drive:
                 self.pplant_line_edit.setText(lowest_drive)
                 self.edit_pplant()
+
+        # Update hardpoint counter
+        self.total_hp.setText(str(self.spacecraft.num_hardpoints))
+        self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+
+        # Update stats
         self.update_stats()
 
     def edit_fuel(self):
@@ -432,6 +489,7 @@ class Window(QWidget):
         """
         Add a new armor piece to the ship, creating a new button in the grid and adjusting values
         """
+        # TODO - fix bug when adding new armors after removing a middle one
         armor_type = self.armor_combo_box.currentText()
         self.armor_combo_box.setCurrentIndex(0)
 
@@ -699,6 +757,243 @@ class Window(QWidget):
     def modify_fuel_scoops(self):
         # Flips the fuel scoop box
         self.spacecraft.modify_fuel_scoops()
+        self.update_stats()
+
+    def add_hardpoint(self):
+        """
+        Handles adding a hardpoint to the ship with an arrow to modify turret options
+        """
+        name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        activate = QPushButton("HP {}".format(name))
+        hardpoint = Hardpoint(self.num_active)
+        remove = QPushButton("X")
+        remove.setMaximumWidth(30)
+
+        # Button functionalities
+        remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, activate))
+        remove.clicked.connect(remove.deleteLater)
+        remove.clicked.connect(activate.deleteLater)
+        activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
+
+        # Adding to GUI
+        self.hp_config_layout.addWidget(activate, self.num_active, 0, 1, 4)
+        self.hp_config_layout.addWidget(remove, self.num_active, 4)
+
+        # Adding hp to ship, updating available hps
+        self.active_hp_buttons.append(activate)
+        self.num_active += 1
+        self.spacecraft.add_hardpoint(hardpoint)
+        self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+        self.update_stats()
+
+    def remove_hardpoint(self, button, hardpoint, active):
+        """
+        Handles the functionality of removing a single hardpoint from the ship and GUI
+        :param button: hardpoint button to remove
+        :param hardpoint: hardpoint class
+        :param active: button to display information
+        """
+        # Wipe out turret layout if removed turret is displayed
+        if active.isEnabled() == False:
+            for i in reversed(range(self.turret_config_layout.count())):
+                self.turret_config_layout.itemAt(i).widget().setParent(None)
+
+        # Removing GUI elements
+        self.hp_config_layout.removeWidget(button)
+        self.hp_config_layout.removeWidget(active)
+
+        # Adding hp to ship, updating available hps
+        # TODO - fix num active bug when removing middle hardpoints
+        self.num_active -= 1
+        self.active_hp_buttons.remove(active)
+        self.spacecraft.remove_hardpoint(hardpoint)
+        self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
+        self.update_stats()
+
+    def display_turret(self, layout, active, hardpoint):
+        """
+        Handles displaying a hardpoint's information and updating the active buttons
+        :param active: active button to set disabled
+        :param hardpoint: hardpoint holding a turret to display
+        """
+        for button in self.active_hp_buttons:
+            if button is active:
+                button.setDisabled(True)
+            else:
+                button.setEnabled(True)
+
+        # Clear the previous layout
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        """ Displaying hardpoint/turret information """
+        label = QLabel("---- HP: {} ----".format(str(hardpoint.id)))
+        layout.addWidget(label, 0, 0)
+
+        # Combobox for turret model on hardpoint
+        turret_label = QLabel("Turret Model:")
+        turret_box = QComboBox()
+        turret_box.addItem("---")
+        idx = 1
+        for key in get_file_data("hull_turrets.json").get("models").keys():
+            turret_box.addItem(key)
+            if hardpoint.turret is not None and hardpoint.turret.name == key:
+                turret_box.setCurrentIndex(idx)
+            idx += 1
+
+        turret_box.currentTextChanged.connect(lambda: self.modify_turret_model(layout, hardpoint, turret_box))
+        layout.addWidget(turret_label, 1, 0)
+        layout.addWidget(turret_box, 2, 0, 1, -1)
+
+        # Checkboxes for pop-up and fixed mounting
+        popup_label = QLabel("Pop-up Cover:")
+        popup_check = QCheckBox()
+        if hardpoint.popup is True:
+            popup_check.setChecked(True)
+        popup_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Pop-up Turret"))
+        layout.addWidget(popup_label, 3, 0)
+        layout.addWidget(popup_check, 3, 1)
+
+        fixed_label = QLabel("Fixed Mounting:")
+        fixed_check = QCheckBox()
+        if hardpoint.fixed is True:
+            fixed_check.setChecked(True)
+        fixed_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Fixed Mounting"))
+        layout.addWidget(fixed_label, 3, 2)
+        layout.addWidget(fixed_check, 3, 3)
+
+        """ Displaying turret weapon information """
+        if hardpoint.turret is None:
+            return
+
+        self.display_turret_weps(layout, hardpoint)
+
+    def display_turret_weps(self, layout, hardpoint):
+        """
+        Handles displaying the weapons for a turret
+        :param layout: PyQT Grid Layout to add to
+        :param hardpoint: hardpoint object with turret
+        """
+        # Clearing out old weapons
+        for i in reversed(range(7, layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        # If turret is None, don't display weps
+        if hardpoint.turret is None:
+            return
+
+        # Creating objects to display weapons
+        row = 4
+        for idx in range(hardpoint.turret.max_wep):
+            label, combobox = self.add_turret_weapon(idx, hardpoint)
+            layout.addWidget(label, row + idx, 0)
+            layout.addWidget(combobox, row + idx, 1, 1, -1)
+
+        # Creating objects to display missile ammo and sandcaster barrels
+        layout.addWidget(QLabel(""), 7, 0)
+        layout.addWidget(QLabel("Turret Ammo:"), 8, 0)
+
+        # Missile ammo
+        row = 9
+        for key in hardpoint.turret.missiles.keys():
+            label = QLabel("{} Missiles:".format(key))
+            total_label, edit = self.add_turret_ammo(hardpoint, key)
+            layout.addWidget(label, row, 0)
+            layout.addWidget(total_label, row, 1)
+            layout.addWidget(edit, row, 2)
+            row += 1
+
+        # Sandcaster barrels
+        label = QLabel("Sandcaster Barrels:")
+        total_label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
+        layout.addWidget(label, row, 0)
+        layout.addWidget(total_label, row, 1)
+        layout.addWidget(edit, row, 2)
+
+    def add_turret_weapon(self, idx, hardpoint):
+        """
+        Helper function that handles creating the label and combobox for a turret weapon, as well
+        as setting up the connection function on activation
+        :param idx: index of the weapon in array
+        :param hardpoint: hardpoint object
+        :return: label of weapon and filled combobox
+        """
+        label = QLabel("Wep {}:".format(idx))
+        combobox = QComboBox()
+        combobox.addItem("---")
+        counter = 1
+        for key in get_file_data("hull_turrets.json").get("weapons").keys():
+            combobox.addItem(key)
+            if hardpoint.turret.weapons[idx] is not None and key == hardpoint.turret.weapons[idx].get("name"):
+                combobox.setCurrentIndex(counter)
+            counter += 1
+
+        combobox.currentTextChanged.connect(
+            lambda: self.modify_turret_wep(hardpoint.turret, combobox.currentText(), idx))
+        return label, combobox
+
+    def add_turret_ammo(self, hardpoint, key):
+        """
+        Handles creating the widgets for a turret ammo, either missile ammo or sandcaster ammo
+        :param idx: index of the gridlayout
+        :param hardpoint: hardpoint object
+        :param key: key object
+        :return: QLabel and QLineEdit with connected function
+        """
+        edit = QLineEdit()
+        edit.setValidator(QIntValidator(edit))
+        edit.validator().setBottom(0)
+        edit.setMaximumWidth(20)
+
+        if key != "Sandcaster":
+            total_label = QLabel(str(hardpoint.turret.missiles.get(key) * 12))
+            edit.setText(str(hardpoint.turret.missiles.get(key)))
+            edit.editingFinished.connect(lambda: self.modify_turret_ammo(hardpoint.turret, key, total_label, edit))
+        else:
+            total_label = QLabel(str(hardpoint.turret.sandcaster_barrels * 20))
+            edit.setText(str(hardpoint.turret.sandcaster_barrels))
+            edit.editingFinished.connect(lambda: self.modify_turret_sandcaster(hardpoint.turret, total_label, edit))
+        return total_label, edit
+
+    def modify_turret_model(self, layout, hardpoint, box):
+        """
+        Handles modifying what type of turret a hardpoint has
+        :param hardpoint: hardpoint object
+        :param box: PyQT ComboBox
+        """
+        model = box.currentText()
+        if model == "---":
+            turret = None
+        else:
+            turret = Turret(model)
+
+        # Add turret to hardpoint, redo UI display
+        hardpoint.add_turret(turret)
+        self.display_turret_weps(layout, hardpoint)
+        self.update_stats()
+
+    def modify_turret_option(self, hardpoint, part):
+        # Handles modifying a hardpoint's addon
+        hardpoint.modify_addon(part)
+        self.update_stats()
+
+    def modify_turret_wep(self, turret, wep, idx):
+        # Handles modifying a turret's weapons
+        turret.modify_weapon(wep, idx)
+        self.update_stats()
+
+    def modify_turret_ammo(self, turret, type, total_label, edit):
+        # Handles modifying a turret's ammo
+        num = int(edit.text())
+        turret.modify_missile_ammo(type, num)
+        total_label.setText(str(num * 12))
+        self.update_stats()
+
+    def modify_turret_sandcaster(self, turret, total_label, edit):
+        # Handles modifying a turret's sandcaster
+        num = int(edit.text())
+        turret.modify_sandcaster_barrel(num)
+        total_label.setText(str(num * 20))
         self.update_stats()
 
 

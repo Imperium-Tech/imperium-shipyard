@@ -19,57 +19,60 @@ class Turret:
         self.name            = model_type                          # name of the model
         self.model           = data.get("models").get(model_type)  # model of the turret
         self.tonnage         = self.model.get("tonnage")           # size of the turret and addons
-        self.addons          = list()                              # list of the addons for this turret
         self.max_wep         = self.model.get("num_weapons")       # max number of weapons per turret type
-        self.weapons         = list()                              # list of the weapons on this turret
+        self.weapons         = [None for _ in range(self.max_wep)] # list of the weapons on this turret
         self.cost            = self.model.get("cost")              # cost of the turret and addons
 
-    def add_addon(self, part):
-        """
-        Handles adding an add-on to the turret
-        :param part: Name of the add-on to add
-        """
-        addon = self.data.get("addons").get(part)
+        # Setting up missile dictionary for display
+        self.missiles        = dict()
+        for mtype in data.get("weapons").get("Missile Rack").get("types").keys():
+            self.missiles[mtype] = 0
 
-        # Appending addon and related costs to turret fields
-        self.addons.append(addon)
-        self.tonnage += addon.get("tonnage")
+        self.sandcaster_barrels = 0                                # number of sandcaster barrels on turret
 
-        if part == "Pop-up Turret":
-            self.cost += addon.get("cost")
-        if part == "Fixed Mounting":
-            self.cost *= addon.get("turret_cost_modifier")
+    def get_cost(self):
+        cost = 0
+        cost += self.cost
 
-    def add_weapon(self, part):
-        """
-        Handles adding weapons to the turret
-        :param part: Name of the weapon to add
-        """
-        if len(self.weapons) == self.max_wep:
-            print("Error: cannot add '{}'. Max # of weapons reached for {}: {}/{}".format(
-                part, self.name, len(self.weapons), self.max_wep))
-            return
+        # Adding weapon cost
+        for wep in self.weapons:
+            if wep is not None:
+                cost += wep.get("cost")
 
-        weapon = self.data.get("weapons").get(part)
+        # Adding missile costs
+        missile_costs = self.data.get("weapons").get("Missile Rack").get("types")
+        for key in self.missiles.keys():
+            cost += self.missiles.get(key) * missile_costs.get(key)
 
-        self.weapons.append(weapon)
-        self.cost += weapon.get("cost")
+        # Adding sandcaster costs
+        sand_data = self.data.get("weapons").get("Sandcaster").get("barrel_cost")
+        cost += self.sandcaster_barrels * sand_data
 
-    def remove_weapon(self, part):
-        """
-        Handles removing a specific weapon from the turret
-        :param part: Name of the weapon to remove
-        """
-        if len(self.weapons) == 0:
-            print("Error: no weapons to remove.")
-            return
+        return cost
 
-        wep = self.data.get("weapons").get(part)
+    def get_tonnage(self):
+        tonnage = 0
+        tonnage += self.tonnage
 
-        # Check if any weapon matches this weapon. If none, print error.
-        for w in self.weapons:
-            if wep == w:
-                self.weapons.remove(w)
-                self.cost -= w.get("cost")
-                return
-        print("Error: {} not attached to {}".format(part, self.name))
+        # Get missile tonnages
+        for key in self.missiles.keys():
+            tonnage += self.missiles.get(key)
+
+        # Get sandcaster tonnages
+        tonnage += self.sandcaster_barrels
+
+        return tonnage
+
+    def modify_weapon(self, part, idx):
+        if part == "---":
+            wep = None
+        else:
+            wep = self.data.get("weapons").get(part)
+        self.weapons[idx] = wep
+
+    def modify_missile_ammo(self, type, num):
+        if type in self.missiles.keys():
+            self.missiles[type] = num
+
+    def modify_sandcaster_barrel(self, num):
+        self.sandcaster_barrels = num

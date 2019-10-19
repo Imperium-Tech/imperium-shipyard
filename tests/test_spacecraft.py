@@ -6,6 +6,7 @@ Unit tests for classes in shipyard.models.spacecraft
 import pytest
 
 from imperium.models.config import Config
+from imperium.models.hardpoint import Hardpoint
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.turrets import Turret
 from imperium.models.armour import Armour
@@ -33,20 +34,19 @@ def test_turret_functionality():
     ship = Spacecraft(100)
 
     # Turret init with a wep and addon
+    hardpoint = Hardpoint("1")
     turret = Turret("Single Turret")
-    turret.add_weapon("Beam Laser")
-    turret.add_addon("Pop-up Turret")
+    hardpoint.add_turret(turret)
+    turret.modify_weapon("Beam Laser", 0)
 
     # Adding and removing the turret, checking ship specs
-    ship.add_turret(turret)
-    assert ship.get_remaining_cargo() == 97
-    assert ship.get_total_cost() == 4.2
-    assert len(ship.turrets) == 1
+    ship.add_hardpoint(hardpoint)
+    assert ship.get_remaining_cargo() == 98
+    assert ship.get_total_cost() == 3.2
 
-    ship.remove_turret(0)
-    assert ship.get_remaining_cargo() == 100
-    assert ship.get_total_cost() == 2.0
-    assert len(ship.turrets) == 0
+    turret.modify_weapon("---", 0)
+    assert ship.get_remaining_cargo() == 98
+    assert ship.get_total_cost() == 2.2
 
 
 def test_set_tonnage():
