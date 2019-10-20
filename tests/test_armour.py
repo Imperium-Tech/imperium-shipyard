@@ -46,7 +46,7 @@ def test_add():
     ship.add_armour(armour)
     assert ship.get_remaining_cargo() == 190
     assert ship.armour_total == 2
-    assert ship.get_total_cost() == 18
+    assert ship.get_total_cost() == 8.4
 
 
 def test_remove():
@@ -64,7 +64,7 @@ def test_remove():
     ship.add_armour(armour)
     assert ship.get_remaining_cargo() == 190
     assert ship.armour_total == 2
-    assert ship.get_total_cost() == 18
+    assert ship.get_total_cost() == 8.4
 
     ship.remove_armour(armour)
     assert ship.get_remaining_cargo() == 200
@@ -94,12 +94,12 @@ def test_swap():
     ship.add_armour(armour)
     assert ship.get_remaining_cargo() == 190
     assert ship.armour_total == 2
-    assert ship.get_total_cost() == 18
+    assert ship.get_total_cost() == 8.4
 
     ship.set_tonnage(100)
     assert ship.get_remaining_cargo() == 95
     assert ship.armour_total == 2
-    assert ship.get_total_cost() == 7
+    assert ship.get_total_cost() == 2.1
 
     ship.remove_armour(armour)
     assert ship.get_remaining_cargo() == 100
