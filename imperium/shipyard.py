@@ -303,6 +303,7 @@ class Window(QWidget):
         self.hpstats_config_layout.setAlignment(Qt.AlignTop)
 
         def add_turret_stat(layout, row, string):
+            # Handles creating and adding a name and value to a layout
             name_label = QLabel(string)
             value_label = QLabel("0")
 
@@ -310,17 +311,30 @@ class Window(QWidget):
             layout.addWidget(value_label, row, 1)
             return name_label, value_label
 
-        _, self.active_hardpoints = add_turret_stat(self.hpstats_config_layout, 0, "Active Hardpoints:")
+        _, self.active_hardpoints = add_turret_stat(self.hpstats_config_layout, 0, "Active HPs:")
+        _, self.hardpoint_cost = add_turret_stat(self.hpstats_config_layout, 1, "Cost: ")
+        _, self.hardpoint_ton = add_turret_stat(self.hpstats_config_layout, 2, "Tonnage: ")
 
         """ Showing how many of each turret model """
-        self.hpstats_config_layout.addWidget(QLabel(""), 1, 0)
-        self.hpstats_config_layout.addWidget(QLabel("Turret Models:"), 2, 0)
+        self.hpstats_config_layout.addWidget(QLabel(""), 3, 0)
+        self.hpstats_config_layout.addWidget(QLabel("Turret Models:"), 4, 0)
 
         self.model_dict = dict()
-        row = 3
+        row = 5
         for model in get_file_data("hull_turrets.json").get("models").keys():
             name, value = add_turret_stat(self.hpstats_config_layout, row, model)
             self.model_dict[model] = value
+            row += 1
+
+        """ Showing how much of each weapon """
+        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
+        self.hpstats_config_layout.addWidget(QLabel("Weapons:"), row + 1, 0)
+
+        row += 2
+        self.weapon_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("weapons").keys():
+            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
+            self.weapon_dict[weapon] = value
             row += 1
 
         self.hpstats_config_group.setLayout(self.hpstats_config_layout)
@@ -440,7 +454,6 @@ class Window(QWidget):
     def update_turret_stats(self):
         """
         Updates turret column stats with appropriate
-        :return:
         """
         self.active_hardpoints.setText(str(len(self.spacecraft.hardpoints)))
 
@@ -456,6 +469,30 @@ class Window(QWidget):
 
         for model in turret_dict.keys():
             self.model_dict[model].setText(str(turret_dict.get(model)))
+
+        # Updating the number of weapons
+        wep_dict = dict()
+        for model in get_file_data("hull_turrets.json").get("weapons").keys():
+            wep_dict[model] = 0
+
+        for hardpoint in self.spacecraft.hardpoints:
+            if hardpoint.turret is not None:
+                for wep in hardpoint.turret.weapons:
+                    if wep is not None:
+                        name = wep.get("name")
+                        wep_dict[name] = wep_dict.get(name) + 1
+
+        for weapon in wep_dict.keys():
+            self.weapon_dict[weapon].setText(str(wep_dict.get(weapon)))
+
+        # Setting current total cost and tonnage
+        cost = 0
+        tonnage = 0
+        for hardpoint in self.spacecraft.hardpoints:
+            cost += hardpoint.get_cost()
+            tonnage += hardpoint.get_tonnage()
+        self.hardpoint_cost.setText(str(round(cost, 2)))
+        self.hardpoint_ton.setText(str(tonnage))
 
     def edit_tonnage(self):
         """
