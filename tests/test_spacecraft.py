@@ -41,11 +41,11 @@ def test_turret_functionality():
 
     # Adding and removing the turret, checking ship specs
     ship.add_hardpoint(hardpoint)
-    assert ship.get_remaining_cargo() == 98
+    assert ship.get_remaining_cargo() == 99
     assert ship.get_total_cost() == 3.2
 
     turret.modify_weapon("---", 0)
-    assert ship.get_remaining_cargo() == 98
+    assert ship.get_remaining_cargo() == 99
     assert ship.get_total_cost() == 2.2
 
 
@@ -72,7 +72,7 @@ def test_set_tonnage():
     armour = Armour("Titanium Steel")
     ship.add_armour(armour)
     assert ship.get_remaining_cargo() == 190
-    assert ship.get_total_cost() == 18
+    assert ship.get_total_cost() == 8.4
     assert ship.tonnage == 200
     assert ship.structure_hp == 4
     assert ship.hull_hp == 4
@@ -80,7 +80,7 @@ def test_set_tonnage():
 
     ship.set_tonnage(100)
     assert ship.get_remaining_cargo() == 95
-    assert ship.get_total_cost() == 7
+    assert ship.get_total_cost() == 2.1
     assert ship.tonnage == 100
     assert ship.armour_total == 2
     assert ship.structure_hp == 2

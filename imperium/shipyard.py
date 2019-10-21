@@ -84,7 +84,7 @@ class Window(QWidget):
         base_stats_layout.setAlignment(Qt.AlignTop)
 
         # Add stat function
-        def add_stat_to_layout(label, row, signal_function=None, force_int=False, read_only=False):
+        def add_stat_to_layout(layout, label, row, signal_function=None, force_int=False, read_only=False):
             """
             Adds all the necessary widgets to a grid layout for a single stat
 
@@ -108,8 +108,8 @@ class Window(QWidget):
                 new_line_edit.setReadOnly(True)
 
             new_line_edit.editingFinished.connect(self.update_stats)
-            base_stats_layout.addWidget(new_label, row, 0)
-            base_stats_layout.addWidget(new_line_edit, row, 2)
+            layout.addWidget(new_label, row, 0)
+            layout.addWidget(new_line_edit, row, 2)
 
             return new_line_edit
 
@@ -123,38 +123,41 @@ class Window(QWidget):
         base_stats_layout.addWidget(self.tonnage_box, 0, 2)
 
         # Cargo
-        self.cargo_line_edit = add_stat_to_layout("Cargo:", 1, read_only=True)
+        self.cargo_line_edit = add_stat_to_layout(base_stats_layout, "Cargo:", 1, read_only=True)
 
         # Fuels
-        self.fuel_line_edit = add_stat_to_layout("Fuel:", 2, signal_function=self.edit_fuel, force_int=True)
+        self.fuel_line_edit = add_stat_to_layout(base_stats_layout, "Fuel:", 2,
+                                                 signal_function=self.edit_fuel, force_int=True)
         self.fuel_line_edit.validator().setBottom(0)
 
         # Jump
-        self.jump_line_edit = add_stat_to_layout("Jump:", 3, signal_function=self.edit_jdrive)
+        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 3, signal_function=self.edit_jdrive)
         self.jump_label = QLabel("-")
         base_stats_layout.addWidget(self.jump_label, 3, 1)
 
         # Thrust
-        self.thrust_line_edit = add_stat_to_layout("Thrust:", 4, signal_function=self.edit_mdrive)
+        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 4, signal_function=self.edit_mdrive)
         self.thrust_label = QLabel("-")
         base_stats_layout.addWidget(self.thrust_label, 4, 1)
 
         # PPlant
-        self.pplant_line_edit = add_stat_to_layout("PPlant:", 5, signal_function=self.edit_pplant)
+        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 5, signal_function=self.edit_pplant)
         self.pplant_label = QLabel("-")
         base_stats_layout.addWidget(self.pplant_label, 5, 1)
 
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout("Hull HP:", 6, signal_function=self.edit_tonnage, read_only=True)
+        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 6,
+                                                    signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout("Structure HP:", 7, signal_function=self.edit_tonnage, read_only=True)
+        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 7,
+                                                         signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
-        self.armour_line_edit = add_stat_to_layout("Armour:", 8, read_only=True)
+        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 8, read_only=True)
 
         # Cost
-        self.cost_line_edit = add_stat_to_layout("Cost (MCr.):", 9, read_only=True)
+        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 9, read_only=True)
 
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
@@ -174,7 +177,6 @@ class Window(QWidget):
 
         # Bridge
         self.bridge_check = add_hull_option(self.armor_config_layout, "Bridge", self.check_bridge, 1, 0)
-        self.bridge_check.setChecked(True)
 
         # Reflec
         self.reflec_check = add_hull_option(self.armor_config_layout, "Reflec",
@@ -294,6 +296,53 @@ class Window(QWidget):
         ###################################
 
         ###################################
+        ###  START: HP Stats Grid       ###
+        ###################################
+        self.hpstats_config_group = QGroupBox("Hardpoint Stats:")
+        self.hpstats_config_layout = QGridLayout()
+        self.hpstats_config_layout.setAlignment(Qt.AlignTop)
+
+        def add_turret_stat(layout, row, string):
+            # Handles creating and adding a name and value to a layout
+            name_label = QLabel(string)
+            value_label = QLabel("0")
+
+            layout.addWidget(name_label, row, 0)
+            layout.addWidget(value_label, row, 1)
+            return name_label, value_label
+
+        _, self.active_hardpoints = add_turret_stat(self.hpstats_config_layout, 0, "Active HPs:")
+        _, self.hardpoint_cost = add_turret_stat(self.hpstats_config_layout, 1, "Cost: ")
+        _, self.hardpoint_ton = add_turret_stat(self.hpstats_config_layout, 2, "Tonnage: ")
+
+        """ Showing how many of each turret model """
+        self.hpstats_config_layout.addWidget(QLabel(""), 3, 0)
+        self.hpstats_config_layout.addWidget(QLabel("Turret Models:"), 4, 0)
+
+        self.model_dict = dict()
+        row = 5
+        for model in get_file_data("hull_turrets.json").get("models").keys():
+            name, value = add_turret_stat(self.hpstats_config_layout, row, model)
+            self.model_dict[model] = value
+            row += 1
+
+        """ Showing how much of each weapon """
+        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
+        self.hpstats_config_layout.addWidget(QLabel("Weapons:"), row + 1, 0)
+
+        row += 2
+        self.weapon_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("weapons").keys():
+            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
+            self.weapon_dict[weapon] = value
+            row += 1
+
+        self.hpstats_config_group.setLayout(self.hpstats_config_layout)
+        ###################################
+        ###  END: HP Stats Grid         ###
+        ###################################
+
+        ###################################
         ###  START: Hardpoint Grid      ###
         ###################################
         self.hp_config_group = QGroupBox("Hardpoints:")
@@ -336,6 +385,9 @@ class Window(QWidget):
         ###  END: Turret Grid           ###
         ###################################
 
+        # Checking bridge to true, needed after initializing everything
+        self.bridge_check.setChecked(True)
+
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
         self.armor_config_group.setFixedWidth(250)
@@ -351,13 +403,17 @@ class Window(QWidget):
         self.hp_config_group.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
+        # Top row
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
         layout.addWidget(self.armor_config_group, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
         layout.addWidget(self.misc_config_group, 0, 3)
-        layout.addWidget(self.hp_config_group, 1, 0)
-        layout.addWidget(self.turret_config_group, 1, 1)
+        # Second Row
+        layout.addWidget(self.hpstats_config_group, 1, 0)
+        layout.addWidget(self.hp_config_group, 1, 1)
+        layout.addWidget(self.turret_config_group, 1, 2)
+        # Logger
         layout.addWidget(self.logger, 2, 0, 1, -1)
         self.setLayout(layout)
 
@@ -378,6 +434,9 @@ class Window(QWidget):
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
         self.cost_line_edit.setText("{:0.2f}".format(self.spacecraft.get_total_cost()))
 
+        # Updating the hardpoint stats information
+        self.update_turret_stats()
+
         # Set the cargo text to red when cargo going negative
         if self.spacecraft.get_remaining_cargo() < 0:
             self.cargo_line_edit.setStyleSheet("color: red")
@@ -391,6 +450,49 @@ class Window(QWidget):
         elif type(validity) is str:
             self.pplant_line_edit.setStyleSheet("color: red")
             self.logger.setText(validity)
+
+    def update_turret_stats(self):
+        """
+        Updates turret column stats with appropriate
+        """
+        self.active_hardpoints.setText(str(len(self.spacecraft.hardpoints)))
+
+        # Updating the number of turrets per model
+        turret_dict = dict()
+        for model in get_file_data("hull_turrets.json").get("models").keys():
+            turret_dict[model] = 0
+
+        for hardpoint in self.spacecraft.hardpoints:
+            if hardpoint.turret is not None:
+                name = hardpoint.turret.name
+                turret_dict[name] = turret_dict.get(name) + 1
+
+        for model in turret_dict.keys():
+            self.model_dict[model].setText(str(turret_dict.get(model)))
+
+        # Updating the number of weapons
+        wep_dict = dict()
+        for model in get_file_data("hull_turrets.json").get("weapons").keys():
+            wep_dict[model] = 0
+
+        for hardpoint in self.spacecraft.hardpoints:
+            if hardpoint.turret is not None:
+                for wep in hardpoint.turret.weapons:
+                    if wep is not None:
+                        name = wep.get("name")
+                        wep_dict[name] = wep_dict.get(name) + 1
+
+        for weapon in wep_dict.keys():
+            self.weapon_dict[weapon].setText(str(wep_dict.get(weapon)))
+
+        # Setting current total cost and tonnage
+        cost = 0
+        tonnage = 0
+        for hardpoint in self.spacecraft.hardpoints:
+            cost += hardpoint.get_cost()
+            tonnage += hardpoint.get_tonnage()
+        self.hardpoint_cost.setText(str(round(cost, 2)))
+        self.hardpoint_ton.setText(str(tonnage))
 
     def edit_tonnage(self):
         """

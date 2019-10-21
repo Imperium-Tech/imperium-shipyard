@@ -97,8 +97,10 @@ class Spacecraft:
 
         # Armour
         for armour_item in self.armour:
-            cost = armour_item.cost_by_hull_percentage
-            cost_total += int(self.tonnage * cost)
+            percent = armour_item.cost_by_hull_percentage
+            ton = get_file_data("hull_data.json")
+            cost = ton.get(self.hull_designation).get("cost")
+            cost_total += percent * cost
 
         # Sensors
         if self.sensors is not None:
