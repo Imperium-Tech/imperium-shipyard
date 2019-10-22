@@ -114,7 +114,7 @@ class Spacecraft:
         for screen in self.screens:
             cost_total += screen.cost
         if self.computer is not None:
-            cost_total += self.computer.cost
+            cost_total += self.computer.get_cost()
         for software in self.software:
             cost_total += software.cost
 
@@ -404,6 +404,10 @@ class Spacecraft:
         rating = 0
         for s in self.software:
             rating += s.rating
+
+            # Check for Jump Control Spec giving one free rank
+            if s.type == "Jump Control" and self.computer is not None and self.computer.bis:
+                rating -= 5
 
         if self.computer is not None:
             available_rating = self.computer.rating - rating

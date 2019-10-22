@@ -248,22 +248,35 @@ class Window(QWidget):
         self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
         self.rating = QLabel("--/--")
         self.computer_config_layout.addWidget(self.rating, 4, 1)
+        self.computer_config_layout.addWidget(QLabel(""), 5, 0)
 
         # Computer customizations
+        self.computer_config_layout.addWidget(QLabel("Customizations:"), 6, 0)
 
+        self.jump_control_spec = add_hull_option(self.computer_config_layout, "Jump Control Spec",
+                                                 lambda: self.modify_computer_addon("Jump Control Spec"), 7, 0)
+
+        self.hardened_system = add_hull_option(self.computer_config_layout, "Hardened System",
+                                               lambda: self.modify_computer_addon("Hardened System"), 8, 0)
+
+        self.jump_control_spec.setDisabled(True)
+        self.hardened_system.setDisabled(True)
+        self.computer_config_layout.addWidget(QLabel(""), 9, 0)
 
         # Software
-        self.software_num_rows = 7
-
+        self.computer_config_layout.addWidget(QLabel("Software:"), 10, 0)
         self.software_box = QComboBox()
         self.software_box.addItem("---")
         for item in get_file_data("hull_software.json").keys():
             self.software_box.addItem(item)
         button = QPushButton("Add")
         button.clicked.connect(lambda: self.add_software(self.software_box))
-        self.computer_config_layout.addWidget(self.software_box, 6, 0)
-        self.computer_config_layout.addWidget(QLabel(), 6, 1)
-        self.computer_config_layout.addWidget(button, 6, 2)
+        self.computer_config_layout.addWidget(self.software_box, 11, 0)
+        self.computer_config_layout.addWidget(QLabel(), 11, 1)
+        self.computer_config_layout.addWidget(button, 11, 2)
+
+        # Occupied rows for software placement
+        self.software_num_rows = 12
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
@@ -695,10 +708,27 @@ class Window(QWidget):
         # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
+            enabled = False
+
+            # If removing the computer, uncheck the specializations
+            self.jump_control_spec.setChecked(False)
+            self.hardened_system.setChecked(False)
         else:
             computer = Computer(computer_type)
+            enabled = True
 
+        # Setting customizations to enabled or disabled
+        self.jump_control_spec.setEnabled(enabled)
+        self.hardened_system.setEnabled(enabled)
+
+        # Adding computer to ship, updating stats
         self.spacecraft.add_computer(computer)
+        self.update_stats()
+
+    def modify_computer_addon(self, name):
+        # Handles modifying the spacecraft's computer addon
+        if self.spacecraft.computer is not None:
+            self.spacecraft.computer.modify_addon(name)
         self.update_stats()
 
     def add_software(self, box):

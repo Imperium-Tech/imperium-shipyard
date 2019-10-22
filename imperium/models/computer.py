@@ -13,13 +13,22 @@ class Computer:
         self.tl         = data.get("tl")
         self.rating     = data.get("rating")
         self.cost       = data.get("cost")
-        self.addons     = list()
+        self.bis        = False                 # whether Jump Control Specialization is added
+        self.fib        = False                 # whether EMP hardened is added
 
-    def add_addon(self, name):
-        addon = get_file_data("hull_computer_addons.json").get(name)
+    def modify_addon(self, name):
+        if name == "Jump Control Spec":
+            self.bis ^= True
+        elif name == "Hardened System":
+            self.fib ^= True
 
-        if addon.get("rating_increase") is not None:
-            self.rating += addon.get("rating_increase")
-        self.cost += (addon.get("cost_increase") * self.cost)
+    def get_cost(self):
+        cost = 0
+        cost += self.cost
 
-        self.addons.append(addon)
+        if self.bis and self.fib:
+            cost += self.cost
+        elif self.bis or self.fib:
+            cost += self.cost * 0.5
+
+        return cost
