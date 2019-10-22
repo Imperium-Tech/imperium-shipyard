@@ -27,7 +27,7 @@ class Hardpoint:
     def add_turret(self, turret):
         # Modifying/adding turret of a hardpoint
         self.turret = turret
-        if self.turret.name == "Bay Weapon":
+        if self.turret is not None and self.turret.name == "Bay Weapon":
             self.popup = False
             self.fixed = False
 

@@ -17,11 +17,11 @@ def test_init():
     computer = Computer("Model 5")
     assert computer.rating == 25
     assert computer.tl == 13
-    assert computer.cost == 10.0
+    assert computer.get_cost() == 10.0
 
-    computer.add_addon("Jump Control Specialisation")
-    assert computer.rating == 30
-    assert computer.cost == 15.0
+    computer.modify_addon("Jump Control Spec")
+    assert computer.rating == 25
+    assert computer.get_cost() == 15.0
 
 
 def test_adding():
