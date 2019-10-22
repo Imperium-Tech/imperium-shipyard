@@ -234,7 +234,7 @@ class Window(QWidget):
         ###################################
 
         ###################################
-        ###  START: Sensors/Comp Grid   ###
+        ###  START: Computer Grid       ###
         ###################################
         self.computer_config_group = QGroupBox("Computer")
         self.computer_config_layout = QGridLayout()
@@ -278,7 +278,7 @@ class Window(QWidget):
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
-        ###  END: Sensors/Comp Grid     ###
+        ###  END: Computer Grid         ###
         ###################################
 
         ###################################
@@ -355,6 +355,16 @@ class Window(QWidget):
             self.weapon_dict[weapon] = value
             row += 1
 
+        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
+        self.hpstats_config_layout.addWidget(QLabel("Bay Weapons:"), row + 1, 0)
+        row += 2
+
+        self.bay_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
+            self.bay_dict[weapon] = value
+            row += 1
+
         self.hpstats_config_group.setLayout(self.hpstats_config_layout)
         ###################################
         ###  END: HP Stats Grid         ###
@@ -418,7 +428,6 @@ class Window(QWidget):
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
         self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.hp_config_group.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         # Top row
@@ -493,7 +502,7 @@ class Window(QWidget):
         for model in turret_dict.keys():
             self.model_dict[model].setText(str(turret_dict.get(model)))
 
-        # Updating the number of weapons
+        # Updating the number of turret weapons
         wep_dict = dict()
         for model in get_file_data("hull_turrets.json").get("weapons").keys():
             wep_dict[model] = 0
@@ -501,12 +510,27 @@ class Window(QWidget):
         for hardpoint in self.spacecraft.hardpoints:
             if hardpoint.turret is not None:
                 for wep in hardpoint.turret.weapons:
-                    if wep is not None:
+                    if wep is not None and hardpoint.turret.name != "Bay Weapon":
                         name = wep.get("name")
                         wep_dict[name] = wep_dict.get(name) + 1
 
         for weapon in wep_dict.keys():
             self.weapon_dict[weapon].setText(str(wep_dict.get(weapon)))
+
+        # Updating the number of bay weapons
+        wep_dict = dict()
+        for model in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            wep_dict[model] = 0
+
+        for hardpoint in self.spacecraft.hardpoints:
+            if hardpoint.turret is not None:
+                for wep in hardpoint.turret.weapons:
+                    if wep is not None and hardpoint.turret.name == "Bay Weapon":
+                        name = wep.get("name")
+                        wep_dict[name] = wep_dict.get(name) + 1
+
+        for weapon in wep_dict.keys():
+            self.bay_dict[weapon].setText(str(wep_dict.get(weapon)))
 
         # Setting current total cost and tonnage
         cost = 0
@@ -1005,8 +1029,10 @@ class Window(QWidget):
         """ Displaying turret weapon information """
         if hardpoint.turret is None:
             return
-
-        self.display_turret_weps(layout, hardpoint)
+        elif hardpoint.turret.name == "Bay Weapon":
+            self.display_bayweapons(layout, hardpoint)
+        else:
+            self.display_turret_weps(layout, hardpoint)
 
     def display_turret_weps(self, layout, hardpoint):
         """
@@ -1029,6 +1055,48 @@ class Window(QWidget):
             layout.addWidget(label, row + idx, 0)
             layout.addWidget(combobox, row + idx, 1, 1, -1)
 
+        # Adding missiles to GUI
+        row = self.add_turret_missiles(hardpoint, layout)
+
+        # Sandcaster barrels
+        label = QLabel("Sandcaster Barrels:")
+        total_label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
+        layout.addWidget(label, row, 0)
+        layout.addWidget(total_label, row, 1)
+        layout.addWidget(edit, row, 2)
+
+    def display_bayweapons(self, layout, hardpoint):
+        """
+        Handles the display path for bayweapons and syncing up the functions to handle that
+        :param layout: PyQT layout to put new widgets in
+        :param hardpoint: hardpoint object to interact with
+        """
+        # Clearing out old weapons
+        for i in reversed(range(7, layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        # Creating combobox for bayweapons
+        label = QLabel("Wep:")
+        combobox = QComboBox()
+        combobox.addItem("---")
+        counter = 1
+        for key in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            combobox.addItem(key)
+            if hardpoint.turret.weapons[0] is not None and key == hardpoint.turret.weapons[0].get("name"):
+                combobox.setCurrentIndex(counter)
+            counter += 1
+
+        combobox.currentTextChanged.connect(
+            lambda: self.modify_turret_wep(hardpoint.turret, combobox.currentText(), 0)
+        )
+
+        layout.addWidget(label, 5, 0)
+        layout.addWidget(combobox, 5, 1, 1, -1)
+
+        # Adding missiles to GUI
+        self.add_turret_missiles(hardpoint, layout)
+
+    def add_turret_missiles(self, hardpoint, layout):
         # Creating objects to display missile ammo and sandcaster barrels
         layout.addWidget(QLabel(""), 7, 0)
         layout.addWidget(QLabel("Turret Ammo:"), 8, 0)
@@ -1045,12 +1113,7 @@ class Window(QWidget):
             layout.addWidget(edit, row, 2)
             row += 1
 
-        # Sandcaster barrels
-        label = QLabel("Sandcaster Barrels:")
-        total_label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
-        layout.addWidget(label, row, 0)
-        layout.addWidget(total_label, row, 1)
-        layout.addWidget(edit, row, 2)
+        return row
 
     def add_turret_weapon(self, idx, hardpoint):
         """
@@ -1106,12 +1169,16 @@ class Window(QWidget):
         model = box.currentText()
         if model == "---":
             turret = None
+            hardpoint.add_turret(turret)
+            self.display_turret_weps(layout, hardpoint)
+        elif model == "Bay Weapon":
+            turret = Turret(model)
+            hardpoint.add_turret(turret)
+            self.display_bayweapons(layout, hardpoint)
         else:
             turret = Turret(model)
-
-        # Add turret to hardpoint, redo UI display
-        hardpoint.add_turret(turret)
-        self.display_turret_weps(layout, hardpoint)
+            hardpoint.add_turret(turret)
+            self.display_turret_weps(layout, hardpoint)
         self.update_stats()
 
     def modify_turret_option(self, hardpoint, part):

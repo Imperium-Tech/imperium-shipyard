@@ -15,5 +15,11 @@ class Bayweapon:
         self.range          = data.get("range")
         self.damage         = data.get("damage")
         self.cost           = data.get("cost")
-        self.tonnage        = 51
+        self.tonnage        = data.get("tonnage")
         self.mod_additional = data.get("mod_additional")
+
+    def get_cost(self):
+        return self.cost
+
+    def get_tonnage(self):
+        return self.tonnage
