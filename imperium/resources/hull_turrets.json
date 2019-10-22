@@ -2,19 +2,19 @@
     "models": {
         "Single Turret": {
             "tl": 7,
-            "tonnage": 0,
+            "tonnage": 1.0,
             "cost": 0.2,
             "num_weapons": 1
         },
         "Double Turret": {
             "tl": 8,
-            "tonnage": 0,
+            "tonnage": 1.0,
             "cost": 0.5,
             "num_weapons": 2
         },
         "Triple Turret": {
             "tl": 9,
-            "tonnage": 0,
+            "tonnage": 1.0,
             "cost": 1.0,
             "num_weapons": 3
         }

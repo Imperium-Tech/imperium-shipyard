@@ -126,38 +126,41 @@ class Window(QWidget):
         self.cargo_line_edit = add_stat_to_layout(base_stats_layout, "Cargo:", 1, read_only=True)
 
         # Fuels
-        self.fuel_line_edit = add_stat_to_layout(base_stats_layout, "Fuel:", 2,
+        self.fuel_line_edit = add_stat_to_layout(base_stats_layout, "Fuel (Tons):", 2,
                                                  signal_function=self.edit_fuel, force_int=True)
         self.fuel_line_edit.validator().setBottom(0)
 
+        # Fuel to jump
+        self.fuel_label = add_stat_to_layout(base_stats_layout, "Fuel/Jump:", 3, read_only=True)
+
         # Jump
-        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 3, signal_function=self.edit_jdrive)
+        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 4, signal_function=self.edit_jdrive)
         self.jump_label = QLabel("-")
-        base_stats_layout.addWidget(self.jump_label, 3, 1)
+        base_stats_layout.addWidget(self.jump_label, 4, 1)
 
         # Thrust
-        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 4, signal_function=self.edit_mdrive)
+        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 5, signal_function=self.edit_mdrive)
         self.thrust_label = QLabel("-")
-        base_stats_layout.addWidget(self.thrust_label, 4, 1)
+        base_stats_layout.addWidget(self.thrust_label, 5, 1)
 
         # PPlant
-        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 5, signal_function=self.edit_pplant)
+        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 6, signal_function=self.edit_pplant)
         self.pplant_label = QLabel("-")
-        base_stats_layout.addWidget(self.pplant_label, 5, 1)
+        base_stats_layout.addWidget(self.pplant_label, 6, 1)
 
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 6,
+        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 7,
                                                     signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 7,
+        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 8,
                                                          signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
-        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 8, read_only=True)
+        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 9, read_only=True)
 
         # Cost
-        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 9, read_only=True)
+        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 10, read_only=True)
 
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
@@ -426,6 +429,7 @@ class Window(QWidget):
         """
         self.cargo_line_edit.setText(str(        self.spacecraft.get_remaining_cargo()))
         self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
+        self.fuel_label.setText(str(             self.spacecraft.fuel_jump          ))
         self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
         self.pplant_line_edit.setText(str(       self.spacecraft.fuel_two_weeks     ))

@@ -203,6 +203,7 @@ class Spacecraft:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
 
         self.jdrive = drive
+        self.fuel_jump = int(0.1 * self.tonnage * self.jump)
 
     def add_mdrive(self, drive):
         """
