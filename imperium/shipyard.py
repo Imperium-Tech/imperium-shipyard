@@ -259,8 +259,6 @@ class Window(QWidget):
         self.hardened_system = add_hull_option(self.computer_config_layout, "Hardened System",
                                                lambda: self.modify_computer_addon("Hardened System"), 8, 0)
 
-        self.jump_control_spec.setDisabled(True)
-        self.hardened_system.setDisabled(True)
         self.computer_config_layout.addWidget(QLabel(""), 9, 0)
 
         # Software
@@ -708,18 +706,16 @@ class Window(QWidget):
         # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
-            enabled = False
 
             # If removing the computer, uncheck the specializations
             self.jump_control_spec.setChecked(False)
             self.hardened_system.setChecked(False)
         else:
             computer = Computer(computer_type)
-            enabled = True
 
-        # Setting customizations to enabled or disabled
-        self.jump_control_spec.setEnabled(enabled)
-        self.hardened_system.setEnabled(enabled)
+        # Uncheck customization options
+        self.jump_control_spec.setChecked(False)
+        self.hardened_system.setChecked(False)
 
         # Adding computer to ship, updating stats
         self.spacecraft.add_computer(computer)
