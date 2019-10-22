@@ -163,7 +163,7 @@ class Spacecraft:
         for misc in self.misc:
             cargo -= misc.tonnage
 
-        return cargo
+        return round(cargo, 2)
 
     def set_tonnage(self, new_tonnage):
         """

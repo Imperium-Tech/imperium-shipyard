@@ -126,7 +126,7 @@ class Window(QWidget):
         self.cargo_line_edit = add_stat_to_layout(base_stats_layout, "Cargo:", 1, read_only=True)
 
         # Fuels
-        self.fuel_line_edit = add_stat_to_layout(base_stats_layout, "Fuel (Tons):", 2,
+        self.fuel_line_edit = add_stat_to_layout(base_stats_layout, "Fuel:", 2,
                                                  signal_function=self.edit_fuel, force_int=True)
         self.fuel_line_edit.validator().setBottom(0)
 
@@ -240,13 +240,9 @@ class Window(QWidget):
         self.computers = add_combo_box(self.computer_config_layout, "Computer/Software: ", "hull_computer.json",
                                        self.edit_computer, 2, 0, True)
 
-        self.computer_config_layout.addWidget(QLabel("Total rating: "), 4, 0)
-        self.computer_rating = QLabel("--")
-        self.computer_config_layout.addWidget(self.computer_rating, 4, 1)
-
-        self.computer_config_layout.addWidget(QLabel("Available rating: "), 5, 0)
-        self.avail_rating = QLabel("--")
-        self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
+        self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
+        self.rating = QLabel("--/--")
+        self.computer_config_layout.addWidget(self.rating, 4, 1)
 
         # Software
         self.software_num_rows = 7
@@ -398,7 +394,7 @@ class Window(QWidget):
         self.misc_config_group.setFixedWidth(250)
 
         # Setting appropriate layout heights
-        FIXED_HEIGHT = 350
+        FIXED_HEIGHT = 400
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
@@ -454,6 +450,10 @@ class Window(QWidget):
         elif type(validity) is str:
             self.pplant_line_edit.setStyleSheet("color: red")
             self.logger.setText(validity)
+
+        # Update computer rating
+        total_rating = "0" if self.spacecraft.computer is None else self.spacecraft.computer.rating
+        self.rating.setText("{}/{}".format(self.spacecraft.check_rating_ratio(), total_rating))
 
     def update_turret_stats(self):
         """
@@ -687,13 +687,10 @@ class Window(QWidget):
         # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
-            self.computer_rating.setText("--")
         else:
             computer = Computer(computer_type)
-            self.computer_rating.setText(str(computer.rating))
 
         self.spacecraft.add_computer(computer)
-        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 
     def add_software(self, box):
@@ -755,7 +752,6 @@ class Window(QWidget):
 
         # Adding item back to combobox
         self.software_box.addItem(software_name)
-        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 
     def modify_software_level(self, label, box):
@@ -776,7 +772,6 @@ class Window(QWidget):
             software = Software(software_name, software_level)
             self.spacecraft.modify_software(software)
 
-        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 
     def add_misc(self, box):
@@ -998,6 +993,8 @@ class Window(QWidget):
         # Creating objects to display missile ammo and sandcaster barrels
         layout.addWidget(QLabel(""), 7, 0)
         layout.addWidget(QLabel("Turret Ammo:"), 8, 0)
+        layout.addWidget(QLabel("#"), 8, 1)
+        layout.addWidget(QLabel("Tons"), 8, 2)
 
         # Missile ammo
         row = 9
