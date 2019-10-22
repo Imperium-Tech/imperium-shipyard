@@ -27,6 +27,9 @@ class Hardpoint:
     def add_turret(self, turret):
         # Modifying/adding turret of a hardpoint
         self.turret = turret
+        if self.turret.name == "Bay Weapon":
+            self.popup = False
+            self.fixed = False
 
     def get_cost(self):
         """

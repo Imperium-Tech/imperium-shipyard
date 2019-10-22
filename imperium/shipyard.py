@@ -1009,29 +1009,11 @@ class Window(QWidget):
         layout.addWidget(turret_label, 1, 0)
         layout.addWidget(turret_box, 2, 0, 1, -1)
 
-        # Checkboxes for pop-up and fixed mounting
-        popup_label = QLabel("Pop-up Cover:")
-        popup_check = QCheckBox()
-        if hardpoint.popup is True:
-            popup_check.setChecked(True)
-        popup_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Pop-up Turret"))
-        layout.addWidget(popup_label, 3, 0)
-        layout.addWidget(popup_check, 3, 1)
-
-        fixed_label = QLabel("Fixed Mounting:")
-        fixed_check = QCheckBox()
-        if hardpoint.fixed is True:
-            fixed_check.setChecked(True)
-        fixed_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Fixed Mounting"))
-        layout.addWidget(fixed_label, 3, 2)
-        layout.addWidget(fixed_check, 3, 3)
-
-        """ Displaying turret weapon information """
-        if hardpoint.turret is None:
-            return
-        elif hardpoint.turret.name == "Bay Weapon":
+        if turret_box.currentText() == "Bay Weapon":
+            # Check if hardpoint has a bayweapon
             self.display_bayweapons(layout, hardpoint)
         else:
+            # Displaying turret wep information
             self.display_turret_weps(layout, hardpoint)
 
     def display_turret_weps(self, layout, hardpoint):
@@ -1041,8 +1023,11 @@ class Window(QWidget):
         :param hardpoint: hardpoint object with turret
         """
         # Clearing out old weapons
-        for i in reversed(range(7, layout.count())):
+        for i in reversed(range(3, layout.count())):
             layout.itemAt(i).widget().setParent(None)
+
+        # Add turret options
+        self.add_turret_options(layout, hardpoint)
 
         # If turret is None, don't display weps
         if hardpoint.turret is None:
@@ -1056,7 +1041,7 @@ class Window(QWidget):
             layout.addWidget(combobox, row + idx, 1, 1, -1)
 
         # Adding missiles to GUI
-        row = self.add_turret_missiles(hardpoint, layout)
+        row = self.add_turret_missiles(layout, hardpoint)
 
         # Sandcaster barrels
         label = QLabel("Sandcaster Barrels:")
@@ -1072,8 +1057,12 @@ class Window(QWidget):
         :param hardpoint: hardpoint object to interact with
         """
         # Clearing out old weapons
-        for i in reversed(range(7, layout.count())):
+        for i in reversed(range(3, layout.count())):
             layout.itemAt(i).widget().setParent(None)
+
+        # Add whitespace for removal
+        for i in range(4):
+            layout.addWidget(None, 3, i)
 
         # Creating combobox for bayweapons
         label = QLabel("Wep:")
@@ -1094,9 +1083,39 @@ class Window(QWidget):
         layout.addWidget(combobox, 5, 1, 1, -1)
 
         # Adding missiles to GUI
-        self.add_turret_missiles(hardpoint, layout)
+        self.add_turret_missiles(layout, hardpoint)
 
-    def add_turret_missiles(self, hardpoint, layout):
+    def add_turret_options(self, layout, hardpoint):
+        """
+        Support function that handles adding a turret's options in the form of check boxes
+        :param layout: PyQT layout to add widgets to
+        :param hardpoint: Hardpoint object to interact with
+        """
+        # Checkboxes for pop-up and fixed mounting
+        popup_label = QLabel("Pop-up Cover:")
+        popup_check = QCheckBox()
+        if hardpoint.popup is True:
+            popup_check.setChecked(True)
+        popup_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Pop-up Turret"))
+        layout.addWidget(popup_label, 3, 0)
+        layout.addWidget(popup_check, 3, 1)
+
+        fixed_label = QLabel("Fixed Mounting:")
+        fixed_check = QCheckBox()
+        if hardpoint.fixed is True:
+            fixed_check.setChecked(True)
+        fixed_check.clicked.connect(lambda: self.modify_turret_option(hardpoint, "Fixed Mounting"))
+        layout.addWidget(fixed_label, 3, 2)
+        layout.addWidget(fixed_check, 3, 3)
+
+    def add_turret_missiles(self, layout, hardpoint):
+        """
+        Support function that handles adding the missiles in hull_turrets.json onto a layout and syncing up
+        the relevant functions for the line edits
+        :param hardpoint: Hardpoint object to interact with
+        :param layout: PyQT layout to add widgets to
+        :return: updated row at the end
+        """
         # Creating objects to display missile ammo and sandcaster barrels
         layout.addWidget(QLabel(""), 7, 0)
         layout.addWidget(QLabel("Turret Ammo:"), 8, 0)
