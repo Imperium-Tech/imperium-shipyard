@@ -37,7 +37,7 @@ class Window(QWidget):
         # Window Title
         self.setWindowTitle("Imperium Shipyard")
 
-        def add_combo_box(layout, label, json, funct, x, y, null_spot=False):
+        def add_combo_box(layout, label, json, funct, x, y, in_line=True, null_spot=False):
             """
             Handles adding a combo box widget with item names from a specific json file
             :param layout: PyQT layout
@@ -46,6 +46,7 @@ class Window(QWidget):
             :param funct: function to connect items to
             :param x: row in layout
             :param y: col in layout
+            :param in_line: whether to put the combox in the same row as the label
             :param null_spot: whether or not to have a 'null' box item
             :return: PyQT Combo Box
             """
@@ -58,7 +59,10 @@ class Window(QWidget):
                 combo_box.addItem(item)
             combo_box.activated.connect(funct)
 
-            layout.addWidget(combo_box, x + 1, y, 1, -1)
+            if in_line:
+                layout.addWidget(combo_box, x, y + 1, 1, -1)
+            else:
+                layout.addWidget(combo_box, x + 1, y, 1, -1)
             return combo_box
 
         def add_hull_option(layout, name, funct, x, y):
@@ -171,7 +175,7 @@ class Window(QWidget):
         ###################################
         ###  START: Armor/Config Grid   ###
         ###################################
-        self.armor_config_group = QGroupBox("Armor/Config")
+        self.armor_config_group = QGroupBox("Config/Armor")
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
@@ -215,11 +219,15 @@ class Window(QWidget):
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
                                              "hull_config.json", self.edit_hull_config, 5, 0)
 
+        ### Sensors ###
+        self.sensors = add_combo_box(self.armor_config_layout, "Sensors: ", "hull_sensors.json",
+                                     self.edit_sensors, 7, 0)
+
         ### Armor list ###
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
-                                             "hull_armor.json", self.edit_armor, 7, 0, True)
+                                             "hull_armor.json", self.edit_armor, 9, 0, in_line=False, null_spot=True)
 
-        self.occupied_rows = 8
+        self.occupied_rows = 10
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
@@ -228,21 +236,21 @@ class Window(QWidget):
         ###################################
         ###  START: Sensors/Comp Grid   ###
         ###################################
-        self.computer_config_group = QGroupBox("Sensors/Computers")
+        self.computer_config_group = QGroupBox("Computer")
         self.computer_config_layout = QGridLayout()
         self.computer_config_layout.setAlignment(Qt.AlignTop)
 
-        # Sensors
-        self.sensors = add_combo_box(self.computer_config_layout, "Sensors: ", "hull_sensors.json",
-                                     self.edit_sensors, 0, 0)
-
         # Computer Model
-        self.computers = add_combo_box(self.computer_config_layout, "Computer/Software: ", "hull_computer.json",
-                                       self.edit_computer, 2, 0, True)
+        self.computers = add_combo_box(self.computer_config_layout, "Model: ", "hull_computer.json",
+                                       self.edit_computer, 2, 0, null_spot=True)
 
-        # self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
-        self.rating = QLabel("Rating: --/--")
-        self.computer_config_layout.addWidget(self.rating, 4, 0)
+        # Computer Rating
+        self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
+        self.rating = QLabel("--/--")
+        self.computer_config_layout.addWidget(self.rating, 4, 1)
+
+        # Computer customizations
+
 
         # Software
         self.software_num_rows = 7
@@ -453,7 +461,7 @@ class Window(QWidget):
 
         # Update computer rating
         total_rating = "0" if self.spacecraft.computer is None else self.spacecraft.computer.rating
-        self.rating.setText("Rating: {}/{}".format(self.spacecraft.check_rating_ratio(), total_rating))
+        self.rating.setText("{}/{}".format(self.spacecraft.check_rating_ratio(), total_rating))
 
     def update_turret_stats(self):
         """
