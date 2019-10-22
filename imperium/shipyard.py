@@ -240,9 +240,9 @@ class Window(QWidget):
         self.computers = add_combo_box(self.computer_config_layout, "Computer/Software: ", "hull_computer.json",
                                        self.edit_computer, 2, 0, True)
 
-        self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
-        self.rating = QLabel("--/--")
-        self.computer_config_layout.addWidget(self.rating, 4, 1)
+        # self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
+        self.rating = QLabel("Rating: --/--")
+        self.computer_config_layout.addWidget(self.rating, 4, 0)
 
         # Software
         self.software_num_rows = 7
@@ -453,7 +453,7 @@ class Window(QWidget):
 
         # Update computer rating
         total_rating = "0" if self.spacecraft.computer is None else self.spacecraft.computer.rating
-        self.rating.setText("{}/{}".format(self.spacecraft.check_rating_ratio(), total_rating))
+        self.rating.setText("Rating: {}/{}".format(self.spacecraft.check_rating_ratio(), total_rating))
 
     def update_turret_stats(self):
         """
@@ -836,8 +836,13 @@ class Window(QWidget):
         self.misc_config_layout.removeWidget(button)
         self.misc_num_rows -= 1
 
-        # Adding item back to combobox
-        idx = self.misc_dict.get(misc_name)
+        # Adding item back to combobox, checking for index placement
+        count_before_misc = 0
+        for item in self.spacecraft.misc:
+            if self.misc_dict.get(item.name) < self.misc_dict.get(misc_name):
+                count_before_misc += 1
+
+        idx = self.misc_dict.get(misc_name) - count_before_misc
         self.misc_box.insertItem(idx, misc_name)
         self.update_stats()
 
