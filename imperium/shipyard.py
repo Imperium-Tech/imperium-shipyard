@@ -393,7 +393,7 @@ class Window(QWidget):
 
         # Global list to hold active button objects
         self.active_hp_buttons = list()
-        self.num_active = 1
+        self.active_hp_id = None
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
@@ -948,51 +948,72 @@ class Window(QWidget):
         Handles adding a hardpoint to the ship with an arrow to modify turret options
         """
         name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
-        activate = QPushButton("HP {}".format(name))
-        hardpoint = Hardpoint(self.num_active)
-        remove = QPushButton("X")
-        remove.setMaximumWidth(30)
+        hardpoint = Hardpoint(name)
 
-        # Button functionalities
-        remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, activate))
-        remove.clicked.connect(remove.deleteLater)
-        remove.clicked.connect(activate.deleteLater)
-        activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
-
-        # Adding to GUI
-        self.hp_config_layout.addWidget(activate, self.num_active, 0, 1, 4)
-        self.hp_config_layout.addWidget(remove, self.num_active, 4)
-
-        # Adding hp to ship, updating available hps
-        self.active_hp_buttons.append(activate)
-        self.num_active += 1
+        # Add hardpoint to ship, redisplay all hardpoints
         self.spacecraft.add_hardpoint(hardpoint)
+        self.display_hardpoints()
+
+        # Update stats
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
 
-    def remove_hardpoint(self, button, hardpoint, active):
+    def remove_hardpoint(self, hardpoint, active):
         """
         Handles the functionality of removing a single hardpoint from the ship and GUI
-        :param button: hardpoint button to remove
         :param hardpoint: hardpoint class
         :param active: button to display information
         """
         # Wipe out turret layout if removed turret is displayed
-        if active.isEnabled() == False:
+        if hardpoint.id == self.active_hp_id:
             for i in reversed(range(self.turret_config_layout.count())):
                 self.turret_config_layout.itemAt(i).widget().setParent(None)
 
-        # Removing GUI elements
-        self.hp_config_layout.removeWidget(button)
-        self.hp_config_layout.removeWidget(active)
-
-        # Adding hp to ship, updating available hps
-        # TODO - fix num active bug when removing middle hardpoints
-        self.num_active -= 1
-        self.active_hp_buttons.remove(active)
+        # Remove hardpoint from ship, redisplay hardpoints
         self.spacecraft.remove_hardpoint(hardpoint)
+        self.display_hardpoints()
+
+        # Update stats
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
+
+    def display_hardpoints(self):
+        """
+        Handles looping through hardpoints on ship and remaking the pyQT GUI elements for them
+        Remakes the active HP buttons list for turret window displaying
+        """
+        # Clear active hp buttons
+        self.active_hp_buttons = list()
+
+        # Clearing out the hardpoint col
+        for i in reversed(range(5, self.hp_config_layout.count())):
+            self.hp_config_layout.itemAt(i).widget().setParent(None)
+
+        # Loop through hardpoints to display
+        for hp in self.spacecraft.hardpoints:
+            # Creating GUI elements
+            activate = QPushButton("HP {}".format(hp.id))
+            if hp.id == self.active_hp_id:
+                activate.setDisabled(True)
+
+            remove = QPushButton("X")
+            remove.setMaximumWidth(30)
+
+            # Button functionalities
+            self.connect_hp_items(remove, hp, activate)
+
+            # Adding to GUI
+            self.active_hp_buttons.append(activate)
+            count = self.hp_config_layout.count()
+            self.hp_config_layout.addWidget(activate, count, 0, 1, 4)
+            self.hp_config_layout.addWidget(remove, count, 4)
+
+    def connect_hp_items(self, remove, hardpoint, activate):
+        """ Helper function that handles connecting hardpoint to its functions """
+        remove.clicked.connect(lambda: self.remove_hardpoint(hardpoint, activate))
+        remove.clicked.connect(remove.deleteLater)
+        remove.clicked.connect(activate.deleteLater)
+        activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
 
     def display_turret(self, layout, active, hardpoint):
         """
@@ -1000,11 +1021,14 @@ class Window(QWidget):
         :param active: active button to set disabled
         :param hardpoint: hardpoint holding a turret to display
         """
+        # Handle updating active button id and which is disabled
         for button in self.active_hp_buttons:
             if button is active:
                 button.setDisabled(True)
             else:
                 button.setEnabled(True)
+
+        self.active_hp_id = hardpoint.id
 
         # Clear the previous layout
         for i in reversed(range(layout.count())):
