@@ -853,57 +853,29 @@ class Window(QWidget):
         if box.count() == 0 or box.currentText() in invalids:
             return
 
-        # Removing item from software list
+        # Removing item from misc list, adding to ship
         misc_name = box.currentText()
         box.removeItem(box.currentIndex())
+        self.spacecraft.modify_misc(Misc(misc_name, 1))
 
-        # GUI elements for newly added software
-        label = QLabel(misc_name)
-
-        line_edit = QLineEdit()
-        line_edit.setFixedWidth(25)
-        line_edit.setValidator(QIntValidator(line_edit))
-        line_edit.validator().setBottom(0)
-
-        button = QPushButton("Remove")
-
-        # Spinbox functionality
-        line_edit.editingFinished.connect(lambda: self.modify_misc_item(label, line_edit))
-
-        # Button functionality
-        button.clicked.connect(lambda: self.remove_misc(label, line_edit, button))
-        button.clicked.connect(label.deleteLater)
-        button.clicked.connect(line_edit.deleteLater)
-        button.clicked.connect(button.deleteLater)
-
-        # Adding widgets to GUI
-        self.misc_config_layout.addWidget(label, self.misc_num_rows, 0)
-        self.misc_config_layout.addWidget(line_edit, self.misc_num_rows, 1)
-        self.misc_config_layout.addWidget(button, self.misc_num_rows, 2)
+        # Display misc items, set box index to 0
+        self.display_misc_items()
         self.misc_box.setCurrentIndex(0)
         self.misc_num_rows += 1
+        self.update_stats()
 
-        # Adding 1 item to start with for UI purposes
-        line_edit.setText("1")
-        self.modify_misc_item(label, line_edit)
-
-    def remove_misc(self, label, line, button):
+    def remove_misc(self, label):
         """
         Handles removing the misc item from the GUI on button click
         :param label: QLabel
-        :param line: QLineEdit
-        :param button: QButton
         """
         misc_name = label.text()
 
         # Remove item from spacecraft
         self.spacecraft.remove_misc(misc_name)
 
-        # Removing software from GUI
-        self.misc_config_layout.removeWidget(label)
-        self.misc_config_layout.removeWidget(line)
-        self.misc_config_layout.removeWidget(button)
-        self.misc_num_rows -= 1
+        # Redisplay misc items
+        self.display_misc_items()
 
         # Adding item back to combobox, checking for index placement
         count_before_misc = 0
@@ -928,6 +900,43 @@ class Window(QWidget):
         misc = Misc(name, int(num_misc))
         self.spacecraft.modify_misc(misc)
         self.update_stats()
+
+    def display_misc_items(self):
+        """ Function that handles redisplaying all of the misc GUI elements on the ship """
+
+        # Clearing out misc column
+        for i in reversed(range(3, self.misc_config_layout.count())):
+            self.misc_config_layout.itemAt(i).widget().setParent(None)
+
+        # Looping through misc and adding gui elements
+        for misc in self.spacecraft.misc:
+            # Making GUI elements
+            label = QLabel(misc.name)
+
+            line_edit = QLineEdit()
+            line_edit.setFixedWidth(25)
+            line_edit.setValidator(QIntValidator(line_edit))
+            line_edit.validator().setBottom(0)
+            line_edit.setText(str(misc.num))
+
+            button = QPushButton("Remove")
+
+            # Connecting functionality
+            self.connect_misc_item(label, line_edit, button)
+
+            # Adding widgets to GUI
+            count = self.misc_config_layout.count()
+            self.misc_config_layout.addWidget(label, count, 0)
+            self.misc_config_layout.addWidget(line_edit, count, 1)
+            self.misc_config_layout.addWidget(button, count, 2)
+
+    def connect_misc_item(self, label, line_edit, button):
+        """ Helper function that handle connecting the lambda functions for GUI elements """
+        line_edit.editingFinished.connect(lambda: self.modify_misc_item(label, line_edit))
+        button.clicked.connect(lambda: self.remove_misc(label))
+        button.clicked.connect(label.deleteLater)
+        button.clicked.connect(line_edit.deleteLater)
+        button.clicked.connect(button.deleteLater)
 
     def modify_fuel_scoops(self):
         # Flips the fuel scoop box

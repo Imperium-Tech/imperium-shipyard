@@ -19,6 +19,7 @@ class Misc:
         obj = data.get(name)
 
         self.name               = name
+        self.num                = num
         self.cost               = obj.get("cost") * num
         self.mod_additional     = obj.get("mod_additional")
         self.tonnage            = obj.get("tonnage") * num
