@@ -227,7 +227,6 @@ class Window(QWidget):
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
                                              "hull_armor.json", self.edit_armor, 9, 0, in_line=False, null_spot=True)
 
-        self.occupied_rows = 10
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
@@ -638,7 +637,6 @@ class Window(QWidget):
         """
         Add a new armor piece to the ship, creating a new button in the grid and adjusting values
         """
-        # TODO - fix bug when adding new armors after removing a middle one
         armor_type = self.armor_combo_box.currentText()
         self.armor_combo_box.setCurrentIndex(0)
 
@@ -648,20 +646,12 @@ class Window(QWidget):
         if self.spacecraft.tonnage == 0:
             return self.logger.setText("Error: Tonnage not set before adding armor.")
 
+        # Creating new armor object and adding to ship
         armor = Armour(armor_type)
         self.spacecraft.add_armour(armor)
 
         # Button to handle removing the piece of armor
-        button = QPushButton()
-        button.setCheckable(True)
-        button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
-        button.clicked.connect(lambda: self.remove_armor(armor))
-        button.clicked.connect(button.deleteLater)
-
-        # Adjusting values and adding widget
-        self.occupied_rows += 1
-        self.armor_config_layout.addWidget(button, self.occupied_rows, 0, 1, -1)
-        self.update_stats()
+        self.display_armor()
 
     def remove_armor(self, armor):
         """
@@ -669,8 +659,29 @@ class Window(QWidget):
         :param armor: armour object to remove
         """
         self.spacecraft.remove_armour(armor)
-        self.occupied_rows -= 1
+        self.display_armor()
+
+    def display_armor(self):
+        """ Handles clearing out the armor column and recreating their buttons """
+
+        # Clearing out old weapons
+        for i in reversed(range(16, self.armor_config_layout.count())):
+            self.armor_config_layout.itemAt(i).widget().setParent(None)
+
+        # Loop through current armor and making new buttons
+        for armor in self.spacecraft.armour:
+            button = QPushButton()
+            button.setCheckable(True)
+            button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
+            self.connect_armor(armor, button)
+            self.armor_config_layout.addWidget(button, self.armor_config_layout.count(), 0, 1, -1)
+
         self.update_stats()
+
+    def connect_armor(self, armor, button):
+        """ Helper function for the lambda button connections"""
+        button.clicked.connect(lambda: self.remove_armor(armor))
+        button.clicked.connect(button.deleteLater)
 
     def edit_hull_config(self):
         """
