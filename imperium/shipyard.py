@@ -734,6 +734,7 @@ class Window(QWidget):
         self.spacecraft.add_sensors(sensor)
         self.update_stats()
 
+    """ COMPUTER/SOFTWARE FUNCTIONS """
     def edit_computer(self):
         # Handles adding/removing computers to a ship
         computer_type = self.computers.currentText()
@@ -771,57 +772,84 @@ class Window(QWidget):
         if box.count() == 0 or box.currentText() == "---":
             return
 
-        # Removing item from software list
+        # Get software to add and add base level to ship
         software_name = box.currentText()
+        base_level = float('inf')
+        for level in get_file_data("hull_software.json").get(software_name).keys():
+            if level != "mod_additional":
+                if int(level) < base_level:
+                    base_level = int(level)
+
+        software = Software(software_name, base_level)
+        self.spacecraft.modify_software(software)
+
+        # Remove software from combobox
         box.removeItem(box.currentIndex())
+        box.setCurrentIndex(0)
 
-        # GUI elements for newly added software
-        software_label = QLabel(software_name)
-        software_combobox = QComboBox()
-        software_button = QPushButton("Remove")
+        # Add ship, display software, update stats
+        self.display_software()
+        self.update_stats()
 
-        # Combobox functionality
-        software_combobox.addItem("-")
-        for item in get_file_data("hull_software.json").get(software_name):
-            if item != "mod_additional":
-                software_combobox.addItem(item)
-        software_combobox.currentTextChanged.connect(lambda: self.modify_software_level(software_label, software_combobox))
-
-        # Button functionality
-        software_button.clicked.connect(lambda: self.remove_software(software_label, software_combobox, software_button))
-        software_button.clicked.connect(software_label.deleteLater)
-        software_button.clicked.connect(software_combobox.deleteLater)
-        software_button.clicked.connect(software_button.deleteLater)
-
-        # Adding widgets to GUI
-        self.computer_config_layout.addWidget(software_label, self.software_num_rows, 0)
-        self.computer_config_layout.addWidget(software_combobox, self.software_num_rows, 1)
-        self.computer_config_layout.addWidget(software_button, self.software_num_rows, 2)
-        self.software_box.setCurrentIndex(0)
-        self.software_num_rows += 1
-
-    def remove_software(self, label, box, button):
+    def remove_software(self, label):
         """
         Handles removing the GUI elements on "Remove" button click
         :param label: QLabel of that row
-        :param box: QComboBox for that software
-        :param button: QPushButton
         """
         software_name = label.text()
+        self.spacecraft.remove_software(software_name)
 
-        # Removing software from ship
-        if software_name != "-":
-            self.spacecraft.remove_software(software_name)
-
-        # Removing software from GUI
-        self.computer_config_layout.removeWidget(label)
-        self.computer_config_layout.removeWidget(box)
-        self.computer_config_layout.removeWidget(button)
-        self.software_num_rows -= 1
+        # Redisplay software
+        self.display_software()
 
         # Adding item back to combobox
         self.software_box.addItem(software_name)
         self.update_stats()
+
+    def display_software(self):
+        """ Handles clearing and redisplaying the GUI elements """
+        # Clearing out software column
+        for i in reversed(range(13, self.computer_config_layout.count())):
+            self.computer_config_layout.itemAt(i).widget().setParent(None)
+
+        # Loops through active software and creates GUI elements for them
+        for software in self.spacecraft.software:
+            software_name = software.type
+
+            # GUI elements for newly added software
+            software_label = QLabel(software_name)
+            software_combobox = QComboBox()
+            software_button = QPushButton("Remove")
+
+            # Connect software func
+            self.connect_software_func(software, software_combobox, software_name, software_label, software_button)
+
+            # Adding widgets to GUI
+            count = self.computer_config_layout.count()
+            self.computer_config_layout.addWidget(software_label, count, 0)
+            self.computer_config_layout.addWidget(software_combobox, count, 1)
+            self.computer_config_layout.addWidget(software_button, count, 2)
+
+    def connect_software_func(self, software, combobox, name, label, button):
+        """ Helper function to connect lambdas to GUI """
+        # Build the combobox
+        for item in get_file_data("hull_software.json").get(name):
+            if item != "mod_additional":
+                combobox.addItem(item)
+
+        # Set currentText to level of the software and connect combobox functionality
+        combobox.setCurrentText(str(software.level))
+        self.connect_software_modify(combobox, name, label)
+
+        # Button functionality
+        button.clicked.connect(lambda: self.remove_software(label))
+        button.clicked.connect(label.deleteLater)
+        button.clicked.connect(combobox.deleteLater)
+        button.clicked.connect(button.deleteLater)
+
+    def connect_software_modify(self, combobox, name, label):
+        """ Helper to the helper for connecting the software level combobox """
+        combobox.currentTextChanged.connect(lambda: self.modify_software_level(label, combobox))
 
     def modify_software_level(self, label, box):
         """
@@ -829,20 +857,17 @@ class Window(QWidget):
         :param label: QLabel of that row
         :param box: QComboBox of that software
         """
-
         # Get software name/level
         software_level = box.currentText()
         software_name = label.text()
 
-        # Check if software level is '-'
-        if software_level == "-":
-            self.spacecraft.remove_software(software_name)
-        else:
-            software = Software(software_name, software_level)
-            self.spacecraft.modify_software(software)
+        # Create software, add it to ship
+        software = Software(software_name, software_level)
+        self.spacecraft.modify_software(software)
 
         self.update_stats()
 
+    """ MISC FUNCTIONS """
     def add_misc(self, box):
         """
         Handles adding new misc items to the GUI
@@ -943,6 +968,7 @@ class Window(QWidget):
         self.spacecraft.modify_fuel_scoops()
         self.update_stats()
 
+    """ HARDPOINT/TURRET FUNCTIONS """
     def add_hardpoint(self):
         """
         Handles adding a hardpoint to the ship with an arrow to modify turret options
@@ -958,7 +984,7 @@ class Window(QWidget):
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
 
-    def remove_hardpoint(self, hardpoint, active):
+    def remove_hardpoint(self, hardpoint):
         """
         Handles the functionality of removing a single hardpoint from the ship and GUI
         :param hardpoint: hardpoint class
@@ -1010,7 +1036,7 @@ class Window(QWidget):
 
     def connect_hp_items(self, remove, hardpoint, activate):
         """ Helper function that handles connecting hardpoint to its functions """
-        remove.clicked.connect(lambda: self.remove_hardpoint(hardpoint, activate))
+        remove.clicked.connect(lambda: self.remove_hardpoint(hardpoint))
         remove.clicked.connect(remove.deleteLater)
         remove.clicked.connect(activate.deleteLater)
         activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
