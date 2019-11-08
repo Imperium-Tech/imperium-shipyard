@@ -27,6 +27,9 @@ class Hardpoint:
     def add_turret(self, turret):
         # Modifying/adding turret of a hardpoint
         self.turret = turret
+        if self.turret is not None and self.turret.name == "Bay Weapon":
+            self.popup = False
+            self.fixed = False
 
     def get_cost(self):
         """
@@ -49,7 +52,7 @@ class Hardpoint:
         Handles getting the total tonnage of a hardpoint and its options
         :return: tonnage
         """
-        tonnage = 1
+        tonnage = 0
 
         if self.turret is not None:
             tonnage += self.turret.get_tonnage()

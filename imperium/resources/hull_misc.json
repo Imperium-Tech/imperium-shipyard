@@ -1,6 +1,6 @@
 {
   "--- Living ---":{},
-  "Stateroom": {
+  "Staterooms": {
         "cost": 0.5,
         "tonnage": 4.0,
         "mod_additional": [
@@ -10,7 +10,7 @@
           "Staterooms present on larger starships, such as exploratory vessels, military ships, and private-owned starships"
         ]
     },
-    "Low Passage Berth": {
+    "Low Passage Berths": {
         "cost": 0.05,
         "tonnage": 0.5,
         "mod_additional": [
@@ -19,7 +19,7 @@
           "Serves well in providing suspended animation for characters needing medical care"
         ]
     },
-    "Emergency Low Berth": {
+    "Emergency Low Berths": {
         "cost": 0.1,
         "tonnage": 1.0,
         "mod_additional": [
@@ -46,7 +46,7 @@
 
     },
     "--- Drones ---": {},
-    "Mining Drone": {
+    "Mining Drones": {
         "tonnage": 10.0,
         "cost": 1.0,
         "mod_additional": [
@@ -55,7 +55,7 @@
           "Includes ore handling machinery, allowing the ship to take on ore and transfer it to the cargo bay."
         ]
     },
-    "Repair Drone": {
+    "Repair Drones": {
         "tonnage": 0.01,
         "cost": 0.2,
         "mod_additional": [
@@ -63,7 +63,7 @@
           "Has the same stats as repair robots, just without an Intellect program"
         ]
     },
-    "Probe Drone": {
+    "Probe Drones": {
         "tonnage": 1.0,
         "cost": 0.5,
         "mod_additional": [
@@ -111,7 +111,7 @@
         "cost": 0.05,
         "mod_additional": "Vehicle, stored in or on the ship"
     },
-    "Fuel Processor": {
+    "Fuel Processors": {
         "cost": 0.05,
         "tonnage": 1,
         "mod_additional": [

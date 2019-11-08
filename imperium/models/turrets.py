@@ -66,6 +66,8 @@ class Turret:
     def modify_weapon(self, part, idx):
         if part == "---":
             wep = None
+        elif self.name == "Bay Weapon":
+            wep = self.data.get("bayweapons").get(part)
         else:
             wep = self.data.get("weapons").get(part)
         self.weapons[idx] = wep

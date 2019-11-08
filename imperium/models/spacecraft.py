@@ -114,7 +114,7 @@ class Spacecraft:
         for screen in self.screens:
             cost_total += screen.cost
         if self.computer is not None:
-            cost_total += self.computer.cost
+            cost_total += self.computer.get_cost()
         for software in self.software:
             cost_total += software.cost
 
@@ -163,7 +163,7 @@ class Spacecraft:
         for misc in self.misc:
             cargo -= misc.tonnage
 
-        return cargo
+        return round(cargo, 2)
 
     def set_tonnage(self, new_tonnage):
         """
@@ -203,6 +203,7 @@ class Spacecraft:
             return "Error: non-compatible drive to tonnage value - Drive {} to {}".format(drive.drive_type, self.tonnage)
 
         self.jdrive = drive
+        self.fuel_jump = int(0.1 * self.tonnage * self.jump)
 
     def add_mdrive(self, drive):
         """
@@ -403,6 +404,10 @@ class Spacecraft:
         rating = 0
         for s in self.software:
             rating += s.rating
+
+            # Check for Jump Control Spec giving one free rank
+            if s.type == "Jump Control" and self.computer is not None and self.computer.bis:
+                rating -= 5
 
         if self.computer is not None:
             available_rating = self.computer.rating - rating

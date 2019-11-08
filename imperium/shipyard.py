@@ -37,7 +37,7 @@ class Window(QWidget):
         # Window Title
         self.setWindowTitle("Imperium Shipyard")
 
-        def add_combo_box(layout, label, json, funct, x, y, null_spot=False):
+        def add_combo_box(layout, label, json, funct, x, y, in_line=True, null_spot=False):
             """
             Handles adding a combo box widget with item names from a specific json file
             :param layout: PyQT layout
@@ -46,6 +46,7 @@ class Window(QWidget):
             :param funct: function to connect items to
             :param x: row in layout
             :param y: col in layout
+            :param in_line: whether to put the combox in the same row as the label
             :param null_spot: whether or not to have a 'null' box item
             :return: PyQT Combo Box
             """
@@ -58,7 +59,10 @@ class Window(QWidget):
                 combo_box.addItem(item)
             combo_box.activated.connect(funct)
 
-            layout.addWidget(combo_box, x + 1, y, 1, -1)
+            if in_line:
+                layout.addWidget(combo_box, x, y + 1, 1, -1)
+            else:
+                layout.addWidget(combo_box, x + 1, y, 1, -1)
             return combo_box
 
         def add_hull_option(layout, name, funct, x, y):
@@ -130,34 +134,37 @@ class Window(QWidget):
                                                  signal_function=self.edit_fuel, force_int=True)
         self.fuel_line_edit.validator().setBottom(0)
 
+        # Fuel to jump
+        self.fuel_label = add_stat_to_layout(base_stats_layout, "Fuel/Jump:", 3, read_only=True)
+
         # Jump
-        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 3, signal_function=self.edit_jdrive)
+        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 4, signal_function=self.edit_jdrive)
         self.jump_label = QLabel("-")
-        base_stats_layout.addWidget(self.jump_label, 3, 1)
+        base_stats_layout.addWidget(self.jump_label, 4, 1)
 
         # Thrust
-        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 4, signal_function=self.edit_mdrive)
+        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 5, signal_function=self.edit_mdrive)
         self.thrust_label = QLabel("-")
-        base_stats_layout.addWidget(self.thrust_label, 4, 1)
+        base_stats_layout.addWidget(self.thrust_label, 5, 1)
 
         # PPlant
-        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 5, signal_function=self.edit_pplant)
+        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 6, signal_function=self.edit_pplant)
         self.pplant_label = QLabel("-")
-        base_stats_layout.addWidget(self.pplant_label, 5, 1)
+        base_stats_layout.addWidget(self.pplant_label, 6, 1)
 
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 6,
+        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 7,
                                                     signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 7,
+        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 8,
                                                          signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
-        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 8, read_only=True)
+        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 9, read_only=True)
 
         # Cost
-        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 9, read_only=True)
+        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 10, read_only=True)
 
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
@@ -168,7 +175,7 @@ class Window(QWidget):
         ###################################
         ###  START: Armor/Config Grid   ###
         ###################################
-        self.armor_config_group = QGroupBox("Armor/Config")
+        self.armor_config_group = QGroupBox("Config/Armor")
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
 
@@ -212,55 +219,65 @@ class Window(QWidget):
         self.hull_config_box = add_combo_box(self.armor_config_layout, "Hull Config: ",
                                              "hull_config.json", self.edit_hull_config, 5, 0)
 
+        ### Sensors ###
+        self.sensors = add_combo_box(self.armor_config_layout, "Sensors: ", "hull_sensors.json",
+                                     self.edit_sensors, 7, 0)
+
         ### Armor list ###
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
-                                             "hull_armor.json", self.edit_armor, 7, 0, True)
+                                             "hull_armor.json", self.edit_armor, 9, 0, in_line=False, null_spot=True)
 
-        self.occupied_rows = 8
         self.armor_config_group.setLayout(self.armor_config_layout)
         ###################################
         ###  END: Armor/Config Grid     ###
         ###################################
 
         ###################################
-        ###  START: Sensors/Comp Grid   ###
+        ###  START: Computer Grid       ###
         ###################################
-        self.computer_config_group = QGroupBox("Sensors/Computers")
+        self.computer_config_group = QGroupBox("Computer")
         self.computer_config_layout = QGridLayout()
         self.computer_config_layout.setAlignment(Qt.AlignTop)
 
-        # Sensors
-        self.sensors = add_combo_box(self.computer_config_layout, "Sensors: ", "hull_sensors.json",
-                                     self.edit_sensors, 0, 0)
-
         # Computer Model
-        self.computers = add_combo_box(self.computer_config_layout, "Computer/Software: ", "hull_computer.json",
-                                       self.edit_computer, 2, 0, True)
+        self.computers = add_combo_box(self.computer_config_layout, "Model: ", "hull_computer.json",
+                                       self.edit_computer, 2, 0, null_spot=True)
 
-        self.computer_config_layout.addWidget(QLabel("Total rating: "), 4, 0)
-        self.computer_rating = QLabel("--")
-        self.computer_config_layout.addWidget(self.computer_rating, 4, 1)
+        # Computer Rating
+        self.computer_config_layout.addWidget(QLabel("Rating:"), 4, 0)
+        self.rating = QLabel("--/--")
+        self.computer_config_layout.addWidget(self.rating, 4, 1)
+        self.computer_config_layout.addWidget(QLabel(""), 5, 0)
 
-        self.computer_config_layout.addWidget(QLabel("Available rating: "), 5, 0)
-        self.avail_rating = QLabel("--")
-        self.computer_config_layout.addWidget(self.avail_rating, 5, 1)
+        # Computer customizations
+        self.computer_config_layout.addWidget(QLabel("Customizations:"), 6, 0)
+
+        self.jump_control_spec = add_hull_option(self.computer_config_layout, "Jump Control Spec",
+                                                 lambda: self.modify_computer_addon("Jump Control Spec"), 7, 0)
+
+        self.hardened_system = add_hull_option(self.computer_config_layout, "Hardened System",
+                                               lambda: self.modify_computer_addon("Hardened System"), 8, 0)
+
+        self.computer_config_layout.addWidget(QLabel(""), 9, 0)
 
         # Software
-        self.software_num_rows = 7
-
+        self.computer_config_layout.addWidget(QLabel("Software:"), 10, 0)
         self.software_box = QComboBox()
         self.software_box.addItem("---")
         for item in get_file_data("hull_software.json").keys():
             self.software_box.addItem(item)
         button = QPushButton("Add")
         button.clicked.connect(lambda: self.add_software(self.software_box))
-        self.computer_config_layout.addWidget(self.software_box, 6, 0)
-        self.computer_config_layout.addWidget(QLabel(), 6, 1)
-        self.computer_config_layout.addWidget(button, 6, 2)
+        self.computer_config_layout.addWidget(self.software_box, 11, 0)
+        self.computer_config_layout.addWidget(QLabel(), 11, 1)
+        self.computer_config_layout.addWidget(button, 11, 2)
+
+        # Occupied rows for software placement
+        self.software_num_rows = 12
 
         self.computer_config_group.setLayout(self.computer_config_layout)
         ###################################
-        ###  END: Sensors/Comp Grid     ###
+        ###  END: Computer Grid         ###
         ###################################
 
         ###################################
@@ -337,6 +354,16 @@ class Window(QWidget):
             self.weapon_dict[weapon] = value
             row += 1
 
+        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
+        self.hpstats_config_layout.addWidget(QLabel("Bay Weapons:"), row + 1, 0)
+        row += 2
+
+        self.bay_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
+            self.bay_dict[weapon] = value
+            row += 1
+
         self.hpstats_config_group.setLayout(self.hpstats_config_layout)
         ###################################
         ###  END: HP Stats Grid         ###
@@ -366,7 +393,7 @@ class Window(QWidget):
 
         # Global list to hold active button objects
         self.active_hp_buttons = list()
-        self.num_active = 1
+        self.active_hp_id = None
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         ###################################
@@ -395,12 +422,11 @@ class Window(QWidget):
         self.misc_config_group.setFixedWidth(250)
 
         # Setting appropriate layout heights
-        FIXED_HEIGHT = 350
+        FIXED_HEIGHT = 400
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
         self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.hp_config_group.setFixedHeight(FIXED_HEIGHT)
 
         # Overall layout grid
         # Top row
@@ -426,13 +452,14 @@ class Window(QWidget):
         """
         self.cargo_line_edit.setText(str(        self.spacecraft.get_remaining_cargo()))
         self.fuel_line_edit.setText(str(         self.spacecraft.fuel_max           ))
+        self.fuel_label.setText(str(             self.spacecraft.fuel_jump          ))
         self.jump_line_edit.setText(str(         self.spacecraft.jump               ))
         self.thrust_line_edit.setText(str(       self.spacecraft.thrust             ))
         self.pplant_line_edit.setText(str(       self.spacecraft.fuel_two_weeks     ))
         self.hull_hp_line_edit.setText(str(      self.spacecraft.hull_hp            ))
         self.structure_hp_line_edit.setText(str( self.spacecraft.structure_hp       ))
         self.armour_line_edit.setText(str(       self.spacecraft.armour_total       ))
-        self.cost_line_edit.setText("{:0.2f}".format(self.spacecraft.get_total_cost()))
+        self.cost_line_edit.setText("{:0.3f}".format(self.spacecraft.get_total_cost()))
 
         # Updating the hardpoint stats information
         self.update_turret_stats()
@@ -450,6 +477,10 @@ class Window(QWidget):
         elif type(validity) is str:
             self.pplant_line_edit.setStyleSheet("color: red")
             self.logger.setText(validity)
+
+        # Update computer rating
+        total_rating = "0" if self.spacecraft.computer is None else self.spacecraft.computer.rating
+        self.rating.setText("{}/{}".format(self.spacecraft.check_rating_ratio(), total_rating))
 
     def update_turret_stats(self):
         """
@@ -470,7 +501,7 @@ class Window(QWidget):
         for model in turret_dict.keys():
             self.model_dict[model].setText(str(turret_dict.get(model)))
 
-        # Updating the number of weapons
+        # Updating the number of turret weapons
         wep_dict = dict()
         for model in get_file_data("hull_turrets.json").get("weapons").keys():
             wep_dict[model] = 0
@@ -478,12 +509,27 @@ class Window(QWidget):
         for hardpoint in self.spacecraft.hardpoints:
             if hardpoint.turret is not None:
                 for wep in hardpoint.turret.weapons:
-                    if wep is not None:
+                    if wep is not None and hardpoint.turret.name != "Bay Weapon":
                         name = wep.get("name")
                         wep_dict[name] = wep_dict.get(name) + 1
 
         for weapon in wep_dict.keys():
             self.weapon_dict[weapon].setText(str(wep_dict.get(weapon)))
+
+        # Updating the number of bay weapons
+        wep_dict = dict()
+        for model in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            wep_dict[model] = 0
+
+        for hardpoint in self.spacecraft.hardpoints:
+            if hardpoint.turret is not None:
+                for wep in hardpoint.turret.weapons:
+                    if wep is not None and hardpoint.turret.name == "Bay Weapon":
+                        name = wep.get("name")
+                        wep_dict[name] = wep_dict.get(name) + 1
+
+        for weapon in wep_dict.keys():
+            self.bay_dict[weapon].setText(str(wep_dict.get(weapon)))
 
         # Setting current total cost and tonnage
         cost = 0
@@ -591,7 +637,6 @@ class Window(QWidget):
         """
         Add a new armor piece to the ship, creating a new button in the grid and adjusting values
         """
-        # TODO - fix bug when adding new armors after removing a middle one
         armor_type = self.armor_combo_box.currentText()
         self.armor_combo_box.setCurrentIndex(0)
 
@@ -601,20 +646,12 @@ class Window(QWidget):
         if self.spacecraft.tonnage == 0:
             return self.logger.setText("Error: Tonnage not set before adding armor.")
 
+        # Creating new armor object and adding to ship
         armor = Armour(armor_type)
         self.spacecraft.add_armour(armor)
 
         # Button to handle removing the piece of armor
-        button = QPushButton()
-        button.setCheckable(True)
-        button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
-        button.clicked.connect(lambda: self.remove_armor(armor))
-        button.clicked.connect(button.deleteLater)
-
-        # Adjusting values and adding widget
-        self.occupied_rows += 1
-        self.armor_config_layout.addWidget(button, self.occupied_rows, 0, 1, -1)
-        self.update_stats()
+        self.display_armor()
 
     def remove_armor(self, armor):
         """
@@ -622,8 +659,29 @@ class Window(QWidget):
         :param armor: armour object to remove
         """
         self.spacecraft.remove_armour(armor)
-        self.occupied_rows -= 1
+        self.display_armor()
+
+    def display_armor(self):
+        """ Handles clearing out the armor column and recreating their buttons """
+
+        # Clearing out old weapons
+        for i in reversed(range(16, self.armor_config_layout.count())):
+            self.armor_config_layout.itemAt(i).widget().setParent(None)
+
+        # Loop through current armor and making new buttons
+        for armor in self.spacecraft.armour:
+            button = QPushButton()
+            button.setCheckable(True)
+            button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
+            self.connect_armor(armor, button)
+            self.armor_config_layout.addWidget(button, self.armor_config_layout.count(), 0, 1, -1)
+
         self.update_stats()
+
+    def connect_armor(self, armor, button):
+        """ Helper function for the lambda button connections"""
+        button.clicked.connect(lambda: self.remove_armor(armor))
+        button.clicked.connect(button.deleteLater)
 
     def edit_hull_config(self):
         """
@@ -676,6 +734,7 @@ class Window(QWidget):
         self.spacecraft.add_sensors(sensor)
         self.update_stats()
 
+    """ COMPUTER/SOFTWARE FUNCTIONS """
     def edit_computer(self):
         # Handles adding/removing computers to a ship
         computer_type = self.computers.currentText()
@@ -683,13 +742,25 @@ class Window(QWidget):
         # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
-            self.computer_rating.setText("--")
+
+            # If removing the computer, uncheck the specializations
+            self.jump_control_spec.setChecked(False)
+            self.hardened_system.setChecked(False)
         else:
             computer = Computer(computer_type)
-            self.computer_rating.setText(str(computer.rating))
 
+        # Uncheck customization options
+        self.jump_control_spec.setChecked(False)
+        self.hardened_system.setChecked(False)
+
+        # Adding computer to ship, updating stats
         self.spacecraft.add_computer(computer)
-        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
+        self.update_stats()
+
+    def modify_computer_addon(self, name):
+        # Handles modifying the spacecraft's computer addon
+        if self.spacecraft.computer is not None:
+            self.spacecraft.computer.modify_addon(name)
         self.update_stats()
 
     def add_software(self, box):
@@ -701,58 +772,84 @@ class Window(QWidget):
         if box.count() == 0 or box.currentText() == "---":
             return
 
-        # Removing item from software list
+        # Get software to add and add base level to ship
         software_name = box.currentText()
+        base_level = float('inf')
+        for level in get_file_data("hull_software.json").get(software_name).keys():
+            if level != "mod_additional":
+                if int(level) < base_level:
+                    base_level = int(level)
+
+        software = Software(software_name, base_level)
+        self.spacecraft.modify_software(software)
+
+        # Remove software from combobox
         box.removeItem(box.currentIndex())
+        box.setCurrentIndex(0)
 
-        # GUI elements for newly added software
-        software_label = QLabel(software_name)
-        software_combobox = QComboBox()
-        software_button = QPushButton("Remove")
+        # Add ship, display software, update stats
+        self.display_software()
+        self.update_stats()
 
-        # Combobox functionality
-        software_combobox.addItem("-")
-        for item in get_file_data("hull_software.json").get(software_name):
-            if item != "mod_additional":
-                software_combobox.addItem(item)
-        software_combobox.currentTextChanged.connect(lambda: self.modify_software_level(software_label, software_combobox))
-
-        # Button functionality
-        software_button.clicked.connect(lambda: self.remove_software(software_label, software_combobox, software_button))
-        software_button.clicked.connect(software_label.deleteLater)
-        software_button.clicked.connect(software_combobox.deleteLater)
-        software_button.clicked.connect(software_button.deleteLater)
-
-        # Adding widgets to GUI
-        self.computer_config_layout.addWidget(software_label, self.software_num_rows, 0)
-        self.computer_config_layout.addWidget(software_combobox, self.software_num_rows, 1)
-        self.computer_config_layout.addWidget(software_button, self.software_num_rows, 2)
-        self.software_box.setCurrentIndex(0)
-        self.software_num_rows += 1
-
-    def remove_software(self, label, box, button):
+    def remove_software(self, label):
         """
         Handles removing the GUI elements on "Remove" button click
         :param label: QLabel of that row
-        :param box: QComboBox for that software
-        :param button: QPushButton
         """
         software_name = label.text()
+        self.spacecraft.remove_software(software_name)
 
-        # Removing software from ship
-        if software_name != "-":
-            self.spacecraft.remove_software(software_name)
-
-        # Removing software from GUI
-        self.computer_config_layout.removeWidget(label)
-        self.computer_config_layout.removeWidget(box)
-        self.computer_config_layout.removeWidget(button)
-        self.software_num_rows -= 1
+        # Redisplay software
+        self.display_software()
 
         # Adding item back to combobox
         self.software_box.addItem(software_name)
-        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
+
+    def display_software(self):
+        """ Handles clearing and redisplaying the GUI elements """
+        # Clearing out software column
+        for i in reversed(range(13, self.computer_config_layout.count())):
+            self.computer_config_layout.itemAt(i).widget().setParent(None)
+
+        # Loops through active software and creates GUI elements for them
+        for software in self.spacecraft.software:
+            software_name = software.type
+
+            # GUI elements for newly added software
+            software_label = QLabel(software_name)
+            software_combobox = QComboBox()
+            software_button = QPushButton("Remove")
+
+            # Connect software func
+            self.connect_software_func(software, software_combobox, software_name, software_label, software_button)
+
+            # Adding widgets to GUI
+            count = self.computer_config_layout.count()
+            self.computer_config_layout.addWidget(software_label, count, 0)
+            self.computer_config_layout.addWidget(software_combobox, count, 1)
+            self.computer_config_layout.addWidget(software_button, count, 2)
+
+    def connect_software_func(self, software, combobox, name, label, button):
+        """ Helper function to connect lambdas to GUI """
+        # Build the combobox
+        for item in get_file_data("hull_software.json").get(name):
+            if item != "mod_additional":
+                combobox.addItem(item)
+
+        # Set currentText to level of the software and connect combobox functionality
+        combobox.setCurrentText(str(software.level))
+        self.connect_software_modify(combobox, name, label)
+
+        # Button functionality
+        button.clicked.connect(lambda: self.remove_software(label))
+        button.clicked.connect(label.deleteLater)
+        button.clicked.connect(combobox.deleteLater)
+        button.clicked.connect(button.deleteLater)
+
+    def connect_software_modify(self, combobox, name, label):
+        """ Helper to the helper for connecting the software level combobox """
+        combobox.currentTextChanged.connect(lambda: self.modify_software_level(label, combobox))
 
     def modify_software_level(self, label, box):
         """
@@ -760,21 +857,17 @@ class Window(QWidget):
         :param label: QLabel of that row
         :param box: QComboBox of that software
         """
-
         # Get software name/level
         software_level = box.currentText()
         software_name = label.text()
 
-        # Check if software level is '-'
-        if software_level == "-":
-            self.spacecraft.remove_software(software_name)
-        else:
-            software = Software(software_name, software_level)
-            self.spacecraft.modify_software(software)
+        # Create software, add it to ship
+        software = Software(software_name, software_level)
+        self.spacecraft.modify_software(software)
 
-        self.avail_rating.setText(str(self.spacecraft.check_rating_ratio()))
         self.update_stats()
 
+    """ MISC FUNCTIONS """
     def add_misc(self, box):
         """
         Handles adding new misc items to the GUI
@@ -785,60 +878,37 @@ class Window(QWidget):
         if box.count() == 0 or box.currentText() in invalids:
             return
 
-        # Removing item from software list
+        # Removing item from misc list, adding to ship
         misc_name = box.currentText()
         box.removeItem(box.currentIndex())
+        self.spacecraft.modify_misc(Misc(misc_name, 1))
 
-        # GUI elements for newly added software
-        label = QLabel(misc_name)
-
-        line_edit = QLineEdit()
-        line_edit.setFixedWidth(25)
-        line_edit.setValidator(QIntValidator(line_edit))
-        line_edit.validator().setBottom(0)
-
-        button = QPushButton("Remove")
-
-        # Spinbox functionality
-        line_edit.editingFinished.connect(lambda: self.modify_misc_item(label, line_edit))
-
-        # Button functionality
-        button.clicked.connect(lambda: self.remove_misc(label, line_edit, button))
-        button.clicked.connect(label.deleteLater)
-        button.clicked.connect(line_edit.deleteLater)
-        button.clicked.connect(button.deleteLater)
-
-        # Adding widgets to GUI
-        self.misc_config_layout.addWidget(label, self.misc_num_rows, 0)
-        self.misc_config_layout.addWidget(line_edit, self.misc_num_rows, 1)
-        self.misc_config_layout.addWidget(button, self.misc_num_rows, 2)
+        # Display misc items, set box index to 0
+        self.display_misc_items()
         self.misc_box.setCurrentIndex(0)
         self.misc_num_rows += 1
+        self.update_stats()
 
-        # Adding 1 item to start with for UI purposes
-        line_edit.setText("1")
-        self.modify_misc_item(label, line_edit)
-
-    def remove_misc(self, label, line, button):
+    def remove_misc(self, label):
         """
         Handles removing the misc item from the GUI on button click
         :param label: QLabel
-        :param line: QLineEdit
-        :param button: QButton
         """
         misc_name = label.text()
 
         # Remove item from spacecraft
         self.spacecraft.remove_misc(misc_name)
 
-        # Removing software from GUI
-        self.misc_config_layout.removeWidget(label)
-        self.misc_config_layout.removeWidget(line)
-        self.misc_config_layout.removeWidget(button)
-        self.misc_num_rows -= 1
+        # Redisplay misc items
+        self.display_misc_items()
 
-        # Adding item back to combobox
-        idx = self.misc_dict.get(misc_name)
+        # Adding item back to combobox, checking for index placement
+        count_before_misc = 0
+        for item in self.spacecraft.misc:
+            if self.misc_dict.get(item.name) < self.misc_dict.get(misc_name):
+                count_before_misc += 1
+
+        idx = self.misc_dict.get(misc_name) - count_before_misc
         self.misc_box.insertItem(idx, misc_name)
         self.update_stats()
 
@@ -856,61 +926,120 @@ class Window(QWidget):
         self.spacecraft.modify_misc(misc)
         self.update_stats()
 
+    def display_misc_items(self):
+        """ Function that handles redisplaying all of the misc GUI elements on the ship """
+
+        # Clearing out misc column
+        for i in reversed(range(3, self.misc_config_layout.count())):
+            self.misc_config_layout.itemAt(i).widget().setParent(None)
+
+        # Looping through misc and adding gui elements
+        for misc in self.spacecraft.misc:
+            # Making GUI elements
+            label = QLabel(misc.name)
+
+            line_edit = QLineEdit()
+            line_edit.setFixedWidth(25)
+            line_edit.setValidator(QIntValidator(line_edit))
+            line_edit.validator().setBottom(0)
+            line_edit.setText(str(misc.num))
+
+            button = QPushButton("Remove")
+
+            # Connecting functionality
+            self.connect_misc_item(label, line_edit, button)
+
+            # Adding widgets to GUI
+            count = self.misc_config_layout.count()
+            self.misc_config_layout.addWidget(label, count, 0)
+            self.misc_config_layout.addWidget(line_edit, count, 1)
+            self.misc_config_layout.addWidget(button, count, 2)
+
+    def connect_misc_item(self, label, line_edit, button):
+        """ Helper function that handle connecting the lambda functions for GUI elements """
+        line_edit.editingFinished.connect(lambda: self.modify_misc_item(label, line_edit))
+        button.clicked.connect(lambda: self.remove_misc(label))
+        button.clicked.connect(label.deleteLater)
+        button.clicked.connect(line_edit.deleteLater)
+        button.clicked.connect(button.deleteLater)
+
     def modify_fuel_scoops(self):
         # Flips the fuel scoop box
         self.spacecraft.modify_fuel_scoops()
         self.update_stats()
 
+    """ HARDPOINT/TURRET FUNCTIONS """
     def add_hardpoint(self):
         """
         Handles adding a hardpoint to the ship with an arrow to modify turret options
         """
         name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
-        activate = QPushButton("HP {}".format(name))
-        hardpoint = Hardpoint(self.num_active)
-        remove = QPushButton("X")
-        remove.setMaximumWidth(30)
+        hardpoint = Hardpoint(name)
 
-        # Button functionalities
-        remove.clicked.connect(lambda: self.remove_hardpoint(remove, hardpoint, activate))
-        remove.clicked.connect(remove.deleteLater)
-        remove.clicked.connect(activate.deleteLater)
-        activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
-
-        # Adding to GUI
-        self.hp_config_layout.addWidget(activate, self.num_active, 0, 1, 4)
-        self.hp_config_layout.addWidget(remove, self.num_active, 4)
-
-        # Adding hp to ship, updating available hps
-        self.active_hp_buttons.append(activate)
-        self.num_active += 1
+        # Add hardpoint to ship, redisplay all hardpoints
         self.spacecraft.add_hardpoint(hardpoint)
+        self.display_hardpoints()
+
+        # Update stats
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
 
-    def remove_hardpoint(self, button, hardpoint, active):
+    def remove_hardpoint(self, hardpoint):
         """
         Handles the functionality of removing a single hardpoint from the ship and GUI
-        :param button: hardpoint button to remove
         :param hardpoint: hardpoint class
         :param active: button to display information
         """
         # Wipe out turret layout if removed turret is displayed
-        if active.isEnabled() == False:
+        if hardpoint.id == self.active_hp_id:
             for i in reversed(range(self.turret_config_layout.count())):
                 self.turret_config_layout.itemAt(i).widget().setParent(None)
 
-        # Removing GUI elements
-        self.hp_config_layout.removeWidget(button)
-        self.hp_config_layout.removeWidget(active)
-
-        # Adding hp to ship, updating available hps
-        # TODO - fix num active bug when removing middle hardpoints
-        self.num_active -= 1
-        self.active_hp_buttons.remove(active)
+        # Remove hardpoint from ship, redisplay hardpoints
         self.spacecraft.remove_hardpoint(hardpoint)
+        self.display_hardpoints()
+
+        # Update stats
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
         self.update_stats()
+
+    def display_hardpoints(self):
+        """
+        Handles looping through hardpoints on ship and remaking the pyQT GUI elements for them
+        Remakes the active HP buttons list for turret window displaying
+        """
+        # Clear active hp buttons
+        self.active_hp_buttons = list()
+
+        # Clearing out the hardpoint col
+        for i in reversed(range(5, self.hp_config_layout.count())):
+            self.hp_config_layout.itemAt(i).widget().setParent(None)
+
+        # Loop through hardpoints to display
+        for hp in self.spacecraft.hardpoints:
+            # Creating GUI elements
+            activate = QPushButton("HP {}".format(hp.id))
+            if hp.id == self.active_hp_id:
+                activate.setDisabled(True)
+
+            remove = QPushButton("X")
+            remove.setMaximumWidth(30)
+
+            # Button functionalities
+            self.connect_hp_items(remove, hp, activate)
+
+            # Adding to GUI
+            self.active_hp_buttons.append(activate)
+            count = self.hp_config_layout.count()
+            self.hp_config_layout.addWidget(activate, count, 0, 1, 4)
+            self.hp_config_layout.addWidget(remove, count, 4)
+
+    def connect_hp_items(self, remove, hardpoint, activate):
+        """ Helper function that handles connecting hardpoint to its functions """
+        remove.clicked.connect(lambda: self.remove_hardpoint(hardpoint))
+        remove.clicked.connect(remove.deleteLater)
+        remove.clicked.connect(activate.deleteLater)
+        activate.clicked.connect(lambda: self.display_turret(self.turret_config_layout, activate, hardpoint))
 
     def display_turret(self, layout, active, hardpoint):
         """
@@ -918,11 +1047,14 @@ class Window(QWidget):
         :param active: active button to set disabled
         :param hardpoint: hardpoint holding a turret to display
         """
+        # Handle updating active button id and which is disabled
         for button in self.active_hp_buttons:
             if button is active:
                 button.setDisabled(True)
             else:
                 button.setEnabled(True)
+
+        self.active_hp_id = hardpoint.id
 
         # Clear the previous layout
         for i in reversed(range(layout.count())):
@@ -947,6 +1079,88 @@ class Window(QWidget):
         layout.addWidget(turret_label, 1, 0)
         layout.addWidget(turret_box, 2, 0, 1, -1)
 
+        if turret_box.currentText() == "Bay Weapon":
+            # Check if hardpoint has a bayweapon
+            self.display_bayweapons(layout, hardpoint)
+        else:
+            # Displaying turret wep information
+            self.display_turret_weps(layout, hardpoint)
+
+    def display_turret_weps(self, layout, hardpoint):
+        """
+        Handles displaying the weapons for a turret
+        :param layout: PyQT Grid Layout to add to
+        :param hardpoint: hardpoint object with turret
+        """
+        # Clearing out old weapons
+        for i in reversed(range(3, layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        # Add turret options
+        self.add_turret_options(layout, hardpoint)
+
+        # If turret is None, don't display weps
+        if hardpoint.turret is None:
+            return
+
+        # Creating objects to display weapons
+        row = 4
+        for idx in range(hardpoint.turret.max_wep):
+            label, combobox = self.add_turret_weapon(idx, hardpoint)
+            layout.addWidget(label, row + idx, 0)
+            layout.addWidget(combobox, row + idx, 1, 1, -1)
+
+        # Adding missiles to GUI
+        row = self.add_turret_missiles(layout, hardpoint)
+
+        # Sandcaster barrels
+        label = QLabel("Sandcaster Barrels:")
+        total_label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
+        layout.addWidget(label, row, 0)
+        layout.addWidget(total_label, row, 1)
+        layout.addWidget(edit, row, 2)
+
+    def display_bayweapons(self, layout, hardpoint):
+        """
+        Handles the display path for bayweapons and syncing up the functions to handle that
+        :param layout: PyQT layout to put new widgets in
+        :param hardpoint: hardpoint object to interact with
+        """
+        # Clearing out old weapons
+        for i in reversed(range(3, layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
+        # Add whitespace for removal
+        for i in range(4):
+            layout.addWidget(None, 3, i)
+
+        # Creating combobox for bayweapons
+        label = QLabel("Wep:")
+        combobox = QComboBox()
+        combobox.addItem("---")
+        counter = 1
+        for key in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            combobox.addItem(key)
+            if hardpoint.turret.weapons[0] is not None and key == hardpoint.turret.weapons[0].get("name"):
+                combobox.setCurrentIndex(counter)
+            counter += 1
+
+        combobox.currentTextChanged.connect(
+            lambda: self.modify_turret_wep(hardpoint.turret, combobox.currentText(), 0)
+        )
+
+        layout.addWidget(label, 5, 0)
+        layout.addWidget(combobox, 5, 1, 1, -1)
+
+        # Adding missiles to GUI
+        self.add_turret_missiles(layout, hardpoint)
+
+    def add_turret_options(self, layout, hardpoint):
+        """
+        Support function that handles adding a turret's options in the form of check boxes
+        :param layout: PyQT layout to add widgets to
+        :param hardpoint: Hardpoint object to interact with
+        """
         # Checkboxes for pop-up and fixed mounting
         popup_label = QLabel("Pop-up Cover:")
         popup_check = QCheckBox()
@@ -964,36 +1178,19 @@ class Window(QWidget):
         layout.addWidget(fixed_label, 3, 2)
         layout.addWidget(fixed_check, 3, 3)
 
-        """ Displaying turret weapon information """
-        if hardpoint.turret is None:
-            return
-
-        self.display_turret_weps(layout, hardpoint)
-
-    def display_turret_weps(self, layout, hardpoint):
+    def add_turret_missiles(self, layout, hardpoint):
         """
-        Handles displaying the weapons for a turret
-        :param layout: PyQT Grid Layout to add to
-        :param hardpoint: hardpoint object with turret
+        Support function that handles adding the missiles in hull_turrets.json onto a layout and syncing up
+        the relevant functions for the line edits
+        :param hardpoint: Hardpoint object to interact with
+        :param layout: PyQT layout to add widgets to
+        :return: updated row at the end
         """
-        # Clearing out old weapons
-        for i in reversed(range(7, layout.count())):
-            layout.itemAt(i).widget().setParent(None)
-
-        # If turret is None, don't display weps
-        if hardpoint.turret is None:
-            return
-
-        # Creating objects to display weapons
-        row = 4
-        for idx in range(hardpoint.turret.max_wep):
-            label, combobox = self.add_turret_weapon(idx, hardpoint)
-            layout.addWidget(label, row + idx, 0)
-            layout.addWidget(combobox, row + idx, 1, 1, -1)
-
         # Creating objects to display missile ammo and sandcaster barrels
         layout.addWidget(QLabel(""), 7, 0)
         layout.addWidget(QLabel("Turret Ammo:"), 8, 0)
+        layout.addWidget(QLabel("#"), 8, 1)
+        layout.addWidget(QLabel("Tons"), 8, 2)
 
         # Missile ammo
         row = 9
@@ -1005,12 +1202,7 @@ class Window(QWidget):
             layout.addWidget(edit, row, 2)
             row += 1
 
-        # Sandcaster barrels
-        label = QLabel("Sandcaster Barrels:")
-        total_label, edit = self.add_turret_ammo(hardpoint, "Sandcaster")
-        layout.addWidget(label, row, 0)
-        layout.addWidget(total_label, row, 1)
-        layout.addWidget(edit, row, 2)
+        return row
 
     def add_turret_weapon(self, idx, hardpoint):
         """
@@ -1066,12 +1258,16 @@ class Window(QWidget):
         model = box.currentText()
         if model == "---":
             turret = None
+            hardpoint.add_turret(turret)
+            self.display_turret_weps(layout, hardpoint)
+        elif model == "Bay Weapon":
+            turret = Turret(model)
+            hardpoint.add_turret(turret)
+            self.display_bayweapons(layout, hardpoint)
         else:
             turret = Turret(model)
-
-        # Add turret to hardpoint, redo UI display
-        hardpoint.add_turret(turret)
-        self.display_turret_weps(layout, hardpoint)
+            hardpoint.add_turret(turret)
+            self.display_turret_weps(layout, hardpoint)
         self.update_stats()
 
     def modify_turret_option(self, hardpoint, part):
