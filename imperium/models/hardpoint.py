@@ -31,7 +31,7 @@ class Hardpoint:
             self.popup = False
             self.fixed = False
 
-    def get_cost(self, discount):
+    def get_cost(self):
         """
         Handles getting the total cost of a hardpoint and its options
         :return: cost
@@ -39,7 +39,7 @@ class Hardpoint:
         cost = 0
 
         if self.turret is not None:
-            cost += self.turret.get_cost(discount)
+            cost += self.turret.get_cost()
         if self.popup is True:
             cost += 1.0
         if self.fixed is True:

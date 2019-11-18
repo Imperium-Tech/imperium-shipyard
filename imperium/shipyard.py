@@ -549,7 +549,7 @@ class Window(QWidget):
         cost = 0
         tonnage = 0
         for hardpoint in self.spacecraft.hardpoints:
-            cost += hardpoint.get_cost(self.spacecraft.discount)
+            cost += hardpoint.get_cost()
             tonnage += hardpoint.get_tonnage()
         self.hardpoint_cost.setText(str(round(cost, 2)))
         self.hardpoint_ton.setText(str(tonnage))

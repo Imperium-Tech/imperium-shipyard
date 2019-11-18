@@ -124,7 +124,7 @@ class Spacecraft:
 
         # Turrets / Bayweapons (after discount because its included
         for hardpoint in self.hardpoints:
-            cost_total += hardpoint.get_cost(self.discount)
+            cost_total += hardpoint.get_cost()
 
         return cost_total
 
