@@ -30,7 +30,7 @@ class Turret:
 
         self.sandcaster_barrels = 0                                # number of sandcaster barrels on turret
 
-    def get_cost(self):
+    def get_cost(self, discount):
         cost = 0
         cost += self.cost
 
@@ -38,6 +38,9 @@ class Turret:
         for wep in self.weapons:
             if wep is not None:
                 cost += wep.get("cost")
+
+        # Adding discount factor only to turret and weapon, not ammo
+        cost *= discount
 
         # Adding missile costs
         missile_costs = self.data.get("weapons").get("Missile Rack").get("types")

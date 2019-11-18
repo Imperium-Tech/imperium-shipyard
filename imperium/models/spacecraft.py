@@ -15,6 +15,7 @@ class Spacecraft:
     """
     def __init__(self, hull_tonnage):
         self.tonnage            = 0 # total tonnage of ship
+        self.discount           = 1 # discount factor for the cost
         self.hull_hp            = 0 # calculated as 1 per 50 tonnage
         self.structure_hp       = 0 # calculated as 1 per 50 tonnage
         self.jump               = 0 # max number of tiles covered in a single jump
@@ -106,10 +107,6 @@ class Spacecraft:
         if self.sensors is not None:
             cost_total += self.sensors.cost
 
-        # Turrets / Bayweapons
-        for hardpoint in self.hardpoints:
-            cost_total += hardpoint.get_cost()
-
         # Screens / Computer / Software
         for screen in self.screens:
             cost_total += screen.cost
@@ -121,6 +118,13 @@ class Spacecraft:
         # Misc
         for misc in self.misc:
             cost_total += misc.cost
+
+        # Adding discount to items
+        cost_total *= self.discount
+
+        # Turrets / Bayweapons (after discount because its included
+        for hardpoint in self.hardpoints:
+            cost_total += hardpoint.get_cost(self.discount)
 
         return cost_total
 
@@ -182,6 +186,10 @@ class Spacecraft:
         self.hull_hp = self.tonnage // 50
         self.structure_hp = self.tonnage // 50
         self.num_hardpoints = self.tonnage // 100
+
+    def set_discount(self, discount):
+        self.discount = (100 - discount) / 100
+        print(self.discount)
 
     def set_fuel(self, new_fuel):
         """

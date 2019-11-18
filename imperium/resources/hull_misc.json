@@ -63,7 +63,7 @@
           "Has the same stats as repair robots, just without an Intellect program"
         ]
     },
-    "Probe Drones": {
+    "Probe Drones (5/ton)": {
         "tonnage": 1.0,
         "cost": 0.5,
         "mod_additional": [
