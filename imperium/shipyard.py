@@ -138,33 +138,43 @@ class Window(QWidget):
         self.fuel_label = add_stat_to_layout(base_stats_layout, "Fuel/Jump:", 3, read_only=True)
 
         # Jump
-        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 4, signal_function=self.edit_jdrive)
+        base_stats_layout.addWidget(QLabel(""), 4, 0)
+        self.jump_line_edit = add_stat_to_layout(base_stats_layout, "Jump:", 5, signal_function=self.edit_jdrive)
         self.jump_label = QLabel("-")
-        base_stats_layout.addWidget(self.jump_label, 4, 1)
+        base_stats_layout.addWidget(self.jump_label, 5, 1)
 
         # Thrust
-        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 5, signal_function=self.edit_mdrive)
+        self.thrust_line_edit = add_stat_to_layout(base_stats_layout, "Thrust:", 6, signal_function=self.edit_mdrive)
         self.thrust_label = QLabel("-")
-        base_stats_layout.addWidget(self.thrust_label, 5, 1)
+        base_stats_layout.addWidget(self.thrust_label, 6, 1)
 
         # PPlant
-        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 6, signal_function=self.edit_pplant)
+        self.pplant_line_edit = add_stat_to_layout(base_stats_layout, "PPlant:", 7, signal_function=self.edit_pplant)
         self.pplant_label = QLabel("-")
-        base_stats_layout.addWidget(self.pplant_label, 6, 1)
+        base_stats_layout.addWidget(self.pplant_label, 7, 1)
 
         # Hull HP
-        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 7,
+        base_stats_layout.addWidget(QLabel(""), 8, 0)
+        self.hull_hp_line_edit = add_stat_to_layout(base_stats_layout, "Hull HP:", 9,
                                                     signal_function=self.edit_tonnage, read_only=True)
 
         # Structure HP
-        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 8,
+        self.structure_hp_line_edit = add_stat_to_layout(base_stats_layout, "Structure HP:", 10,
                                                          signal_function=self.edit_tonnage, read_only=True)
 
         # Armor
-        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 9, read_only=True)
+        self.armour_line_edit = add_stat_to_layout(base_stats_layout, "Armour:", 11, read_only=True)
+
+        # Adding discount field
+        base_stats_layout.addWidget(QLabel(""), 12, 0)
+        self.discount = add_stat_to_layout(base_stats_layout, "Discount %:", 13, force_int=True,
+                                           signal_function=self.edit_discount)
+        self.discount.validator().setBottom(0)
+        self.discount.validator().setTop(100)
 
         # Cost
-        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 10, read_only=True)
+        self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 14, read_only=True)
+
 
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
@@ -415,6 +425,10 @@ class Window(QWidget):
         # Checking bridge to true, needed after initializing everything
         self.bridge_check.setChecked(True)
 
+        # Setting initial discount to 0%
+        self.discount.setText("0")
+        self.edit_discount()
+
         # Setting appropriate column widths
         base_stats_group.setFixedWidth(175)
         self.armor_config_group.setFixedWidth(250)
@@ -574,6 +588,14 @@ class Window(QWidget):
         self.avail_hp.setText(str(self.spacecraft.num_hardpoints - len(self.spacecraft.hardpoints)))
 
         # Update stats
+        self.update_stats()
+
+    def edit_discount(self):
+        """
+        Update the discount factor of the ship
+        """
+        val = int(self.discount.text())
+        self.spacecraft.set_discount(val)
         self.update_stats()
 
     def edit_fuel(self):

@@ -58,6 +58,7 @@ def test_double_turret():
     assert turret.tonnage == 1
     assert turret.get_cost() == 1.5
 
+
     print("--- Passed test for Double Turret! ---")
 
 
