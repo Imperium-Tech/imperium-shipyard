@@ -10,6 +10,7 @@ class Sensor:
     def __init__(self, name):
         data = get_file_data("hull_sensors.json").get(name)
 
+        self.name           = name
         self.tl             = data.get("tl")
         self.equipment      = data.get("equipment")
         self.tonnage        = data.get("tonnage")

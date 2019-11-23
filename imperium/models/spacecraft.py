@@ -4,6 +4,7 @@ spacecraft.py
 Houses the spacecraft class
 """
 from imperium.models.config import Config
+from imperium.models.sensors import Sensor
 from imperium.models.json_reader import get_file_data
 
 
@@ -64,6 +65,9 @@ class Spacecraft:
 
         # set hull type to standard
         self.hull_type = Config("Standard")
+
+        # set sensors to standard
+        self.sensors = Sensor("Standard")
 
     def get_total_cost(self):
         """
