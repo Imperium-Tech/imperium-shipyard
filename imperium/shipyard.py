@@ -4,6 +4,7 @@ shipyard.py
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
 import random
+import os
 import string
 
 from imperium.models.computer import Computer
@@ -22,7 +23,7 @@ from imperium.models.armour import Armour
 from shipyard.fileloader import FileLoader
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
-from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
+from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
                              QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox, QMainWindow, QAction)
 
 from imperium.models.turrets import Turret
@@ -48,10 +49,11 @@ class Window(QMainWindow):
         file_bar = imperium_bar.addMenu("File")
 
         save_action = QAction("Save", self)
-        save_action.triggered.connect(lambda: self.fileloader.save_model("testmodel", self.spacecraft))
+        save_action.setShortcut("Ctrl+S")
+        save_action.triggered.connect(lambda: self.save_file())
 
         load_action = QAction("Load", self)
-        load_action.triggered.connect(lambda: self.fileloader.load_model("testmodel", self))
+        load_action.triggered.connect(lambda: self.open_file())
 
         file_bar.addAction(save_action)
         file_bar.addAction(load_action)
@@ -488,6 +490,32 @@ class Window(QMainWindow):
 
         # Update to current stats
         self.update_stats()
+
+    def open_file(self):
+        """
+        # Handles the QtFileDialog for loading in ship formats
+        """
+        dlg = QFileDialog()
+
+        # Doing the interaction
+        filename = dlg.getOpenFileName(self, 'Load File', 'shipyard/models/', 'Traveller SRD files (*.srd)')
+
+        if filename[0] != '':
+            print(filename)
+            self.fileloader.load_model(filename[0], self)
+
+    def save_file(self):
+        """
+        Handles the QtFileDialog for saving the current ship to a file
+        """
+        dlg = QFileDialog()
+
+        # Doing the interaction
+        filename = dlg.getSaveFileName(self, 'Save File', 'shipyard/models', 'Traveller SRD files (*.srd)')
+
+        if filename[0] != '':
+            print(filename)
+            self.fileloader.save_model(filename[0], self.spacecraft)
 
     def update_stats(self):
         """

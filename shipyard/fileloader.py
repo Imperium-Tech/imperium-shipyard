@@ -4,33 +4,26 @@
 
 Class that handles interacting with and saving a ship's state into a file for later use
 """
-from imperium.models.armour import Armour
-from imperium.models.computer import Computer
-from imperium.models.drives import JDrive, MDrive
 from imperium.models.hardpoint import Hardpoint
-from imperium.models.pplant import PPlant
 from imperium.models.software import Software
 from imperium.models.spacecraft import Spacecraft
-from imperium.models.option import Option
+from imperium.models.turrets import Turret
 from imperium.models.misc import Misc
 import json
 import os
-
-from imperium.models.turrets import Turret
 
 
 class FileLoader:
     def __init__(self):
         self.savepath = "models/"
 
-    def save_model(self, filename, spacecraft):
+    def save_model(self, outpath, spacecraft):
         """
-
-        :param filename:
-        :param spacecraft:
-        :return:
+        Handles the saving of a model by outputting the contents of the spacecraft into
+        a formatted SRD file
+        :param outpath: full path to the saved file
+        :param spacecraft: spacecraft object to save
         """
-
         # Loading in the model template for ships
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, "model_template.json")
@@ -106,24 +99,20 @@ class FileLoader:
                 }
             template['hardpoints'].append(hp)
 
-        print(template)
-
         # Saving model to srd file
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "models/" + filename + ".srd")
-        with open(path , 'w') as f:
+        with open(outpath, 'w') as f:
             json.dump(template, f)
 
-    def load_model(self, filename, window):
-        print(filename, window)
-
+    def load_model(self, path, window):
+        """
+        Handles loading in a model from a SRD file and setting both the backend and front end to the
+        contents of the file
+        :param path: full path to the file
+        :param window: QMainWindow object to interact with
+        """
         # Loading in the model template for ships
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "models/" + filename + ".srd")
         with open(path, 'r') as f:
             model = json.load(f)
-
-        print(model)
 
         # Setting to new spacecraft
         window.spacecraft = Spacecraft(100)
