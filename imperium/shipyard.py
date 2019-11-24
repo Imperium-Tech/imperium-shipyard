@@ -49,7 +49,12 @@ class Window(QMainWindow):
 
         save_action = QAction("Save", self)
         save_action.triggered.connect(lambda: self.fileloader.save_model("testmodel", self.spacecraft))
+
+        load_action = QAction("Load", self)
+        load_action.triggered.connect(lambda: self.fileloader.load_model("testmodel", self))
+
         file_bar.addAction(save_action)
+        file_bar.addAction(load_action)
 
         ###################################
         ###    END: Imperium Options    ###

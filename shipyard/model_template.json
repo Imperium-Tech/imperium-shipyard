@@ -14,11 +14,12 @@
   },
   "config":{
     "bridge": false,
-    "options": [],
+    "options": [false, false, false],
+    "screens": [false, false],
     "fuel_scoop": false,
     "hull_type": null,
     "sensors": null,
-    "armor": []
+    "armour": []
   },
   "computer":{
     "model": null,
