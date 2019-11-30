@@ -1,0 +1,34 @@
+{
+  "name": "Ship",
+  "stats":{
+    "tonnage": 0,
+    "cost": 0,
+    "cargo": 0,
+    "fuel": 0,
+    "discount": 0
+  },
+  "drives":{
+    "jdrive": null,
+    "mdrive": null,
+    "pplant": null
+  },
+  "config":{
+    "bridge": false,
+    "options": [false, false, false],
+    "screens": [false, false],
+    "fuel_scoop": false,
+    "hull_type": null,
+    "sensors": null,
+    "armour": []
+  },
+  "computer":{
+    "model": null,
+    "jump_control_spec": false,
+    "hardened_system": false,
+    "software":[]
+  },
+  "misc":{
+    "misc": []
+  },
+  "hardpoints": []
+}

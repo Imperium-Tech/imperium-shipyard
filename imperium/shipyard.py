@@ -4,6 +4,7 @@ shipyard.py
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 """
 import random
+import os
 import string
 
 from imperium.models.computer import Computer
@@ -19,23 +20,47 @@ from imperium.models.sensors import Sensor
 from imperium.models.software import Software
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
+from shipyard.fileloader import FileLoader
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
-from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
-                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox)
+from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
+                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox, QMainWindow, QAction)
 
 from imperium.models.turrets import Turret
 
 
-class Window(QWidget):
+class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
-        # Create a placeholder Spacecraft
+        # Creating a file loader for saving
+        self.fileloader = FileLoader()
+
+        # Create a base Spacecraft to use
         self.spacecraft = Spacecraft(100)
         self.logger = QLabel("")
 
         # Window Title
         self.setWindowTitle("Imperium Shipyard")
+
+        ###################################
+        ###  BEGIN: Imperium Options    ###
+        ###################################
+        imperium_bar = self.menuBar()
+        file_bar = imperium_bar.addMenu("File")
+
+        save_action = QAction("Save", self)
+        save_action.setShortcut("Ctrl+S")
+        save_action.triggered.connect(lambda: self.save_file())
+
+        load_action = QAction("Load", self)
+        load_action.triggered.connect(lambda: self.open_file())
+
+        file_bar.addAction(save_action)
+        file_bar.addAction(load_action)
+
+        ###################################
+        ###    END: Imperium Options    ###
+        ###################################
 
         def add_combo_box(layout, label, json, funct, x, y, in_line=True, null_spot=False):
             """
@@ -455,10 +480,42 @@ class Window(QWidget):
         layout.addWidget(self.turret_config_group, 1, 2)
         # Logger
         layout.addWidget(self.logger, 2, 0, 1, -1)
-        self.setLayout(layout)
+        # self.setLayout(layout)
+
+        # Setting layout to be the central widget of main window
+        wid = QWidget()
+        wid.setLayout(layout)
+        self.setCentralWidget(wid)
+
 
         # Update to current stats
         self.update_stats()
+
+    def open_file(self):
+        """
+        # Handles the QtFileDialog for loading in ship formats
+        """
+        dlg = QFileDialog()
+
+        # Doing the interaction
+        filename = dlg.getOpenFileName(self, 'Load File', 'shipyard/models/', 'Traveller SRD files (*.srd)')
+
+        if filename[0] != '':
+            print(filename)
+            self.fileloader.load_model(filename[0], self)
+
+    def save_file(self):
+        """
+        Handles the QtFileDialog for saving the current ship to a file
+        """
+        dlg = QFileDialog()
+
+        # Doing the interaction
+        filename = dlg.getSaveFileName(self, 'Save File', 'shipyard/models', 'Traveller SRD files (*.srd)')
+
+        if filename[0] != '':
+            print(filename)
+            self.fileloader.save_model(filename[0], self.spacecraft)
 
     def update_stats(self):
         """

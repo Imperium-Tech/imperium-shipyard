@@ -10,6 +10,7 @@ class Computer:
     def __init__(self, name):
         data = get_file_data("hull_computer.json").get(name)
 
+        self.model      = name
         self.tl         = data.get("tl")
         self.rating     = data.get("rating")
         self.cost       = data.get("cost")
