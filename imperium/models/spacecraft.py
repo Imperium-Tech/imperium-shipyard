@@ -122,10 +122,9 @@ class Spacecraft:
         # Misc
         for misc in self.misc:
             if misc.name == "Repair Drones":
-                cost_total += misc.cost * misc.tonnage * self.tonnage
+                cost_total += 0.2 * (misc.tonnage * self.tonnage)
             else:
                 cost_total += misc.cost
-
 
         # Adding discount to items
         cost_total *= self.discount
