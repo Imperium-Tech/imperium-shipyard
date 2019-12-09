@@ -193,7 +193,6 @@ class Spacecraft:
 
     def set_discount(self, discount):
         self.discount = (100 - discount) / 100
-        print(self.discount)
 
     def set_fuel(self, new_fuel):
         """

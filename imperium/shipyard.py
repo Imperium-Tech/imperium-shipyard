@@ -55,8 +55,13 @@ class Window(QMainWindow):
         load_action = QAction("Load", self)
         load_action.triggered.connect(lambda: self.open_file())
 
+        reset_action = QAction("Reset", self)
+        reset_action.setShortcut("Ctrl+R")
+        reset_action.triggered.connect(lambda: self.reset_ship())
+
         file_bar.addAction(save_action)
         file_bar.addAction(load_action)
+        file_bar.addAction(reset_action)
 
         ###################################
         ###    END: Imperium Options    ###
@@ -378,32 +383,35 @@ class Window(QMainWindow):
             self.model_dict[model] = value
             row += 1
 
-        """ Showing how much of each weapon """
-        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
-        self.hpstats_config_layout.addWidget(QLabel("Weapons:"), row + 1, 0)
-
-        row += 2
-        self.weapon_dict = dict()
-        for weapon in get_file_data("hull_turrets.json").get("weapons").keys():
-            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
-            self.weapon_dict[weapon] = value
-            row += 1
-
-        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
-        self.hpstats_config_layout.addWidget(QLabel("Bay Weapons:"), row + 1, 0)
-        row += 2
-
-        self.bay_dict = dict()
-        for weapon in get_file_data("hull_turrets.json").get("bayweapons").keys():
-            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
-            self.bay_dict[weapon] = value
-            row += 1
-
         self.hpstats_config_group.setLayout(self.hpstats_config_layout)
         ###################################
         ###  END: HP Stats Grid         ###
         ###################################
+        self.hpstats2_config_group = QGroupBox("Cont.")
+        self.hpstats2_config_layout = QGridLayout()
+        self.hpstats2_config_layout.setAlignment(Qt.AlignTop)
 
+        """ Showing how much of each weapon """
+        self.hpstats2_config_layout.addWidget(QLabel("Weapons:"), row + 1, 0)
+
+        row += 2
+        self.weapon_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("weapons").keys():
+            name, value = add_turret_stat(self.hpstats2_config_layout, row, weapon)
+            self.weapon_dict[weapon] = value
+            row += 1
+
+        self.hpstats2_config_layout.addWidget(QLabel(""), row, 0)
+        self.hpstats2_config_layout.addWidget(QLabel("Bay Weapons:"), row + 1, 0)
+        row += 2
+
+        self.bay_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            name, value = add_turret_stat(self.hpstats2_config_layout, row, weapon)
+            self.bay_dict[weapon] = value
+            row += 1
+
+        self.hpstats2_config_group.setLayout(self.hpstats2_config_layout)
         ###################################
         ###  START: Hardpoint Grid      ###
         ###################################
@@ -466,6 +474,7 @@ class Window(QMainWindow):
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
         self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.hpstats2_config_group.setFixedHeight(350)
 
         # Overall layout grid
         # Top row
@@ -476,8 +485,9 @@ class Window(QMainWindow):
         layout.addWidget(self.misc_config_group, 0, 3)
         # Second Row
         layout.addWidget(self.hpstats_config_group, 1, 0)
-        layout.addWidget(self.hp_config_group, 1, 1)
-        layout.addWidget(self.turret_config_group, 1, 2)
+        layout.addWidget(self.hpstats2_config_group, 1, 1)
+        layout.addWidget(self.hp_config_group, 1, 2)
+        layout.addWidget(self.turret_config_group, 1, 3)
         # Logger
         layout.addWidget(self.logger, 2, 0, 1, -1)
         # self.setLayout(layout)
@@ -516,6 +526,14 @@ class Window(QMainWindow):
         if filename[0] != '':
             print(filename)
             self.fileloader.save_model(filename[0], self.spacecraft)
+
+    def reset_ship(self):
+        """
+        Handles getting the path to the default SRD file and resetting the GUI to a default ship
+        """
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        filename = os.path.join(my_path, "../shipyard/models/default/default.srd")
+        self.fileloader.load_model(filename, self)
 
     def update_stats(self):
         """
@@ -721,6 +739,7 @@ class Window(QMainWindow):
 
         # Error checking for invalid ship states
         if armor_type == "---":
+            self.display_armor()
             return
         if self.spacecraft.tonnage == 0:
             return self.logger.setText("Error: Tonnage not set before adding armor.")
