@@ -497,7 +497,6 @@ class Window(QMainWindow):
         wid.setLayout(layout)
         self.setCentralWidget(wid)
 
-
         # Update to current stats
         self.update_stats()
 

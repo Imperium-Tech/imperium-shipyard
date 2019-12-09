@@ -135,6 +135,21 @@ class FileLoader:
         for item in data.keys():
             window.software_box.addItem(item)
 
+        # Adding misc labels back to box
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "../imperium/resources/hull_misc.json")
+        with open(path) as f:
+            data = json.load(f)
+
+        window.misc_dict = {}
+        idx = 1
+        window.misc_box.clear()
+        window.misc_box.addItem(" ")
+        for item in data.keys():
+            window.misc_dict[item] = idx
+            window.misc_box.addItem(item)
+            idx += 1
+
         # Setting spacecraft to new template
         window.spacecraft = Spacecraft(100)
 
