@@ -118,6 +118,10 @@ class FileLoader:
         with open(path, 'r') as f:
             model = json.load(f)
 
+        # Wiping out the active turret box
+        for i in reversed(range(0, window.turret_config_layout.count())):
+            window.turret_config_layout.itemAt(i).widget().setParent(None)
+
         # Setting hull option flags to False initially
         window.reflec_check.setChecked(False)
         window.stealth_check.setChecked(False)
@@ -248,11 +252,12 @@ class FileLoader:
 
             # Making turret and adding it
             turret_dict = hardpoint['turret']
-            turret = Turret(turret_dict['type'])
-            turret.weapons = turret_dict['weapons']
-            turret.missiles = turret_dict['missiles']
-            turret.sandcaster_barrels = turret_dict['sandcaster_barrels']
-            hp.add_turret(turret)
+            if turret_dict is not None:
+                turret = Turret(turret_dict['type'])
+                turret.weapons = turret_dict['weapons']
+                turret.missiles = turret_dict['missiles']
+                turret.sandcaster_barrels = turret_dict['sandcaster_barrels']
+                hp.add_turret(turret)
 
             window.spacecraft.add_hardpoint(hp)
 
