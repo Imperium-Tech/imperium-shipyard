@@ -489,13 +489,14 @@ class Window(QMainWindow):
         self.hpstats2_config_group.setFixedWidth(FIXED_WIDTH)
         self.hp_config_group.setFixedWidth(FIXED_WIDTH)
         self.hp_scroll.setFixedWidth(FIXED_WIDTH)
+        self.turret_config_group.setFixedWidth(FIXED_WIDTH)
 
         # Setting appropriate layout heights
         FIXED_HEIGHT = 400
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.hpstats2_config_group.setFixedHeight(350)
+        # self.hpstats2_config_group.setFixedHeight(350)
 
         # Overall layout grid
         # Top row
@@ -790,7 +791,7 @@ class Window(QMainWindow):
         for armor in self.spacecraft.armour:
             button = QPushButton()
             button.setCheckable(True)
-            button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
+            button.setText("{} - Protect: {}".format(armor.type, armor.protection))
             self.connect_armor(armor, button)
             self.armor_config_layout.addWidget(button, self.armor_config_layout.count(), 0, 1, -1)
 
@@ -1249,8 +1250,8 @@ class Window(QMainWindow):
             layout.itemAt(i).widget().setParent(None)
 
         # Add whitespace for removal
-        for i in range(4):
-            layout.addWidget(None, 3, i)
+        # for i in range(4):
+        #    layout.addWidget(QLabel(), 3, i)
 
         # Creating combobox for bayweapons
         label = QLabel("Wep:")

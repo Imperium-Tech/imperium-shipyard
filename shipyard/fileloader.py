@@ -261,6 +261,10 @@ class FileLoader:
 
             window.spacecraft.add_hardpoint(hp)
 
+        # Resetting HP total/avail
+        window.total_hp.setText(str(window.spacecraft.num_hardpoints))
+        window.avail_hp.setText(str(window.spacecraft.num_hardpoints - len(window.spacecraft.hardpoints)))
+
         # Setting active hardpoint to None, displaying new hardpoints
         window.active_hp_id = None
         window.display_hardpoints()
