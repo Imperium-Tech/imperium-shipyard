@@ -24,7 +24,7 @@ from shipyard.fileloader import FileLoader
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
-                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox, QMainWindow, QAction)
+                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QScrollArea, QMainWindow, QAction)
 
 from imperium.models.turrets import Turret
 
@@ -323,6 +323,7 @@ class Window(QMainWindow):
         ###################################
         ###  START: Misc Items Grid     ###
         ###################################
+        self.misc_scroll = QScrollArea()
         self.misc_config_group = QGroupBox("Living/Vehicles/Drones")
         self.misc_config_layout = QGridLayout()
         self.misc_config_layout.setAlignment(Qt.AlignTop)
@@ -347,7 +348,13 @@ class Window(QMainWindow):
         self.misc_config_layout.addWidget(button, 0, 2)
         self.misc_num_rows = 1
 
+        # Setting scroll area properties
+        self.misc_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.misc_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.misc_scroll.setWidgetResizable(True)
+
         self.misc_config_group.setLayout(self.misc_config_layout)
+        self.misc_scroll.setWidget(self.misc_config_group)
         ###################################
         ###  END: Misc Items Grid       ###
         ###################################
@@ -415,6 +422,7 @@ class Window(QMainWindow):
         ###################################
         ###  START: Hardpoint Grid      ###
         ###################################
+        self.hp_scroll = QScrollArea()
         self.hp_config_group = QGroupBox("Hardpoints:")
         self.hp_config_layout = QGridLayout()
         self.hp_config_layout.setAlignment(Qt.AlignTop)
@@ -438,7 +446,13 @@ class Window(QMainWindow):
         self.active_hp_buttons = list()
         self.active_hp_id = None
 
+        # Setting properties of scroll area
+        self.hp_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.hp_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.hp_scroll.setWidgetResizable(True)
+
         self.hp_config_group.setLayout(self.hp_config_layout)
+        self.hp_scroll.setWidget(self.hp_config_group)
         ###################################
         ###  END: Hardpoint Grid        ###
         ###################################
@@ -463,17 +477,24 @@ class Window(QMainWindow):
         self.edit_discount()
 
         # Setting appropriate column widths
+        FIXED_WIDTH = 250
         base_stats_group.setFixedWidth(175)
-        self.armor_config_group.setFixedWidth(250)
-        self.computer_config_group.setFixedWidth(250)
-        self.misc_config_group.setFixedWidth(250)
+        self.hpstats_config_group.setFixedWidth(175)
+
+        self.armor_config_group.setFixedWidth(FIXED_WIDTH)
+        self.computer_config_group.setFixedWidth(FIXED_WIDTH)
+        self.misc_config_group.setFixedWidth(FIXED_WIDTH)
+        self.misc_scroll.setFixedWidth(FIXED_WIDTH)
+
+        self.hpstats2_config_group.setFixedWidth(FIXED_WIDTH)
+        self.hp_config_group.setFixedWidth(FIXED_WIDTH)
+        self.hp_scroll.setFixedWidth(FIXED_WIDTH)
 
         # Setting appropriate layout heights
         FIXED_HEIGHT = 400
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
         self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
         self.hpstats2_config_group.setFixedHeight(350)
 
         # Overall layout grid
@@ -482,11 +503,11 @@ class Window(QMainWindow):
         layout.addWidget(base_stats_group, 0, 0)
         layout.addWidget(self.armor_config_group, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
-        layout.addWidget(self.misc_config_group, 0, 3)
+        layout.addWidget(self.misc_scroll, 0, 3)
         # Second Row
         layout.addWidget(self.hpstats_config_group, 1, 0)
         layout.addWidget(self.hpstats2_config_group, 1, 1)
-        layout.addWidget(self.hp_config_group, 1, 2)
+        layout.addWidget(self.hp_scroll, 1, 2)
         layout.addWidget(self.turret_config_group, 1, 3)
         # Logger
         layout.addWidget(self.logger, 2, 0, 1, -1)
