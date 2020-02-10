@@ -50,7 +50,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            QT_DEBUG_PLUGINS=1 pytest --cov=imperium tests/
+            QT_DEBUG_PLUGINS=1 pytest -sv --cov=imperium tests/
             coveralls
 
       - store_artifacts:
