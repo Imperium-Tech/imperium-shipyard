@@ -1,7 +1,9 @@
 """
-shipyard.py
+@file shipyard.py
+@author Ryan Missel, Chris Vantine
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
+Handles all of the UI interaction and display for the PyQT frontend
 """
 import random
 import os
@@ -22,9 +24,10 @@ from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from shipyard.fileloader import FileLoader
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
-                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QScrollArea, QMainWindow, QAction)
+                             QLabel, QLineEdit, QWidget, QFrame, QPushButton, QCheckBox,
+                             QScrollArea, QMainWindow, QAction)
 
 from imperium.models.turrets import Turret
 
@@ -205,7 +208,6 @@ class Window(QMainWindow):
         # Cost
         self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 14, read_only=True)
 
-
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
         ###################################
@@ -215,6 +217,7 @@ class Window(QMainWindow):
         ###################################
         ###  START: Armor/Config Grid   ###
         ###################################
+        self.armor_scroll = QScrollArea()
         self.armor_config_group = QGroupBox("Config/Armor")
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
@@ -267,7 +270,14 @@ class Window(QMainWindow):
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
                                              "hull_armor.json", self.edit_armor, 9, 0, in_line=False, null_spot=True)
 
+        ### Scroll area properties ###
+        self.armor_scroll.setFrameShape(QFrame.NoFrame)
+        self.armor_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.armor_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.armor_scroll.setWidgetResizable(True)
+
         self.armor_config_group.setLayout(self.armor_config_layout)
+        self.armor_scroll.setWidget(self.armor_config_group)
         ###################################
         ###  END: Armor/Config Grid     ###
         ###################################
@@ -352,6 +362,7 @@ class Window(QMainWindow):
         self.misc_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.misc_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.misc_scroll.setWidgetResizable(True)
+        self.misc_scroll.setFrameShape(QFrame.NoFrame)
 
         self.misc_config_group.setLayout(self.misc_config_layout)
         self.misc_scroll.setWidget(self.misc_config_group)
@@ -450,6 +461,7 @@ class Window(QMainWindow):
         self.hp_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.hp_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.hp_scroll.setWidgetResizable(True)
+        self.hp_scroll.setFrameShape(QFrame.NoFrame)
 
         self.hp_config_group.setLayout(self.hp_config_layout)
         self.hp_scroll.setWidget(self.hp_config_group)
@@ -494,15 +506,14 @@ class Window(QMainWindow):
         # Setting appropriate layout heights
         FIXED_HEIGHT = 400
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
-        self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
-        # self.hpstats2_config_group.setFixedHeight(350)
+        self.turret_config_group.setFixedHeight(350)
 
         # Overall layout grid
         # Top row
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
-        layout.addWidget(self.armor_config_group, 0, 1)
+        layout.addWidget(self.armor_scroll, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
         layout.addWidget(self.misc_scroll, 0, 3)
         # Second Row
@@ -510,9 +521,6 @@ class Window(QMainWindow):
         layout.addWidget(self.hpstats2_config_group, 1, 1)
         layout.addWidget(self.hp_scroll, 1, 2)
         layout.addWidget(self.turret_config_group, 1, 3)
-        # Logger
-        layout.addWidget(self.logger, 2, 0, 1, -1)
-        # self.setLayout(layout)
 
         # Setting layout to be the central widget of main window
         wid = QWidget()
