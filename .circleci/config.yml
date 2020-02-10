@@ -35,7 +35,6 @@ jobs:
             pip install -r requirements.txt
             pip install -e .
             pip install coveralls
-            sudo apt update && sudo apt install -y libxkbcommon-x11-0
 
       - save_cache:
           paths:
@@ -51,7 +50,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            QT_DEBUG_PLUGINS=1 pytest -sv --cov=imperium tests/
+            xvfb-run -a pytest -sv --cov=imperium tests/
             coveralls
 
       - store_artifacts:
