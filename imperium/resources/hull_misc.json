@@ -45,6 +45,11 @@
         "mod_additional": "Covers the installation of rescue bubbles and other escape pods"
 
     },
+    "Laboratory Space": {
+        "tonnage": 100,
+        "cost": 0.0,
+        "mod_additional": "Space reserved for laboratory use"
+    },
     "--- Drones ---": {},
     "Mining Drones": {
         "tonnage": 10.0,

@@ -4,6 +4,8 @@
 
 Class that handles interacting with and saving a ship's state into a file for later use
 """
+from PyQt5.QtWidgets import QLabel, QComboBox
+
 from imperium.models.hardpoint import Hardpoint
 from imperium.models.software import Software
 from imperium.models.spacecraft import Spacecraft
@@ -74,6 +76,8 @@ class FileLoader:
             template['computer']['model'] = spacecraft.computer.model
             template['computer']['jump_control_spec'] = spacecraft.computer.bis
             template['computer']['hardened_system'] = spacecraft.computer.fib
+        else:
+            template['computer']['model'] = "---"
 
         for software in spacecraft.software:
             template['computer']['software'].append((software.type, software.level))
@@ -114,7 +118,43 @@ class FileLoader:
         with open(path, 'r') as f:
             model = json.load(f)
 
-        # Setting to new spacecraft
+        # Wiping out the active turret box
+        for i in reversed(range(0, window.turret_config_layout.count())):
+            window.turret_config_layout.itemAt(i).widget().setParent(None)
+
+        # Setting hull option flags to False initially
+        window.reflec_check.setChecked(False)
+        window.stealth_check.setChecked(False)
+        window.seal_check.setChecked(False)
+        window.fuel_scoop.setChecked(False)
+
+        # Adding software labels back to box
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "../imperium/resources/hull_software.json")
+        with open(path) as f:
+            data = json.load(f)
+
+        window.software_box.clear()
+        window.software_box.addItem("---")
+        for item in data.keys():
+            window.software_box.addItem(item)
+
+        # Adding misc labels back to box
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "../imperium/resources/hull_misc.json")
+        with open(path) as f:
+            data = json.load(f)
+
+        window.misc_dict = {}
+        idx = 1
+        window.misc_box.clear()
+        window.misc_box.addItem(" ")
+        for item in data.keys():
+            window.misc_dict[item] = idx
+            window.misc_box.addItem(item)
+            idx += 1
+
+        # Setting spacecraft to new template
         window.spacecraft = Spacecraft(100)
 
         # Setting stats
@@ -128,23 +168,36 @@ class FileLoader:
         window.edit_discount()
 
         # Setting drives
-        window.jump_line_edit.setText(model['drives']['jdrive'])
-        window.edit_jdrive()
+        window.jump_label.setText("-")
+        window.thrust_label.setText("-")
+        window.pplant_label.setText("-")
 
-        window.thrust_line_edit.setText(model['drives']['mdrive'])
-        window.edit_mdrive()
+        if model['drives']['jdrive'] is not None:
+            window.jump_line_edit.setText(model['drives']['jdrive'])
+            window.edit_jdrive()
 
-        window.pplant_line_edit.setText(model['drives']['pplant'])
-        window.edit_pplant()
+        if model['drives']['mdrive'] is not None:
+            window.thrust_line_edit.setText(model['drives']['mdrive'])
+            window.edit_mdrive()
+
+        if model['drives']['pplant'] is not None:
+            window.pplant_line_edit.setText(model['drives']['pplant'])
+            window.edit_pplant()
 
         # Setting configs
         window.bridge_check.setChecked(model['config']['bridge'])
         window.check_bridge()
 
         options = model['config']['options']
-        window.reflec_check.setChecked(options[0])
-        window.seal_check.setChecked(options[1])
-        window.stealth_check.setChecked(options[2])
+
+        if options[0] is True:
+            window.reflec_check.setChecked(True)
+
+        if options[1] is True:
+            window.seal_check.setChecked(True)
+
+        if options[2] is True:
+            window.stealth_check.setChecked(True)
 
         screens = model['config']['screens']
         window.meson_screen.setChecked(screens[0])
@@ -160,6 +213,8 @@ class FileLoader:
         window.sensors.setCurrentText(model['config']['sensors'])
         window.edit_sensors()
 
+        # Redisplaying armour before adding rest
+        window.edit_armor()
         for armour in model['config']['armour']:
             window.armor_combo_box.setCurrentText(armour)
             window.edit_armor()
@@ -173,6 +228,10 @@ class FileLoader:
 
         for sname, slevel in model['computer']['software']:
             window.spacecraft.modify_software(Software(sname, slevel))
+            window.software_box.setCurrentText(sname)
+            window.software_box.removeItem(window.software_box.currentIndex())
+
+        window.software_box.setCurrentIndex(0)
         window.display_software()
 
         # Adding all misc items
@@ -193,13 +252,18 @@ class FileLoader:
 
             # Making turret and adding it
             turret_dict = hardpoint['turret']
-            turret = Turret(turret_dict['type'])
-            turret.weapons = turret_dict['weapons']
-            turret.missiles = turret_dict['missiles']
-            turret.sandcaster_barrels = turret_dict['sandcaster_barrels']
-            hp.add_turret(turret)
+            if turret_dict is not None:
+                turret = Turret(turret_dict['type'])
+                turret.weapons = turret_dict['weapons']
+                turret.missiles = turret_dict['missiles']
+                turret.sandcaster_barrels = turret_dict['sandcaster_barrels']
+                hp.add_turret(turret)
 
             window.spacecraft.add_hardpoint(hp)
+
+        # Resetting HP total/avail
+        window.total_hp.setText(str(window.spacecraft.num_hardpoints))
+        window.avail_hp.setText(str(window.spacecraft.num_hardpoints - len(window.spacecraft.hardpoints)))
 
         # Setting active hardpoint to None, displaying new hardpoints
         window.active_hp_id = None

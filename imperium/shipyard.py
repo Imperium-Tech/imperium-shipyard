@@ -1,7 +1,9 @@
 """
-shipyard.py
+@file shipyard.py
+@author Ryan Missel, Chris Vantine
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
+Handles all of the UI interaction and display for the PyQT frontend
 """
 import random
 import os
@@ -22,9 +24,10 @@ from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from shipyard.fileloader import FileLoader
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
-                             QLabel, QLineEdit, QWidget, QPushButton, QCheckBox, QSpinBox, QMainWindow, QAction)
+                             QLabel, QLineEdit, QWidget, QFrame, QPushButton, QCheckBox,
+                             QScrollArea, QMainWindow, QAction)
 
 from imperium.models.turrets import Turret
 
@@ -55,8 +58,13 @@ class Window(QMainWindow):
         load_action = QAction("Load", self)
         load_action.triggered.connect(lambda: self.open_file())
 
+        reset_action = QAction("Reset", self)
+        reset_action.setShortcut("Ctrl+R")
+        reset_action.triggered.connect(lambda: self.reset_ship())
+
         file_bar.addAction(save_action)
         file_bar.addAction(load_action)
+        file_bar.addAction(reset_action)
 
         ###################################
         ###    END: Imperium Options    ###
@@ -200,7 +208,6 @@ class Window(QMainWindow):
         # Cost
         self.cost_line_edit = add_stat_to_layout(base_stats_layout, "Cost (MCr.):", 14, read_only=True)
 
-
         # Grid layout
         base_stats_group.setLayout(base_stats_layout)
         ###################################
@@ -210,6 +217,7 @@ class Window(QMainWindow):
         ###################################
         ###  START: Armor/Config Grid   ###
         ###################################
+        self.armor_scroll = QScrollArea()
         self.armor_config_group = QGroupBox("Config/Armor")
         self.armor_config_layout = QGridLayout()
         self.armor_config_layout.setAlignment(Qt.AlignTop)
@@ -262,7 +270,14 @@ class Window(QMainWindow):
         self.armor_combo_box = add_combo_box(self.armor_config_layout, "Armour:",
                                              "hull_armor.json", self.edit_armor, 9, 0, in_line=False, null_spot=True)
 
+        ### Scroll area properties ###
+        self.armor_scroll.setFrameShape(QFrame.NoFrame)
+        self.armor_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.armor_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.armor_scroll.setWidgetResizable(True)
+
         self.armor_config_group.setLayout(self.armor_config_layout)
+        self.armor_scroll.setWidget(self.armor_config_group)
         ###################################
         ###  END: Armor/Config Grid     ###
         ###################################
@@ -318,6 +333,7 @@ class Window(QMainWindow):
         ###################################
         ###  START: Misc Items Grid     ###
         ###################################
+        self.misc_scroll = QScrollArea()
         self.misc_config_group = QGroupBox("Living/Vehicles/Drones")
         self.misc_config_layout = QGridLayout()
         self.misc_config_layout.setAlignment(Qt.AlignTop)
@@ -342,7 +358,14 @@ class Window(QMainWindow):
         self.misc_config_layout.addWidget(button, 0, 2)
         self.misc_num_rows = 1
 
+        # Setting scroll area properties
+        self.misc_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.misc_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.misc_scroll.setWidgetResizable(True)
+        self.misc_scroll.setFrameShape(QFrame.NoFrame)
+
         self.misc_config_group.setLayout(self.misc_config_layout)
+        self.misc_scroll.setWidget(self.misc_config_group)
         ###################################
         ###  END: Misc Items Grid       ###
         ###################################
@@ -378,35 +401,39 @@ class Window(QMainWindow):
             self.model_dict[model] = value
             row += 1
 
-        """ Showing how much of each weapon """
-        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
-        self.hpstats_config_layout.addWidget(QLabel("Weapons:"), row + 1, 0)
-
-        row += 2
-        self.weapon_dict = dict()
-        for weapon in get_file_data("hull_turrets.json").get("weapons").keys():
-            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
-            self.weapon_dict[weapon] = value
-            row += 1
-
-        self.hpstats_config_layout.addWidget(QLabel(""), row, 0)
-        self.hpstats_config_layout.addWidget(QLabel("Bay Weapons:"), row + 1, 0)
-        row += 2
-
-        self.bay_dict = dict()
-        for weapon in get_file_data("hull_turrets.json").get("bayweapons").keys():
-            name, value = add_turret_stat(self.hpstats_config_layout, row, weapon)
-            self.bay_dict[weapon] = value
-            row += 1
-
         self.hpstats_config_group.setLayout(self.hpstats_config_layout)
         ###################################
         ###  END: HP Stats Grid         ###
         ###################################
+        self.hpstats2_config_group = QGroupBox("Cont.")
+        self.hpstats2_config_layout = QGridLayout()
+        self.hpstats2_config_layout.setAlignment(Qt.AlignTop)
 
+        """ Showing how much of each weapon """
+        self.hpstats2_config_layout.addWidget(QLabel("Weapons:"), row + 1, 0)
+
+        row += 2
+        self.weapon_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("weapons").keys():
+            name, value = add_turret_stat(self.hpstats2_config_layout, row, weapon)
+            self.weapon_dict[weapon] = value
+            row += 1
+
+        self.hpstats2_config_layout.addWidget(QLabel(""), row, 0)
+        self.hpstats2_config_layout.addWidget(QLabel("Bay Weapons:"), row + 1, 0)
+        row += 2
+
+        self.bay_dict = dict()
+        for weapon in get_file_data("hull_turrets.json").get("bayweapons").keys():
+            name, value = add_turret_stat(self.hpstats2_config_layout, row, weapon)
+            self.bay_dict[weapon] = value
+            row += 1
+
+        self.hpstats2_config_group.setLayout(self.hpstats2_config_layout)
         ###################################
         ###  START: Hardpoint Grid      ###
         ###################################
+        self.hp_scroll = QScrollArea()
         self.hp_config_group = QGroupBox("Hardpoints:")
         self.hp_config_layout = QGridLayout()
         self.hp_config_layout.setAlignment(Qt.AlignTop)
@@ -430,7 +457,14 @@ class Window(QMainWindow):
         self.active_hp_buttons = list()
         self.active_hp_id = None
 
+        # Setting properties of scroll area
+        self.hp_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.hp_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.hp_scroll.setWidgetResizable(True)
+        self.hp_scroll.setFrameShape(QFrame.NoFrame)
+
         self.hp_config_group.setLayout(self.hp_config_layout)
+        self.hp_scroll.setWidget(self.hp_config_group)
         ###################################
         ###  END: Hardpoint Grid        ###
         ###################################
@@ -455,38 +489,43 @@ class Window(QMainWindow):
         self.edit_discount()
 
         # Setting appropriate column widths
+        FIXED_WIDTH = 250
         base_stats_group.setFixedWidth(175)
-        self.armor_config_group.setFixedWidth(250)
-        self.computer_config_group.setFixedWidth(250)
-        self.misc_config_group.setFixedWidth(250)
+        self.hpstats_config_group.setFixedWidth(175)
+
+        self.armor_config_group.setFixedWidth(FIXED_WIDTH)
+        self.computer_config_group.setFixedWidth(FIXED_WIDTH)
+        self.misc_config_group.setFixedWidth(FIXED_WIDTH)
+        self.misc_scroll.setFixedWidth(FIXED_WIDTH)
+
+        self.hpstats2_config_group.setFixedWidth(FIXED_WIDTH)
+        self.hp_config_group.setFixedWidth(FIXED_WIDTH)
+        self.hp_scroll.setFixedWidth(FIXED_WIDTH)
+        self.turret_config_group.setFixedWidth(FIXED_WIDTH)
 
         # Setting appropriate layout heights
         FIXED_HEIGHT = 400
         base_stats_group.setFixedHeight(FIXED_HEIGHT)
-        self.armor_config_group.setFixedHeight(FIXED_HEIGHT)
         self.computer_config_group.setFixedHeight(FIXED_HEIGHT)
-        self.misc_config_group.setFixedHeight(FIXED_HEIGHT)
+        self.turret_config_group.setFixedHeight(350)
 
         # Overall layout grid
         # Top row
         layout = QGridLayout()
         layout.addWidget(base_stats_group, 0, 0)
-        layout.addWidget(self.armor_config_group, 0, 1)
+        layout.addWidget(self.armor_scroll, 0, 1)
         layout.addWidget(self.computer_config_group, 0, 2)
-        layout.addWidget(self.misc_config_group, 0, 3)
+        layout.addWidget(self.misc_scroll, 0, 3)
         # Second Row
         layout.addWidget(self.hpstats_config_group, 1, 0)
-        layout.addWidget(self.hp_config_group, 1, 1)
-        layout.addWidget(self.turret_config_group, 1, 2)
-        # Logger
-        layout.addWidget(self.logger, 2, 0, 1, -1)
-        # self.setLayout(layout)
+        layout.addWidget(self.hpstats2_config_group, 1, 1)
+        layout.addWidget(self.hp_scroll, 1, 2)
+        layout.addWidget(self.turret_config_group, 1, 3)
 
         # Setting layout to be the central widget of main window
         wid = QWidget()
         wid.setLayout(layout)
         self.setCentralWidget(wid)
-
 
         # Update to current stats
         self.update_stats()
@@ -516,6 +555,14 @@ class Window(QMainWindow):
         if filename[0] != '':
             print(filename)
             self.fileloader.save_model(filename[0], self.spacecraft)
+
+    def reset_ship(self):
+        """
+        Handles getting the path to the default SRD file and resetting the GUI to a default ship
+        """
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        filename = os.path.join(my_path, "../shipyard/models/default/default.srd")
+        self.fileloader.load_model(filename, self)
 
     def update_stats(self):
         """
@@ -721,6 +768,7 @@ class Window(QMainWindow):
 
         # Error checking for invalid ship states
         if armor_type == "---":
+            self.display_armor()
             return
         if self.spacecraft.tonnage == 0:
             return self.logger.setText("Error: Tonnage not set before adding armor.")
@@ -751,7 +799,7 @@ class Window(QMainWindow):
         for armor in self.spacecraft.armour:
             button = QPushButton()
             button.setCheckable(True)
-            button.setText("{} - Protect: {} | TL: {}".format(armor.type, armor.protection, armor.tl))
+            button.setText("{} - Protect: {}".format(armor.type, armor.protection))
             self.connect_armor(armor, button)
             self.armor_config_layout.addWidget(button, self.armor_config_layout.count(), 0, 1, -1)
 
@@ -1210,8 +1258,8 @@ class Window(QMainWindow):
             layout.itemAt(i).widget().setParent(None)
 
         # Add whitespace for removal
-        for i in range(4):
-            layout.addWidget(None, 3, i)
+        # for i in range(4):
+        #    layout.addWidget(QLabel(), 3, i)
 
         # Creating combobox for bayweapons
         label = QLabel("Wep:")

@@ -121,7 +121,10 @@ class Spacecraft:
 
         # Misc
         for misc in self.misc:
-            cost_total += misc.cost
+            if misc.name == "Repair Drones":
+                cost_total += 0.2 * (misc.tonnage * self.tonnage)
+            else:
+                cost_total += misc.cost
 
         # Adding discount to items
         cost_total *= self.discount
@@ -169,7 +172,10 @@ class Spacecraft:
 
         # Misc
         for misc in self.misc:
-            cargo -= misc.tonnage
+            if misc.name == "Repair Drones":
+                cargo -= misc.tonnage * self.tonnage
+            else:
+                cargo -= misc.tonnage
 
         return round(cargo, 2)
 
@@ -193,7 +199,6 @@ class Spacecraft:
 
     def set_discount(self, discount):
         self.discount = (100 - discount) / 100
-        print(self.discount)
 
     def set_fuel(self, new_fuel):
         """
