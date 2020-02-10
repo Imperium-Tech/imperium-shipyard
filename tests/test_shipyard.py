@@ -3,24 +3,18 @@
 
 Holds the unit tests for shipyard.py, which is mainly PyQT interactions
 """
-import pytest
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtTest import QTest
-from PyQt5.QtCore import Qt
-from imperium.shipyard import Window
 import sys
-
-# app = QApplication(sys.argv)
+import pytest
+from pytestqt import qtbot
+from imperium.shipyard import Window
 
 
 @pytest.fixture()
-def window():
+def window(qtbot):
     """ Before all for the tests, initializing a Window object """
-    app = QApplication(sys.argv)
     window = Window()
+    qtbot.addWidget(window)
     yield window
-    window.close()
-    del app
 
 
 def test_base_stats_init(window):
