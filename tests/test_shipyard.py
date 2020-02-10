@@ -10,15 +10,17 @@ from PyQt5.QtCore import Qt
 from imperium.shipyard import Window
 import sys
 
-app = QApplication(sys.argv)
+# app = QApplication(sys.argv)
 
 
 @pytest.fixture()
 def window():
     """ Before all for the tests, initializing a Window object """
+    app = QApplication(sys.argv)
     window = Window()
     yield window
     window.close()
+    del app
 
 
 def test_base_stats_init(window):
