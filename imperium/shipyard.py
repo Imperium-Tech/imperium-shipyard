@@ -23,13 +23,12 @@ from imperium.models.software import Software
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from shipyard.fileloader import FileLoader
+from imperium.models.turrets import Turret
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
                              QLabel, QLineEdit, QWidget, QFrame, QPushButton, QCheckBox,
                              QScrollArea, QMainWindow, QAction)
-
-from imperium.models.turrets import Turret
 
 
 class Window(QMainWindow):
