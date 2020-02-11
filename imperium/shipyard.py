@@ -664,12 +664,11 @@ class Window(QMainWindow):
         """
         new_tonnage = int(self.tonnage_box.currentText())
 
+        # Return if the tonnage is the same
         if new_tonnage == self.spacecraft.tonnage:
             return
 
-        # Cap tonnage to 2000
-        if new_tonnage > 2000:
-            new_tonnage = 2000
+        # Set tonnage on the spacecraft object
         self.spacecraft.set_tonnage(new_tonnage)
 
         # Checks for updating the drive, if necessary
@@ -769,8 +768,6 @@ class Window(QMainWindow):
         if armor_type == "---":
             self.display_armor()
             return
-        if self.spacecraft.tonnage == 0:
-            return self.logger.setText("Error: Tonnage not set before adding armor.")
 
         # Creating new armor object and adding to ship
         armor = Armour(armor_type)
@@ -868,10 +865,6 @@ class Window(QMainWindow):
         # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
-
-            # If removing the computer, uncheck the specializations
-            self.jump_control_spec.setChecked(False)
-            self.hardened_system.setChecked(False)
         else:
             computer = Computer(computer_type)
 
