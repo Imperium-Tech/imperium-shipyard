@@ -1399,10 +1399,10 @@ class Window(QMainWindow):
         turret.modify_weapon(wep, idx)
         self.update_stats()
 
-    def modify_turret_ammo(self, turret, type, total_label, edit):
+    def modify_turret_ammo(self, turret, ammo_type, total_label, edit):
         # Handles modifying a turret's ammo
         num = int(edit.text())
-        turret.modify_missile_ammo(type, num)
+        turret.modify_missile_ammo(ammo_type, num)
         total_label.setText(str(num * 12))
         self.update_stats()
 

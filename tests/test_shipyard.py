@@ -319,6 +319,12 @@ def test_modify_misc(window):
     assert window.spacecraft.get_remaining_cargo() == 82
     assert window.spacecraft.get_total_cost() == 3.5
 
+    # Remove stateroom
+    window.remove_misc(label)
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.get_remaining_cargo() == 90
+    assert window.misc_config_layout.itemAt(3) is None
+
 
 def test_add_hardpoint(window):
     """ Tests adding a hardpoint to the ship """
@@ -345,9 +351,88 @@ def test_display_turret(window):
 
     # Add hardpoint and call display
     window.add_hardpoint()
+    window.add_hardpoint()
     window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
 
     # Check for proper displays
     name = "---- HP: {} ----".format(window.spacecraft.hardpoints[0].id)
     assert window.turret_config_layout.itemAt(0).widget().text() == name
     assert window.turret_config_layout.itemAt(2).widget().currentText() == "---"
+
+
+def test_display_turret_with_wep(window):
+    """ Tests displaying the turret of a hardpoint that has a weapon """
+    assert window is not None
+
+    # Add hardpoint and display turret
+    window.add_hardpoint()
+    window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
+
+    # Change turret to single model
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(1)
+    assert window.spacecraft.hardpoints[0].turret is not None
+    assert window.spacecraft.get_total_cost() == 2.7
+    assert window.spacecraft.get_remaining_cargo() == 89
+
+    # Add weapon to turret
+    window.turret_config_layout.itemAt(8).widget().setCurrentIndex(1)
+    assert window.spacecraft.get_remaining_cargo() == 89
+    assert window.spacecraft.get_total_cost() == 3.2
+
+    # Swap turret model to bayweapon
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(4)
+    assert window.spacecraft.get_remaining_cargo() == 39
+    assert window.spacecraft.get_total_cost() == 2.5
+
+    # Remove turret, back to '---'
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(0)
+    assert window.spacecraft.get_remaining_cargo() == 90
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.hardpoints[0].turret is None
+
+
+def test_turret_ammo(window):
+    """ Tests modifying ammunition on a turret """
+    assert window is not None
+
+    window.add_hardpoint()
+    window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
+
+    # Change turret to single model
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(1)
+
+    # Modify missile ammo
+    window.turret_config_layout.itemAt(15).widget().setText("1")
+
+    turret = window.spacecraft.hardpoints[0].turret
+    ammo_type = window.turret_config_layout.itemAt(13).widget().text()[:-10]
+    total_label = window.turret_config_layout.itemAt(14).widget()
+    edit = window.turret_config_layout.itemAt(15).widget()
+
+    window.modify_turret_ammo(turret, ammo_type, total_label, edit)
+    assert window.spacecraft.get_total_cost() == 2.715
+    assert window.spacecraft.get_remaining_cargo() == 88
+    assert window.spacecraft.hardpoints[0].turret.missiles.get(ammo_type) == 1
+
+
+def test_sandcaster_ammo(window):
+    """ Tests modifying sandcaster ammo on a turret """
+    assert window is not None
+
+    window.add_hardpoint()
+    window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
+
+    # Change turret to single model
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(1)
+
+    # Modify sandcaster ammo
+    window.turret_config_layout.itemAt(24).widget().setText("1")
+
+    turret = window.spacecraft.hardpoints[0].turret
+    total_label = window.turret_config_layout.itemAt(23).widget()
+    edit = window.turret_config_layout.itemAt(24).widget()
+    window.modify_turret_sandcaster(turret, total_label, edit)
+
+    assert window.spacecraft.get_total_cost() == 2.710
+    assert window.spacecraft.get_remaining_cargo() == 88
+    assert window.spacecraft.hardpoints[0].turret.sandcaster_barrels == 1
