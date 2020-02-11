@@ -23,6 +23,9 @@ def test_init():
     assert computer.rating == 25
     assert computer.get_cost() == 15.0
 
+    computer.modify_addon("Hardened System")
+    assert computer.get_cost() == 20.0
+
 
 def test_adding():
     # Initializing a ship and adding a computer system to it, checking for correct values

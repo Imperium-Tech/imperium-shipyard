@@ -23,13 +23,12 @@ from imperium.models.software import Software
 from imperium.models.spacecraft import Spacecraft
 from imperium.models.armour import Armour
 from shipyard.fileloader import FileLoader
+from imperium.models.turrets import Turret
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
                              QLabel, QLineEdit, QWidget, QFrame, QPushButton, QCheckBox,
                              QScrollArea, QMainWindow, QAction)
-
-from imperium.models.turrets import Turret
 
 
 class Window(QMainWindow):
@@ -665,12 +664,11 @@ class Window(QMainWindow):
         """
         new_tonnage = int(self.tonnage_box.currentText())
 
+        # Return if the tonnage is the same
         if new_tonnage == self.spacecraft.tonnage:
             return
 
-        # Cap tonnage to 2000
-        if new_tonnage > 2000:
-            new_tonnage = 2000
+        # Set tonnage on the spacecraft object
         self.spacecraft.set_tonnage(new_tonnage)
 
         # Checks for updating the drive, if necessary
@@ -770,8 +768,6 @@ class Window(QMainWindow):
         if armor_type == "---":
             self.display_armor()
             return
-        if self.spacecraft.tonnage == 0:
-            return self.logger.setText("Error: Tonnage not set before adding armor.")
 
         # Creating new armor object and adding to ship
         armor = Armour(armor_type)
@@ -869,10 +865,6 @@ class Window(QMainWindow):
         # Checking for whether the computer was removed or not
         if computer_type == "---":
             computer = None
-
-            # If removing the computer, uncheck the specializations
-            self.jump_control_spec.setChecked(False)
-            self.hardened_system.setChecked(False)
         else:
             computer = Computer(computer_type)
 
@@ -1407,10 +1399,10 @@ class Window(QMainWindow):
         turret.modify_weapon(wep, idx)
         self.update_stats()
 
-    def modify_turret_ammo(self, turret, type, total_label, edit):
+    def modify_turret_ammo(self, turret, ammo_type, total_label, edit):
         # Handles modifying a turret's ammo
         num = int(edit.text())
-        turret.modify_missile_ammo(type, num)
+        turret.modify_missile_ammo(ammo_type, num)
         total_label.setText(str(num * 12))
         self.update_stats()
 

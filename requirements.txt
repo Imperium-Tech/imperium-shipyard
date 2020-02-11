@@ -9,4 +9,5 @@ PyQt5==5.12
 PyQt5-sip==4.19.14
 pytest==4.2.0
 pytest-cov==2.6.1
+pytest-qt==3.3.0
 six==1.12.0
