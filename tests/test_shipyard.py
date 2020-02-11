@@ -250,3 +250,104 @@ def test_edit_computer(window):
 
     assert window.spacecraft.computer is None
     assert window.spacecraft.get_total_cost() == 2.5
+
+
+def test_modifying_software(window):
+    """ Tests adding/removing software to the ship """
+    assert window is not None
+
+    # Get starting box count
+    box_count = window.software_box.count()
+
+    # Add jump control
+    window.software_box.setCurrentIndex(1)
+    window.add_software(window.software_box)
+
+    # Check stats and box removal
+    assert len(window.spacecraft.software) == 1
+    assert window.spacecraft.get_total_cost() == 2.6
+    assert window.software_box.count() == box_count - 1
+
+    # Remove software
+    label = window.computer_config_layout.itemAt(13).widget()
+    window.remove_software(label)
+
+    assert len(window.spacecraft.software) == 0
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.software_box.count() == box_count
+
+
+def test_mod_software_level(window):
+    """ Tests modifying software level """
+    assert window is not None
+
+    # Add software
+    window.software_box.setCurrentIndex(1)
+    window.add_software(window.software_box)
+
+    # Modify software level
+    box = window.computer_config_layout.itemAt(14).widget()
+    box.setCurrentIndex(1)
+
+    # Check stats
+    assert window.spacecraft.get_total_cost() == 2.7
+
+
+def test_modify_misc(window):
+    """ Tests adding and modifying a misc """
+    assert window is not None
+
+    # Test adding invalid misc
+    window.add_misc(window.misc_box)
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.get_remaining_cargo() == 90
+
+    # Add stateroom and check stats
+    window.misc_box.setCurrentIndex(2)
+    window.add_misc(window.misc_box)
+
+    assert window.spacecraft.get_total_cost() == 3.0
+    assert window.spacecraft.get_remaining_cargo() == 86
+    assert len(window.spacecraft.misc) == 1
+
+    # Modify stateroom
+    label = window.misc_config_layout.itemAt(3).widget()
+    line_edit = window.misc_config_layout.itemAt(4).widget()
+    line_edit.setText("2")
+    window.modify_misc_item(label, line_edit)
+
+    assert window.spacecraft.get_remaining_cargo() == 82
+    assert window.spacecraft.get_total_cost() == 3.5
+
+
+def test_add_hardpoint(window):
+    """ Tests adding a hardpoint to the ship """
+    assert window is not None
+
+    # Add hardpoint
+    window.add_hardpoint()
+    assert len(window.spacecraft.hardpoints) == 1
+    assert window.hp_config_layout.itemAt(5).widget() is not None
+    assert window.total_hp.text() == "1"
+    assert window.avail_hp.text() == "0"
+
+    # Remove hardpoint
+    window.remove_hardpoint(window.spacecraft.hardpoints[0])
+    assert len(window.spacecraft.hardpoints) == 0
+    assert window.hp_config_layout.itemAt(5) is None
+    assert window.total_hp.text() == "1"
+    assert window.avail_hp.text() == "1"
+
+
+def test_display_turret(window):
+    """ Tests displaying the turret of a hardpoint """
+    assert window is not None
+
+    # Add hardpoint and call display
+    window.add_hardpoint()
+    window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
+
+    # Check for proper displays
+    name = "---- HP: {} ----".format(window.spacecraft.hardpoints[0].id)
+    assert window.turret_config_layout.itemAt(0).widget().text() == name
+    assert window.turret_config_layout.itemAt(2).widget().currentText() == "---"
