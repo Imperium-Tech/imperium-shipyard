@@ -7,6 +7,19 @@ import pytest
 from imperium.models.turrets import Turret
 
 
+def test_baywep():
+    """
+    Test bayweapon adding
+    """
+    turret = Turret("Bay Weapon")
+    assert turret.tonnage == 51
+    assert turret.get_cost() == 0
+    assert turret.max_wep == 1
+
+    turret.modify_weapon("Missile Bank", 0)
+    assert turret.get_cost() == 12.0
+
+
 def test_single_turret():
     """
     Test to check single turret initialization and the weapon remove functionality
@@ -57,7 +70,6 @@ def test_double_turret():
     turret.modify_weapon("---", 0)
     assert turret.tonnage == 1
     assert turret.get_cost() == 1.5
-
 
     print("--- Passed test for Double Turret! ---")
 
