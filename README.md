@@ -12,6 +12,11 @@ For CMD (in root folder of imperium-shipyard): `python -m imperium.shipyard`
 
 For EXE: simply double click the Imperium executable
 
+## Default Ships:
+Included standard in Imperium Shipyard is a representation of every ship available in the Core Rulebooks, from the Laboratory Ship to the Corsair. The costs of these ships equally match the raw added totals in all cases. 
+
+These ships can be loaded in via the file bar and are found within imperium-shipyard/shipyard/models/default.
+For creating custom ships by hand, the default.srd or model_template.json files can be used as references.
 
 ## Custom Parts:
 Imperium Shipyard allows for easily adding customized parts to various parts for the ship. This is done by parsing the JSON 
@@ -54,8 +59,6 @@ These include:
 <ul>
     <li><b> Shipyard Refactor</b>: the current blobs that are the shipyard.py/spacecraft.py would be nice to refactor into
     different sections based off of relatedness, like an "armory" for turrets, weapons, etc.</li>
-    <li> <b>Starting Ship Templates</b>: after the file format, having the templates from the Core Rulebook ready to use would
-    a nice starting point for newcomers.</li>
 </ul>
 
 Proposed Design Refactor:
