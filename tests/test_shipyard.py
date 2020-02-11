@@ -360,6 +360,22 @@ def test_display_turret(window):
     assert window.turret_config_layout.itemAt(2).widget().currentText() == "---"
 
 
+def test_turret_addon(window):
+    """ Tests adding a turret addon """
+    assert window is not None
+
+    # Add hardpoint and get turret display
+    window.add_hardpoint()
+    window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(1)
+
+    # Checked the popup and call mod turret option
+    window.turret_config_layout.itemAt(4).widget().setChecked(True)
+    window.modify_turret_option(window.spacecraft.hardpoints[0], "Pop-up Turret")
+    assert window.spacecraft.get_remaining_cargo() == 87
+    assert window.spacecraft.get_total_cost() == 3.7
+
+
 def test_display_turret_with_wep(window):
     """ Tests displaying the turret of a hardpoint that has a weapon """
     assert window is not None
@@ -436,3 +452,24 @@ def test_sandcaster_ammo(window):
     assert window.spacecraft.get_total_cost() == 2.710
     assert window.spacecraft.get_remaining_cargo() == 88
     assert window.spacecraft.hardpoints[0].turret.sandcaster_barrels == 1
+
+
+def test_reset_ship(window):
+    """ Tests resetting the ship to a default state """
+    # Change tonnage, add a hardpoint and turret
+    window.tonnage_box.setCurrentIndex(1)
+    window.edit_tonnage()
+
+    window.add_hardpoint()
+    window.display_turret(window.turret_config_layout, window.active_hp_buttons[0], window.spacecraft.hardpoints[0])
+    window.turret_config_layout.itemAt(2).widget().setCurrentIndex(1)
+
+    assert window.spacecraft.get_total_cost() == 9.2
+    assert window.spacecraft.get_remaining_cargo() == 189
+    assert len(window.spacecraft.hardpoints) == 1
+
+    # Reset and check for default
+    window.reset_ship()
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.get_remaining_cargo() == 90
+    assert len(window.spacecraft.hardpoints) == 0
