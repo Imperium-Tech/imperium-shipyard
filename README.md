@@ -5,18 +5,29 @@ Python ship designer for Mongoose Traveller SRD, 2nd Edition. Built using PyQT G
 parsing. Utilizes a custom file format (.srd) in order to save, load, and share ships.
 
 ## Running:
-There are two ways to run Imperium Shipyard, either through a cmd command or by using the executable provided. The CMD 
-option is more for development work and testing features/tweaks.
+There are two ways to run Imperium Shipyard, either through a cmd command by pulling the repo or by using the executable provided from our release page. The CMD option is more for development work and testing new features/tweaks.
 
-For CMD (in root folder of imperium-shipyard): `python -m imperium.shipyard`
+For CMD (in root folder of imperium-shipyard): `python -m imperium.shipbuilder`
 
 For EXE: simply double click the Imperium executable
+
+## Folder Layout:
+```
+  ImperiumShipyard/
+  │
+  ├── ImperiumShipyard.exe
+  |
+  ├── imperium/
+  │   ├── classes/   - Holds the Python classes that represent ship objects
+  │   ├── resources/ - Holds the transcribed table values from the rulebook
+  │   └── shipyard/  - Repository for holding .srd files
+  ```
 
 ## Default Ships:
 Included standard in Imperium Shipyard is a representation of every ship available in the Core Rulebooks, from the Laboratory Ship to the Corsair. The costs of these ships equally match the raw added totals in all cases. 
 
-These ships can be loaded in via the file bar and are found within imperium-shipyard/shipyard/models/default.
-For creating custom ships by hand, the default.srd or model_template.json files can be used as references.
+These ships can be loaded in via the file bar and are found within ImperiumShipyard/imperium/shipyard/models/default.
+For creating custom ships by hand (outside of the program), the default.srd or model_template.json files can be used as references.
 
 ## Custom Parts:
 Imperium Shipyard allows for easily adding customized parts to various parts for the ship. This is done by parsing the JSON 
@@ -64,3 +75,8 @@ These include:
 Proposed Design Refactor:
 
 <img src="images/imperium_design.png" alt="Picture of redesign"></img>
+
+## Credit
+The ship design in our icon comes from Greer Mosher, available here: https://thenounproject.com/term/spaceship/269595/
+
+This icon is available as a sample icon on Adobe Spark's Logo Maker under the CC License.
