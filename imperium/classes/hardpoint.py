@@ -3,7 +3,7 @@
 
 Represents a single hardpoint on a ship and its contained items/customizations
 """
-from imperium.models.json_reader import get_file_data
+from imperium.classes.json_reader import get_file_data
 
 
 class Hardpoint:

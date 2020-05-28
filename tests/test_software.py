@@ -4,9 +4,9 @@
 Unit tests for testing functionality of adding and removing software from a ship
 """
 import pytest
-from imperium.models.software import Software
-from imperium.models.spacecraft import Spacecraft
-from imperium.models.computer import Computer
+from imperium.classes.software import Software
+from imperium.classes.spacecraft import Spacecraft
+from imperium.classes.computer import Computer
 
 
 def test_init():

@@ -4,8 +4,8 @@
 Unit tests for testing functionality of adding armor pieces to a ship
 """
 import pytest
-from imperium.models.armour import Armour
-from imperium.models.spacecraft import Spacecraft
+from imperium.classes.armour import Armour
+from imperium.classes.spacecraft import Spacecraft
 
 
 def test_init():

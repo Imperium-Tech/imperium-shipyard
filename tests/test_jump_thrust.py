@@ -5,8 +5,8 @@ Unit test for testing jump and thrust functionality for m- and j-drives
 """
 import pytest
 
-from imperium.models.drives import MDrive, JDrive
-from imperium.models.spacecraft import Spacecraft
+from imperium.classes.drives import MDrive, JDrive
+from imperium.classes.spacecraft import Spacecraft
 
 
 def test_mdrive():

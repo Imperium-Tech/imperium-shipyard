@@ -4,7 +4,7 @@
 File to test functionality of the Turrets class
 """
 import pytest
-from imperium.models.turrets import Turret
+from imperium.classes.turrets import Turret
 
 
 def test_baywep():

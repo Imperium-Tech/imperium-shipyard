@@ -4,8 +4,8 @@
 Unit tests for Options objects within a ship
 """
 import pytest
-from imperium.models.option import Option
-from imperium.models.spacecraft import Spacecraft
+from imperium.classes.option import Option
+from imperium.classes.spacecraft import Spacecraft
 
 
 def test_init():

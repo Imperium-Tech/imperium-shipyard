@@ -4,13 +4,11 @@
 
 Class that handles interacting with and saving a ship's state into a file for later use
 """
-from PyQt5.QtWidgets import QLabel, QComboBox
-
-from imperium.models.hardpoint import Hardpoint
-from imperium.models.software import Software
-from imperium.models.spacecraft import Spacecraft
-from imperium.models.turrets import Turret
-from imperium.models.misc import Misc
+from imperium.classes.hardpoint import Hardpoint
+from imperium.classes.software import Software
+from imperium.classes.spacecraft import Spacecraft
+from imperium.classes.turrets import Turret
+from imperium.classes.misc import Misc
 import json
 import os
 
@@ -130,7 +128,7 @@ class FileLoader:
 
         # Adding software labels back to box
         my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "../imperium/resources/hull_software.json")
+        path = os.path.join(my_path, "../resources/hull_software.json")
         with open(path) as f:
             data = json.load(f)
 
@@ -141,7 +139,7 @@ class FileLoader:
 
         # Adding misc labels back to box
         my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "../imperium/resources/hull_misc.json")
+        path = os.path.join(my_path, "../resources/hull_misc.json")
         with open(path) as f:
             data = json.load(f)
 

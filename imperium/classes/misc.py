@@ -4,7 +4,7 @@
 Misc class that represents miscellaneous items that don't need individual classes, such as
 staterooms, low berths, fuel scoops, etc
 """
-from imperium.models.json_reader import get_file_data
+from imperium.classes.json_reader import get_file_data
 
 
 class Misc:

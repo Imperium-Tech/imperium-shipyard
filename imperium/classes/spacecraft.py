@@ -3,9 +3,9 @@ spacecraft.py
 
 Houses the spacecraft class
 """
-from imperium.models.config import Config
-from imperium.models.sensors import Sensor
-from imperium.models.json_reader import get_file_data
+from imperium.classes.config import Config
+from imperium.classes.sensors import Sensor
+from imperium.classes.json_reader import get_file_data
 
 
 class Spacecraft:
