@@ -1,4 +1,4 @@
-<img src="images/IS-banner.png" alt="Picture of redesign"></img>
+<img src="images/IS-banner.png" alt="Imperium Shipyard Banner"></img>
 
 # imperium-shipyard
 [![CircleCI](https://circleci.com/gh/Milkshak3s/imperium-shipyard.svg?style=svg)](https://circleci.com/gh/Milkshak3s/imperium-shipyard)

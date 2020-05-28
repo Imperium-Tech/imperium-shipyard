@@ -6,7 +6,7 @@ Holds the unit tests for shipyard.py, which is mainly PyQT interactions
 import sys
 import pytest
 from pytestqt import qtbot
-from imperium.shipyard import Window
+from imperium.shipbuilder import Window
 
 
 @pytest.fixture()
