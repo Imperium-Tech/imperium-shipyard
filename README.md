@@ -2,8 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/Milkshak3s/imperium-shipyard.svg?style=svg)](https://circleci.com/gh/Milkshak3s/imperium-shipyard)
 [![Coverage Status](https://coveralls.io/repos/github/Milkshak3s/imperium-shipyard/badge.svg?branch=master)](https://coveralls.io/github/Milkshak3s/imperium-shipyard?branch=master)  
-Python ship designer for Mongoose Traveller SRD, 2nd Edition. Built using PyQT GUI and a JSON backend for data management
-parsing. Utilizes a custom file format (.srd) in order to save, load, and share ships.
+Python ship designer for Mongoose Traveller SRD, 1st Edition. Built using PyQT GUI and a JSON backend for data management/parsing. Utilizes a custom file format (.srd) in order to save, load, and share ships. 
 
 ## Running:
 There are two ways to run Imperium Shipyard, either through a cmd command or by using the executable provided. The CMD 
@@ -55,8 +54,8 @@ These include:
 <ul>
     <li><b> Shipyard Refactor</b>: the current blobs that are the shipyard.py/spacecraft.py would be nice to refactor into
     different sections based off of relatedness, like an "armory" for turrets, weapons, etc.</li>
-    <li> <b>Starting Ship Templates</b>: after the file format, having the templates from the Core Rulebook ready to use would
-    a nice starting point for newcomers.</li>
+    <li><b> UI Rework</b>: while most of the sections are clean, the stat tracking for hardpoints can be cleaned up and condensed. One idea is to condense it into one column that has drop-down lists for each piece and can scroll like the other columns.</li>
+    <li><b> Armor UI</b>: presently, you need to click on the added armor to remove it. This is inconsistent with the other features having "remove" buttons, so bringing this in line would help consistency. It appears to be an alignment nightmare, though.</li>
 </ul>
 
 Proposed Design Refactor:
