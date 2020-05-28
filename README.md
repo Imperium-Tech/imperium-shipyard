@@ -8,7 +8,7 @@ Python ship designer for Mongoose Traveller SRD, 1st Edition. Built using PyQT G
 There are two ways to run Imperium Shipyard, either through a cmd command or by using the executable provided. The CMD 
 option is more for development work and testing features/tweaks.
 
-For CMD (in root folder of imperium-shipyard): `python -m imperium.shipyard`
+For CMD (in root folder of imperium-shipyard): `python shipbuilder.py`
 
 For EXE: simply double click the Imperium executable
 
