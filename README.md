@@ -66,7 +66,9 @@ And there you go, a custom part to use in your ships!
 
 ## TO-DO:
 There are still a number of features wanting to be implemented that aren't explicitly needed for the base functionality
-of the program, but would be great additions to have.
+of the program, but would be great additions to have. 
+
+These could be good issues to tackle (some far more work than others) for those looking to contribute! :)
 
 These include:
 <ul>
@@ -74,11 +76,17 @@ These include:
     different sections based off of relatedness, like an "armory" for turrets, weapons, etc.</li>
     <li><b> UI Rework</b>: while most of the sections are clean, the stat tracking for hardpoints can be cleaned up and condensed. One idea is to condense it into one column that has drop-down lists for each piece and can scroll like the other columns.</li>
     <li><b> Armor UI</b>: presently, you need to click on the added armor to remove it. This is inconsistent with the other features having "remove" buttons, so bringing this in line would help consistency. It appears to be an alignment nightmare, though.</li>
+  <li><b> GUI Sizing</b>: at the moment, window size values are mostly hardcoded rather than dynamically fitted. It functions well at 1080p+ resolution on a Windows machine, but it might look off on other OSs or resolutions.</li>
+  <li><b> Mouseover Equipment</b>: There are a lot of fields that don't affect values in the calculator but are present in our backend. Having a way to visualize attached equipment (perhaps with a mouseover menu on specific items?) would be a convenient feature to have.</li>
+  <li><b> Error Logger</b>: while the rules in the books are enforced on what is allowed under which circumstances, having an error logger on why specific things are wrong would be helpful to newer players.</li>
 </ul>
 
 Proposed Design Refactor:
 
 <img src="images/imperium_design.png" alt="Picture of redesign"></img>
+
+## Issues and Contributions
+Please feel free to put up any issues that are found or enhancements that would improve this work. As well, please feel welcome to put up PRs for any improvements that you can do!
 
 ## Credit
 The ship design in our icon comes from Greer Mosher, available here: https://thenounproject.com/term/spaceship/269595/
