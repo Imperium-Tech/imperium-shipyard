@@ -471,3 +471,79 @@ def test_reset_ship(window):
     assert window.spacecraft.get_total_cost() == 2.5
     assert window.spacecraft.get_remaining_cargo() == 90
     assert len(window.spacecraft.hardpoints) == 0
+
+
+def test_load_model(window):
+    """ Tests loading a model in from the default ships """
+    assert window.spacecraft.tonnage == 100
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.get_remaining_cargo() == 90
+
+    # Load in the model
+    window.fileloader.load_model("tests/testship.srd", window)
+
+    # Check if attributes are correctly set and loaded
+    assert window.spacecraft.tonnage == 500
+    assert window.spacecraft.get_total_cost() == 383.725
+    assert window.spacecraft.get_remaining_cargo() == 62
+    assert window.spacecraft.fuel_jump == 50
+    assert window.spacecraft.jdrive.drive_type == "C"
+    assert window.spacecraft.mdrive.drive_type == "C"
+    assert window.spacecraft.pplant.type == "C"
+    assert window.spacecraft.bridge is True
+    assert window.spacecraft.armour_total == 4
+    assert len(window.spacecraft.hull_options) == 3
+    assert window.spacecraft.sensors.name == "Basic Military"
+    assert window.spacecraft.computer.model == "Model 4"
+    assert len(window.spacecraft.hardpoints) == 4
+
+
+def test_save_model(window):
+    """ Tests saving a model ship """
+    assert window.spacecraft.tonnage == 100
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.get_remaining_cargo() == 90
+
+    # Load in the model
+    window.fileloader.load_model("tests/testship.srd", window)
+
+    # Check if attributes are correctly set and loaded
+    assert window.spacecraft.tonnage == 500
+    assert window.spacecraft.get_total_cost() == 383.725
+    assert window.spacecraft.get_remaining_cargo() == 62
+    assert window.spacecraft.fuel_jump == 50
+    assert window.spacecraft.jdrive.drive_type == "C"
+    assert window.spacecraft.mdrive.drive_type == "C"
+    assert window.spacecraft.pplant.type == "C"
+    assert window.spacecraft.bridge is True
+    assert window.spacecraft.armour_total == 4
+    assert len(window.spacecraft.hull_options) == 3
+    assert window.spacecraft.sensors.name == "Basic Military"
+    assert window.spacecraft.computer.model == "Model 4"
+    assert len(window.spacecraft.hardpoints) == 4
+
+    # Save the loaded model
+    window.fileloader.save_model("tests/savetestship.srd", window.spacecraft)
+
+    # Reset the ship and reload in the new saved ship
+    window.reset_ship()
+    assert window.spacecraft.tonnage == 100
+    assert window.spacecraft.get_total_cost() == 2.5
+    assert window.spacecraft.get_remaining_cargo() == 90
+
+    window.fileloader.load_model("tests/savetestship.srd", window)
+
+    # Check if attributes are correctly set and loaded
+    assert window.spacecraft.tonnage == 500
+    assert window.spacecraft.get_total_cost() == 383.725
+    assert window.spacecraft.get_remaining_cargo() == 62
+    assert window.spacecraft.fuel_jump == 50
+    assert window.spacecraft.jdrive.drive_type == "C"
+    assert window.spacecraft.mdrive.drive_type == "C"
+    assert window.spacecraft.pplant.type == "C"
+    assert window.spacecraft.bridge is True
+    assert window.spacecraft.armour_total == 4
+    assert len(window.spacecraft.hull_options) == 3
+    assert window.spacecraft.sensors.name == "Basic Military"
+    assert window.spacecraft.computer.model == "Model 4"
+    assert len(window.spacecraft.hardpoints) == 4

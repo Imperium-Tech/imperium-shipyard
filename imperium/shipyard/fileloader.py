@@ -126,6 +126,10 @@ class FileLoader:
         window.seal_check.setChecked(False)
         window.fuel_scoop.setChecked(False)
 
+        # Setting screen option flags to False initially
+        window.meson_screen.setChecked(False)
+        window.nuclear_damper.setChecked(False)
+
         # Adding software labels back to box
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, "../resources/hull_software.json")
@@ -187,7 +191,6 @@ class FileLoader:
         window.check_bridge()
 
         options = model['config']['options']
-
         if options[0] is True:
             window.reflec_check.setChecked(True)
 
@@ -198,8 +201,11 @@ class FileLoader:
             window.stealth_check.setChecked(True)
 
         screens = model['config']['screens']
-        window.meson_screen.setChecked(screens[0])
-        window.nuclear_damper.setChecked(screens[1])
+        if screens[0] is True:
+            window.meson_screen.setChecked(True)
+
+        if screens[1] is True:
+            window.nuclear_damper.setChecked(True)
 
         window.hull_config_box.setCurrentText(model['config']['hull_type'])
         window.edit_hull_config()

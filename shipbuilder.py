@@ -1,5 +1,5 @@
 """
-@file shipyard.py
+@file shipbuilder.py
 @author Ryan Missel, Chris Vantine
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
