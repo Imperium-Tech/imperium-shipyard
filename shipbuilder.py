@@ -1420,6 +1420,11 @@ class Window(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Window()
-    window.setWindowIcon(QIcon('images/IS-logo.png'))
+
+    # Different checking needed depending on local build or executable run
+    if os.path.exists("IS-logo.png"):
+        window.setWindowIcon(QIcon('IS-logo.png'))
+    else:
+        window.setWindowIcon(QIcon('images/IS-logo.png'))
     window.show()
     sys.exit(app.exec_())
