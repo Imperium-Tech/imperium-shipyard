@@ -3,10 +3,8 @@
 
 Holds the unit tests for shipyard.py, which is mainly PyQT interactions
 """
-import sys
 import pytest
-from pytestqt import qtbot
-from imperium.shipbuilder import Window
+from shipbuilder import Window
 
 
 @pytest.fixture()

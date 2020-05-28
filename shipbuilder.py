@@ -1422,6 +1422,6 @@ class Window(QMainWindow):
 
 app = QApplication(sys.argv)
 window = Window()
-window.setWindowIcon(QIcon('../images/IS-logo.png'))
+window.setWindowIcon(QIcon('images/IS-logo.png'))
 window.show()
 sys.exit(app.exec_())
