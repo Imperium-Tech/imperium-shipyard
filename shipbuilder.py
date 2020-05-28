@@ -45,7 +45,7 @@ class Window(QMainWindow):
         self.logger = QLabel("")
 
         # Window Title
-        self.setWindowTitle("Imperium Shipyard")
+        self.setWindowTitle("Imperium Shipyard - Untitled.srd")
 
         ###################################
         ###  BEGIN: Imperium Options    ###
@@ -542,7 +542,7 @@ class Window(QMainWindow):
         filename = dlg.getOpenFileName(self, 'Load File', 'shipyard/models/', 'Traveller SRD files (*.srd)')
 
         if filename[0] != '':
-            print(filename)
+            self.setWindowTitle("Imperium Shipyard - {}".format(filename[0].split('/')[-1]))
             self.fileloader.load_model(filename[0], self)
 
     def save_file(self):
@@ -555,7 +555,7 @@ class Window(QMainWindow):
         filename = dlg.getSaveFileName(self, 'Save File', 'shipyard/models', 'Traveller SRD files (*.srd)')
 
         if filename[0] != '':
-            print(filename)
+            self.setWindowTitle("Imperium Shipyard - {}".format(filename[0].split('/')[-1]))
             self.fileloader.save_model(filename[0], self.spacecraft)
 
     def reset_ship(self):
@@ -564,6 +564,8 @@ class Window(QMainWindow):
         """
         my_path = os.path.abspath(os.path.dirname(__file__))
         filename = os.path.join(my_path, "imperium/shipyard/models/default/default.srd")
+
+        self.setWindowTitle("Imperium Shipyard - Untitled.srd")
         self.fileloader.load_model(filename, self)
 
     def update_stats(self):
