@@ -3,7 +3,7 @@
 
 Module that contains classes and relevant data for a turret
 """
-from imperium.models.json_reader import get_file_data
+from imperium.classes.json_reader import get_file_data
 
 
 class Turret:

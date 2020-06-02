@@ -1,31 +1,34 @@
 """
-@file shipyard.py
+@file shipbuilder.py
 @author Ryan Missel, Chris Vantine
 
 Entrypoint for the imperium-shipyard program (https://github.com/Milkshak3s/imperium-shipyard)
 Handles all of the UI interaction and display for the PyQT frontend
 """
+import sys
 import random
 import os
 import string
 
-from imperium.models.computer import Computer
-from imperium.models.config import Config
-from imperium.models.drives import MDrive, JDrive
-from imperium.models.hardpoint import Hardpoint
-from imperium.models.json_reader import get_file_data
-from imperium.models.misc import Misc
-from imperium.models.option import Option
-from imperium.models.pplant import PPlant
-from imperium.models.screens import Screen
-from imperium.models.sensors import Sensor
-from imperium.models.software import Software
-from imperium.models.spacecraft import Spacecraft
-from imperium.models.armour import Armour
-from shipyard.fileloader import FileLoader
-from imperium.models.turrets import Turret
+from imperium.classes.computer import Computer
+from imperium.classes.config import Config
+from imperium.classes.drives import MDrive, JDrive
+from imperium.classes.hardpoint import Hardpoint
+from imperium.classes.json_reader import get_file_data
+from imperium.classes.misc import Misc
+from imperium.classes.option import Option
+from imperium.classes.pplant import PPlant
+from imperium.classes.screens import Screen
+from imperium.classes.sensors import Sensor
+from imperium.classes.software import Software
+from imperium.classes.spacecraft import Spacecraft
+from imperium.classes.armour import Armour
+from imperium.classes.turrets import Turret
+
+from imperium.shipyard.fileloader import FileLoader
+
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox, QFileDialog,
                              QLabel, QLineEdit, QWidget, QFrame, QPushButton, QCheckBox,
                              QScrollArea, QMainWindow, QAction)
@@ -42,7 +45,7 @@ class Window(QMainWindow):
         self.logger = QLabel("")
 
         # Window Title
-        self.setWindowTitle("Imperium Shipyard")
+        self.setWindowTitle("Imperium Shipyard - Untitled.srd")
 
         ###################################
         ###  BEGIN: Imperium Options    ###
@@ -539,7 +542,7 @@ class Window(QMainWindow):
         filename = dlg.getOpenFileName(self, 'Load File', 'shipyard/models/', 'Traveller SRD files (*.srd)')
 
         if filename[0] != '':
-            print(filename)
+            self.setWindowTitle("Imperium Shipyard - {}".format(filename[0].split('/')[-1]))
             self.fileloader.load_model(filename[0], self)
 
     def save_file(self):
@@ -552,7 +555,7 @@ class Window(QMainWindow):
         filename = dlg.getSaveFileName(self, 'Save File', 'shipyard/models', 'Traveller SRD files (*.srd)')
 
         if filename[0] != '':
-            print(filename)
+            self.setWindowTitle("Imperium Shipyard - {}".format(filename[0].split('/')[-1]))
             self.fileloader.save_model(filename[0], self.spacecraft)
 
     def reset_ship(self):
@@ -560,7 +563,9 @@ class Window(QMainWindow):
         Handles getting the path to the default SRD file and resetting the GUI to a default ship
         """
         my_path = os.path.abspath(os.path.dirname(__file__))
-        filename = os.path.join(my_path, "../shipyard/models/default/default.srd")
+        filename = os.path.join(my_path, "imperium/shipyard/models/default/default.srd")
+
+        self.setWindowTitle("Imperium Shipyard - Untitled.srd")
         self.fileloader.load_model(filename, self)
 
     def update_stats(self):
@@ -1415,9 +1420,13 @@ class Window(QMainWindow):
 
 
 if __name__ == '__main__':
-    import sys
-
     app = QApplication(sys.argv)
     window = Window()
+
+    # Different checking needed depending on local build or executable run
+    if os.path.exists("IS-logo.png"):
+        window.setWindowIcon(QIcon('IS-logo.png'))
+    else:
+        window.setWindowIcon(QIcon('images/IS-logo.png'))
     window.show()
     sys.exit(app.exec_())

@@ -6,9 +6,9 @@ Unit tests for functionality of the drive classes
 """
 import pytest
 
-from imperium.models.pplant import PPlant
-from imperium.models.spacecraft import Spacecraft
-from imperium.models.drives import (JDrive, MDrive)
+from imperium.classes.pplant import PPlant
+from imperium.classes.spacecraft import Spacecraft
+from imperium.classes.drives import (JDrive, MDrive)
 
 
 def test_init():

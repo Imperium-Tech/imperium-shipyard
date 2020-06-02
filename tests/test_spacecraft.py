@@ -5,11 +5,11 @@ Unit tests for classes in shipyard.models.spacecraft
 """
 import pytest
 
-from imperium.models.config import Config
-from imperium.models.hardpoint import Hardpoint
-from imperium.models.spacecraft import Spacecraft
-from imperium.models.turrets import Turret
-from imperium.models.armour import Armour
+from imperium.classes.config import Config
+from imperium.classes.hardpoint import Hardpoint
+from imperium.classes.spacecraft import Spacecraft
+from imperium.classes.turrets import Turret
+from imperium.classes.armour import Armour
 
 
 def test_spacecraft_init():

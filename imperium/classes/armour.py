@@ -3,7 +3,7 @@
 
 Represents a piece of armor that can be added onto a ship
 """
-from imperium.models.json_reader import get_file_data
+from imperium.classes.json_reader import get_file_data
 
 
 class Armour:

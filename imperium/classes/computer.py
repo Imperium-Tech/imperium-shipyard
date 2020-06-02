@@ -3,7 +3,7 @@
 
 Represents the computers put within a ship and the benefits that come with it
 """
-from imperium.models.json_reader import get_file_data
+from imperium.classes.json_reader import get_file_data
 
 
 class Computer:
