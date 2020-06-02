@@ -1,13 +1,11 @@
 <img src="images/IS-banner.png" alt="Imperium Shipyard Banner"></img>
 
-[![CircleCI](https://circleci.com/gh/Milkshak3s/imperium-shipyard.svg?style=svg)](https://circleci.com/gh/Milkshak3s/imperium-shipyard)
-
 [![Coverage Status](https://coveralls.io/repos/github/Milkshak3s/imperium-shipyard/badge.svg?branch=master)](https://coveralls.io/github/Milkshak3s/imperium-shipyard?branch=master)  
 Python ship designer for Mongoose Traveller SRD, 1st Edition. Built using PyQT GUI and a JSON backend for data management/parsing. Utilizes a custom file format (.srd) in order to save, load, and share ships. 
 
 
 ## Running:
-There are two ways to run Imperium Shipyard, either through a cmd command by pulling the repo or by using the executable provided from our release page. The CMD option is more for development work and testing new features/tweaks.
+There are two ways to run Imperium Shipyard, either through a cmd command by pulling the repo or by using the executable provided from our release page. The CMD option is more for development work and testing new features/tweaks, as well for those on MacOS/Linux.
 
 For CMD (in root folder of imperium-shipyard): `python shipbuilder.py`
 
@@ -20,7 +18,6 @@ For EXE: simply double click the Imperium executable within the root of Imperium
   ├── ImperiumShipyard.exe
   |
   ├── imperium/
-  │   ├── classes/   - Holds the Python classes that represent ship objects
   │   ├── resources/ - Holds the transcribed table values from the rulebook
   │   └── shipyard/  - Repository for holding .srd files
   ```
