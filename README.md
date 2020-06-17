@@ -1,5 +1,7 @@
 <img src="images/IS-banner.png" alt="Imperium Shipyard Banner"></img>
 
+[![CircleCI](https://circleci.com/gh/Imperium-Tech/imperium-shipyard.svg?style=svg)](https://circleci.com/gh/Imperium-Tech/imperium-shipyard)
+
 [![Coverage Status](https://coveralls.io/repos/github/Milkshak3s/imperium-shipyard/badge.svg?branch=master)](https://coveralls.io/github/Milkshak3s/imperium-shipyard?branch=master)  
 Python ship designer for Mongoose Traveller SRD, 1st Edition. Built using PyQT GUI and a JSON backend for data management/parsing. Utilizes a custom file format (.srd) in order to save, load, and share ships. 
 
