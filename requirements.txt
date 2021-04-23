@@ -4,7 +4,7 @@ colorama==0.4.1
 more-itertools==5.0.0
 pi==0.1.2
 pluggy==0.8.1
-py==1.7.0
+py==1.10.0
 PyQt5==5.12
 PyQt5-sip==4.19.14
 pytest==4.2.0
